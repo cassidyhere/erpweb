@@ -8,9 +8,25 @@ export function fetchList(query) {
   })
 }
 
+export function fetchActives() {
+  return request({
+    url: '/supplier/actives/',
+    method: 'get',
+    params: {}
+  })
+}
+
 export function fetchSupplierDetail(params) {
   return request({
     url: '/supplier/detail/',
+    method: 'get',
+    params: params
+  })
+}
+
+export function fetchSupplierMaterials(params) {
+  return request({
+    url: '/supplier/materials/',
     method: 'get',
     params: params
   })

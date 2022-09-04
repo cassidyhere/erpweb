@@ -121,6 +121,112 @@ export const constantRoutes = [
       }
     ]
   },
+  
+  {
+    path: '/purchase',
+    component: Layout,
+    redirect: '/purchase/contract',
+    name: '采购',
+    meta: { title: '采购', icon: 'dashboard' },
+    children: [
+      {
+        path: 'contract',
+        name: '采购合同',
+        component: () => import('@/views/purchase/index'),
+        meta: { title: '采购合同', icon: 'dashboard' }
+      },
+      {
+        path: 'order',
+        name: '采购订单',
+        component: () => import('@/views/purchase/order'),
+        meta: { title: '采购订单', icon: 'dashboard' }
+      },
+      {
+        path: 'contract/create',
+        name: 'createContract',
+        component: () => import('@/views/purchase/createContract'),
+        meta: { title: '新建采购合同' },
+        hidden: true
+      }
+    ]
+  },
+
+  {
+    path: '/warehouse',
+    component: Layout,
+    redirect: '/warehouse/in',
+    name: '仓库',
+    meta: { title: '仓库', icon: 'dashboard' },
+    children: [
+      {
+        path: 'in',
+        name: 'in',
+        component: () => import('@/views/inout/warehouse'),
+        meta: { title: '入仓单', icon: 'dashboard' },
+      },
+      {
+        path: 'pick',
+        name: 'pick',
+        component: () => import('@/views/inout/pick'),
+        meta: { title: '出仓单(领料单)', icon: 'dashboard' },
+      },
+      {
+        path: 'slip',
+        name: 'slip',
+        component: () => import('@/views/inout/slip'),
+        meta: { title: '退库单', icon: 'dashboard' },
+      },
+      {
+        path: 'return',
+        name: 'return',
+        component: () => import('@/views/inout/return'),
+        meta: { title: '退货单', icon: 'dashboard' },
+      },
+      {
+        path: 'inventory',
+        name: 'inventory',
+        component: () => import('@/views/warehouse/index'),
+        meta: { title: '库存概览', icon: 'dashboard' }
+      },
+      {
+        path: 'inventory-batch',
+        name: 'inventory-batch',
+        component: () => import('@/views/warehouse/batch'),
+        meta: { title: '库存批次明细', icon: 'dashboard' },
+        hidden: true
+      }
+    ]
+  },
+
+  {
+    path: '/supplier',
+    component: Layout,
+    redirect: '/warehouse/supplier',
+    name: 'supplier',
+    meta: { title: '供应商', icon: 'dashboard' },
+    children: [
+      {
+        path: 'supplier',
+        name: 'supplier',
+        component: () => import('@/views/supplier/index'),
+        meta: { title: '供应商列表', icon: 'dashboard' }
+      },
+      {
+        path: 'material',
+        name: 'material',
+        component: () => import('@/views/supplier/material'),
+        meta: { title: '材料列表', icon: 'dashboard' }
+      },
+      {
+        path: 'category',
+        name: 'category',
+        component: () => import('@/views/supplier/category'),
+        meta: { title: '材料列表管理' },
+        hidden: true
+      }
+    ]
+  },
+
   {
     path: '/documentation',
     component: Layout,
