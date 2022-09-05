@@ -8,6 +8,14 @@ export function fetchList(query) {
   })
 }
 
+export function fetchBuildingList(query) {
+  return request({
+    url: '/engineer/building/',
+    method: 'get',
+    params: query
+  })
+}
+
 export function fetchEngineerStats(query) {
   return request({
     url: '/engineer/stats/',

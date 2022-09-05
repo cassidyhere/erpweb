@@ -131,13 +131,13 @@ export const constantRoutes = [
     children: [
       {
         path: 'contract',
-        name: '采购合同',
+        name: 'contract',
         component: () => import('@/views/purchase/index'),
         meta: { title: '采购合同', icon: 'dashboard' }
       },
       {
         path: 'order',
-        name: '采购订单',
+        name: 'order',
         component: () => import('@/views/purchase/order'),
         meta: { title: '采购订单', icon: 'dashboard' }
       },
