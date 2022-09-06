@@ -126,13 +126,15 @@
 </template>
 
 <script>
-import { createContract } from '@/api/purchase'
+import { updateContract, fetchContract } from '@/api/purchase'
 import { fetchBuildingList } from '@/api/engineer'
 import { fetchActives, fetchSupplierMaterials } from '@/api/supplier'
 
 export default {
   data() {
     return {
+      temp: {},
+      contract_id: undefined,
       mkey: undefined,
       disableContract: false,
       temp_materials: [],
@@ -150,11 +152,14 @@ export default {
   },
 
   created() {
-    this.temp = this.$store.getters.contractInfo
-    if (this.temp.sign_time === undefined) {
-      this.getNowTime()
+    this.contract_id = this.$route.params.contract_id
+    if (this.contract_id === parseInt(this.contract_id, 10)) {
+      const data = { contract_id: this.contract_id }
+      fetchContract(data).then(res => {
+        this.temp = Object.assign({}, res)
+        this.temp_materials = this.temp.materials
+      })
     }
-    this.temp_materials = this.temp.materials
     fetchBuildingList().then(res => {
       this.engineers = res.engineers
     })
@@ -164,21 +169,10 @@ export default {
   },
 
   methods: {
-    getNowTime() {
-      var now = new Date()
-      var year = now.getFullYear() // 得到年份
-      var month = now.getMonth() // 得到月份
-      var date = now.getDate() // 得到日期
-      month = month + 1
-      month = month.toString().padStart(2, '0')
-      date = date.toString().padStart(2, '0')
-      var defaultDate = `${year}-${month}-${date}`
-      this.$set(this.temp, 'sign_time', defaultDate)
-    },
     updateData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          createContract(this.temp).then(() => {
+          updateContract(this.temp).then(() => {
             this.$notify({
               title: 'Success',
               message: 'Created Successfully',
@@ -191,8 +185,8 @@ export default {
       })
     },
     cancel() {
-      this.$store.dispatch('tagsView/delVisitedViewByPath', '/contract/create', 'createContract')
-      this.$store.dispatch('contract/clearContractInfo')
+      // this.$store.dispatch('tagsView/delVisitedViewByPath', '/contract/create', 'createContract')
+      // this.$store.dispatch('contract/clearContractInfo')
       this.$router.push({
         name: 'contract'
       })

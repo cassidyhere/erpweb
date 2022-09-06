@@ -15,7 +15,7 @@ export function fetchContractNames() {
   })
 }
 
-export function fetchContractDetail(query) {
+export function fetchContract(query) {
   return request({
     url: '/purchase/contract/detail/',
     method: 'get',

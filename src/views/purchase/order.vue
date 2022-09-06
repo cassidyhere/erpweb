@@ -433,7 +433,7 @@ import waves from '@/directive/waves' // waves directive
 import {
   fetchContractList,
   fetchContractNames,
-  fetchContractDetail,
+  fetchContract,
   fetchContractEngineers,
   fetchContractSuppliers,
   createContract,
@@ -681,7 +681,7 @@ export default {
       this.getIdByContractName(contract_name)
       if (this.temp.contract_id !== 1) {
         var data = { contract_id: this.temp.contract_id }
-        fetchContractDetail(data).then(res => {
+        fetchContract(data).then(res => {
           this.createActiveMaerials(res.materials)
           this.temp.supplier_id = res.supplier_id
         })

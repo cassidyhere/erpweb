@@ -78,17 +78,6 @@ export default {
   },
 
   methods: {
-    getNowTime() {
-      var now = new Date()
-      var year = now.getFullYear() // 得到年份
-      var month = now.getMonth() // 得到月份
-      var date = now.getDate() // 得到日期
-      month = month + 1
-      month = month.toString().padStart(2, '0')
-      date = date.toString().padStart(2, '0')
-      var defaultDate = `${year}-${month}-${date}`
-      this.$set(this.temp, 'sign_time', defaultDate)
-    },
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
