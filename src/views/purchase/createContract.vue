@@ -191,7 +191,7 @@ export default {
       })
     },
     cancel() {
-      this.$store.dispatch('tagsView/delVisitedViewByPath', '/contract/create', 'createContract')
+      this.$store.dispatch('tagsView/delVisitedViewByPath', '/purchase/contract/create')
       this.$store.dispatch('contract/clearContractInfo')
       this.$router.push({
         name: 'contract'

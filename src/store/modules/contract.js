@@ -19,12 +19,19 @@ const state = {
     payment: undefined,
     end_time: undefined
   },
-  test: []
+  updatingContractId: undefined,
+  lookingContractId: undefined
 }
   
 const mutations = {
   SET_CONTRACT_INFO: (state, info) => {
     state.info = info
+  },
+  SET_UPDATING_CONTRACT_ID: (state, contract_id) => {
+    state.updatingContractId = contract_id
+  },
+  SET_LOOKING_CONTRACT_ID: (state, contract_id) => {
+    state.lookingContractId = contract_id
   }
 }
 
@@ -54,7 +61,13 @@ const actions = {
       end_time: undefined
     }
     commit('SET_CONTRACT_INFO', info)
-  }
+  },
+  setUpdatingContractId({ commit }, contract_id) {
+    commit('SET_UPDATING_CONTRACT_ID', contract_id)
+  },
+  setLookingContractId({ commit }, contract_id) {
+    commit('SET_LOOKING_CONTRACT_ID', contract_id)
+  },
 }
 
 export default {

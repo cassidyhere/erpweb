@@ -12,6 +12,7 @@ const getters = {
   permission_routes: state => state.permission.routes,
   errorLogs: state => state.errorLog.logs,
   engineerInfo: state => state.engineer.info,
-  contractInfo: state => state.contract.info
+  contractInfo: state => state.contract.info,
+  updatingContractId: state => state.contract.updatingContractId
 }
 export default getters

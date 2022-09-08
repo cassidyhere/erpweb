@@ -154,6 +154,13 @@ export const constantRoutes = [
         component: () => import('@/views/purchase/updateContract'),
         meta: { title: '更新采购合同' },
         hidden: true
+      },
+      {
+        path: 'contract/detail',
+        name: 'fetchContract',
+        component: () => import('@/views/purchase/fetchContract'),
+        meta: { title: '查看采购合同' },
+        hidden: true
       }
     ]
   },
