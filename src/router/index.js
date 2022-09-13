@@ -159,7 +159,28 @@ export const constantRoutes = [
         path: 'contract/detail',
         name: 'fetchContract',
         component: () => import('@/views/purchase/fetchContract'),
-        meta: { title: '查看采购合同' },
+        meta: { title: '查看采购订单' },
+        hidden: true
+      },
+      {
+        path: 'order/create',
+        name: 'createOrder',
+        component: () => import('@/views/purchase/createOrder'),
+        meta: { title: '新建采购订单' },
+        hidden: true
+      },
+      {
+        path: 'order/update',
+        name: 'updateOrder',
+        component: () => import('@/views/purchase/updateOrder'),
+        meta: { title: '更新采购订单' },
+        hidden: true
+      },
+      {
+        path: 'order/detail',
+        name: 'fetchOrder',
+        component: () => import('@/views/purchase/fetchOrder'),
+        meta: { title: '查看采购订单' },
         hidden: true
       }
     ]

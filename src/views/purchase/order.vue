@@ -568,11 +568,9 @@ export default {
       })
     },
     handleCreate() {
-      this.resetTemp()
-      this.dialogStatus = 'create'
-      this.dialogFormVisible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate()
+      this.$store.dispatch('order/clearOrderInfo')
+      this.$router.push({
+        name: 'createOrder'
       })
     },
     resetTemp() {
@@ -640,15 +638,19 @@ export default {
       })
     },
     handleUpdateOrder(order_id) {
-      const data = { order_id: order_id }
-      fetchOrderDetail(data).then(res => {
-        this.temp = Object.assign({}, res) // copy obj
-        this.dialogStatus = 'get'
-        this.dialogFormVisible = true
-        this.$nextTick(() => {
-          this.$refs['dataForm'].clearValidate()
-        })
+      this.$router.push({
+        name: 'updateOrder',
+        params: { order_id: order_id }
       })
+      // const data = { order_id: order_id }
+      // fetchOrderDetail(data).then(res => {
+      //   this.temp = Object.assign({}, res) // copy obj
+      //   this.dialogStatus = 'get'
+      //   this.dialogFormVisible = true
+      //   this.$nextTick(() => {
+      //     this.$refs['dataForm'].clearValidate()
+      //   })
+      // })
     },
     handleDeleteOrder(order_id) {
       const data = { order_id: order_id }
@@ -658,12 +660,16 @@ export default {
       })
     },
     handleGetOrder(order_id) {
-      const data = { order_id: order_id }
-      fetchOrderDetail(data).then(res => {
-        this.temp = Object.assign({}, res) // copy obj
-        this.dialogStatus = 'get'
-        this.dialogFormVisible = true
+      this.$router.push({
+        name: 'fetchOrder',
+        params: { order_id: order_id }
       })
+      // const data = { order_id: order_id }
+      // fetchOrderDetail(data).then(res => {
+      //   this.temp = Object.assign({}, res) // copy obj
+      //   this.dialogStatus = 'get'
+      //   this.dialogFormVisible = true
+      // })
     },
     handleInOrder(order_id) {
       const data = { order_id: order_id }

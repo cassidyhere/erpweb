@@ -134,7 +134,6 @@ export default {
   data() {
     return {
       mkey: undefined,
-      disableContract: false,
       temp_materials: [],
       engineers: [],
       suppliers: [],

@@ -21,11 +21,23 @@
             </el-radio-group>
           </el-form-item>
         </el-col>
+        <el-col v-if="temp.link_contract==='true'" :span="8">
+          <el-form-item label="合同名称" prop="contract_name" class="head-item">
+            <el-autocomplete
+              v-model="temp.contract_name"
+              value-key="contract_name"
+              :fetch-suggestions="querySearchContract"
+              placeholder="请输入内容"
+              @select="handleSelectContract"
+              style="width: 200px;"
+            />
+          </el-form-item>
+        </el-col>
       </el-row>
       <el-row>
         <el-col :span="8">
           <el-form-item label="供应商名称" prop="supplier_name" class="head-item">
-            <span v-if="temp.link_contract===true">{{ temp.supplier_name }}</span>
+            <span v-if="temp.link_contract==='true'">{{ temp.supplier_name }}</span>
             <el-autocomplete
               v-else
               v-model="temp.supplier_name"
@@ -39,7 +51,7 @@
         </el-col>
         <el-col :span="8">
           <el-form-item label="总仓" prop="from_basecamp" class="head-item">
-            <el-radio-group v-if="temp.from_basecamp==='false'" v-model="temp.from_basecamp">
+            <el-radio-group v-if="temp.link_contract==='true'" v-model="temp.from_basecamp" disabled>
               <el-radio label=true>是</el-radio>
               <el-radio label=false>否</el-radio>
             </el-radio-group>
@@ -51,7 +63,7 @@
         </el-col>
         <el-col :span="8">
           <el-form-item v-if="temp.from_basecamp==='false'" label="工程名称" prop="engineer_name" class="head-item">
-            <span v-if="temp.link_contract===true">{{ temp.engineer_name }}</span>
+            <span v-if="temp.link_contract==='true'">{{ temp.engineer_name }}</span>
             <el-autocomplete
               v-else
               v-model="temp.engineer_name"
@@ -141,17 +153,17 @@
 </template>
 
 <script>
-import { updateOrder, fetchOrder } from '@/api/purchase'
+import { createOrder } from '@/api/purchase'
 import { fetchBuildingList } from '@/api/engineer'
 import { fetchActives, fetchSupplierMaterials } from '@/api/supplier'
+import { getNowTime } from '@/utils/common'
 
 export default {
   data() {
     return {
-      temp: {},
-      order_id: undefined,
       mkey: undefined,
       temp_materials: [],
+      contracts: [],
       engineers: [],
       suppliers: [],
       rules: {
@@ -167,25 +179,11 @@ export default {
   },
 
   created() {
-    // 先从传参找order_id，找不到再从store找
-    var order_id = undefined
-    order_id = this.$route.params.order_id
-    if (order_id === parseInt(order_id, 10)) {
-      this.$store.dispatch('order/setUpdatingOrderId', order_id)
-    } else {
-      order_id = this.$store.getters.updatingOrderId
+    this.temp = this.$store.getters.orderInfo
+    if (this.temp.sign_time === undefined) {
+      this.temp.order_time = getNowTime()
     }
-
-    if (order_id === undefined) {
-      this.cancel()
-    }
-
-    this.order_id = order_id
-    const data = { order_id: this.order_id }
-    fetchOrder(data).then(res => {
-      this.temp = Object.assign({}, res)
-      this.temp_materials = this.temp.materials
-    })
+    this.temp_materials = this.temp.materials
     fetchBuildingList().then(res => {
       this.engineers = res.engineers
     })
@@ -198,7 +196,7 @@ export default {
     updateData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          updateOrder(this.temp).then(() => {
+          createOrder(this.temp).then(() => {
             this.$notify({
               title: 'Success',
               message: 'Created Successfully',
@@ -215,6 +213,21 @@ export default {
       this.$router.push({
         name: 'order'
       })
+    },
+    querySearchContract(queryString, cb) {
+      var contracts = this.contracts;
+      var results = queryString ? contracts.filter(this.createContractFilter(queryString)) : contracts;
+      // 调用 callback 返回建议列表的数据
+      cb(results);
+    },
+    createContractFilter(queryString) {
+      return (contracts) => {
+        return (contracts.contract_name.toLowerCase().indexOf(queryString.toLowerCase()) !== -1);
+      };
+    },
+    handleSelectContract(item) {
+      this.temp.contract_id = item.contract_id
+      this.temp.contract_name = item.contract_name
     },
     querySearchSupplier(queryString, cb) {
       var suppliers = this.suppliers;
