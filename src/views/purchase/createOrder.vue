@@ -139,6 +139,11 @@
           <el-input v-model="scope.row.price" size="small"></el-input>
         </template>
       </el-table-column>
+      <el-table-column label="数量" width="200">
+        <template slot-scope="scope">
+          <el-input v-model="scope.row.number" size="small"></el-input>
+        </template>
+      </el-table-column>
       <el-table-column label="备注" width="220">
         <template slot-scope="scope">
           <el-input v-model="scope.row.remark" size="small"></el-input>
@@ -153,7 +158,7 @@
 </template>
 
 <script>
-import { createOrder } from '@/api/purchase'
+import { createOrder, fetchContractExecuting, fetchContractInfo } from '@/api/purchase'
 import { fetchBuildingList } from '@/api/engineer'
 import { fetchActives, fetchSupplierMaterials } from '@/api/supplier'
 import { getNowTime } from '@/utils/common'
@@ -184,6 +189,9 @@ export default {
       this.temp.order_time = getNowTime()
     }
     this.temp_materials = this.temp.materials
+    fetchContractExecuting().then(res => {
+      this.contracts = res.contracts
+    })
     fetchBuildingList().then(res => {
       this.engineers = res.engineers
     })
@@ -196,7 +204,9 @@ export default {
     updateData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          createOrder(this.temp).then(() => {
+          var data = Object.assign({}, this.temp)
+          data.materials = data.materials.filter(m => m.number !== undefined)
+          createOrder(data).then(() => {
             this.$notify({
               title: 'Success',
               message: 'Created Successfully',
@@ -228,6 +238,12 @@ export default {
     handleSelectContract(item) {
       this.temp.contract_id = item.contract_id
       this.temp.contract_name = item.contract_name
+      fetchContractInfo({ contract_id: item.contract_id }).then(res => {
+        Object.assign(this.temp, res)
+        fetchSupplierMaterials({ supplier_id: this.temp.supplier_id }).then(res => {
+          this.temp_materials = this.temp.materials = res.materials
+        })
+      })
     },
     querySearchSupplier(queryString, cb) {
       var suppliers = this.suppliers;

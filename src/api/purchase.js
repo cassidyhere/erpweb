@@ -8,9 +8,9 @@ export function fetchContractList(query) {
   })
 }
 
-export function fetchContractNames() {
+export function fetchContractExecuting() {
   return request({
-    url: '/purchase/contract/names/',
+    url: '/purchase/contract/executing/',
     method: 'get'
   })
 }
@@ -18,6 +18,14 @@ export function fetchContractNames() {
 export function fetchContract(query) {
   return request({
     url: '/purchase/contract/detail/',
+    method: 'get',
+    params: query
+  })
+}
+
+export function fetchContractInfo(query) {
+  return request({
+    url: '/purchase/contract/info/',
     method: 'get',
     params: query
   })
@@ -187,9 +195,19 @@ export function importOrderMaterialExcel(file) {
   formData.append('file', file)
 
   return request({
-    url: 'purchase/order-material/import-file/',
+    url: '/purchase/order-material/import-file/',
     method: 'post',
     data: formData,
     headers: { 'Content-Type': 'multipart/form-data' }
+  })
+}
+
+export function downloadOrderExcel(query) {
+  return request({
+    url: '/purchase/order/export/',
+    method: 'get',
+    params: query,
+    headers: { 'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' },
+    responseType: 'blob'
   })
 }

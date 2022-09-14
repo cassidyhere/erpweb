@@ -132,15 +132,6 @@
           >
             完结合同
           </el-button>
-          <!-- <el-button
-            v-if="scope.row.status===1"
-            size="mini"
-            type="success"
-            plain
-            @click="handleDownloadContract(scope.row.id)"
-          >
-            导出
-          </el-button> -->
         </template>
       </el-table-column>
     </el-table>
