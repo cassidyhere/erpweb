@@ -7,25 +7,49 @@
       label-width="140px"
       style="width: 70%;"
     >
+      <el-form-item v-if="status!=='create'" class="head-item" label="订单编号" prop="order_code">
+        <span>{{ temp.order_code }}</span>
+      </el-form-item>
       <el-row>
         <el-col :span="8">
           <el-form-item class="head-item" label="订单名称" prop="order_name">
-            <el-input v-model="temp.order_name" style="width: 200px;" />
+            <span v-if="status==='get'">{{ temp.order_code }}</span>
+            <el-input v-else v-model="temp.order_name" style="width: 200px;" />
           </el-form-item>
         </el-col>
         <el-col :span="8">
           <el-form-item label="是否关联采购合同" prop="link_contract" class="head-item">
-            <el-radio-group v-model="temp.link_contract">
+            <el-radio-group v-if="status==='get'" v-model="temp.link_contract" disabled>
               <el-radio label=true>是</el-radio>
               <el-radio label=false>否</el-radio>
             </el-radio-group>
+            <el-radio-group v-else v-model="temp.link_contract">
+              <el-radio label=true>是</el-radio>
+              <el-radio label=false>否</el-radio>
+            </el-radio-group>
+          </el-form-item>
+        </el-col>
+        <el-col v-if="temp.link_contract==='true'" :span="8">
+          <el-form-item label="合同名称" prop="contract_name" class="head-item">
+            <span v-if="status==='get'">{{ temp.order_code }}</span>
+            <el-autocomplete
+              v-else
+              v-model="temp.contract_name"
+              value-key="contract_name"
+              :fetch-suggestions="querySearchContract"
+              placeholder="请输入内容"
+              @select="handleSelectContract"
+              style="width: 200px;"
+            />
           </el-form-item>
         </el-col>
       </el-row>
       <el-row>
         <el-col :span="8">
           <el-form-item label="供应商名称" prop="supplier_name" class="head-item">
-            <span v-if="temp.link_contract===true">{{ temp.supplier_name }}</span>
+            <span v-if="temp.link_contract==='true' || status==='get'">
+              {{ temp.supplier_name }}
+            </span>
             <el-autocomplete
               v-else
               v-model="temp.supplier_name"
@@ -39,7 +63,11 @@
         </el-col>
         <el-col :span="8">
           <el-form-item label="总仓" prop="from_basecamp" class="head-item">
-            <el-radio-group v-if="temp.from_basecamp==='false'" v-model="temp.from_basecamp">
+            <el-radio-group 
+              v-if="temp.link_contract==='true' || status==='get'" 
+              v-model="temp.from_basecamp"
+              disabled
+            >
               <el-radio label=true>是</el-radio>
               <el-radio label=false>否</el-radio>
             </el-radio-group>
@@ -51,7 +79,7 @@
         </el-col>
         <el-col :span="8">
           <el-form-item v-if="temp.from_basecamp==='false'" label="工程名称" prop="engineer_name" class="head-item">
-            <span v-if="temp.link_contract===true">{{ temp.engineer_name }}</span>
+            <span v-if="temp.link_contract==='true' || status==='get'">{{ temp.engineer_name }}</span>
             <el-autocomplete
               v-else
               v-model="temp.engineer_name"
@@ -67,12 +95,15 @@
       <el-row>
         <el-col :span="8">
           <el-form-item label="订单金额(元)" prop="total" class="head-item">
-            <el-input v-model="temp.total" style="width: 200px;" />
+            <span v-if="status==='get'">{{ temp.order_code }}</span>
+            <el-input v-else v-model="temp.total" style="width: 200px;" />
           </el-form-item>
         </el-col>
         <el-col :span="8">
           <el-form-item label="下单时间" prop="order_time" class="head-item">
+            <span v-if="status==='get'">{{ temp.order_code }}</span>
             <el-date-picker
+              v-else
               v-model="temp.order_time"
               type="date"
               placeholder="选择日期"
@@ -84,7 +115,8 @@
         </el-col>
       </el-row>
       <el-form-item label="备注" prop="remark" style="width: 50%;">
-        <el-input v-model="temp.remark" type="textarea" maxlength="128" show-word-limit />
+        <span v-if="status==='get'">{{ temp.remark }}</span>
+        <el-input v-else v-model="temp.remark" type="textarea" maxlength="128" show-word-limit />
       </el-form-item>
       <el-form-item label="材料列表" class="head-item" style="margin-top:30px">
         <el-input v-model="mkey" placeholder="搜索材料" style="width: 200px;" class="filter-item" @keyup.enter.native="handleSearchMaterial" />
@@ -124,12 +156,20 @@
       </el-table-column>
       <el-table-column label="价格" width="200">
         <template slot-scope="scope">
-          <el-input v-model="scope.row.price" size="small"></el-input>
+          <span v-if="status==='get'">{{ temp.order_code }}</span>
+          <el-input v-else v-model="scope.row.price" size="small"></el-input>
+        </template>
+      </el-table-column>
+      <el-table-column label="数量" width="200">
+        <template slot-scope="scope">
+          <span v-if="status==='get'">{{ temp.order_code }}</span>
+          <el-input v-else v-model="scope.row.number" size="small"></el-input>
         </template>
       </el-table-column>
       <el-table-column label="备注" width="220">
         <template slot-scope="scope">
-          <el-input v-model="scope.row.remark" size="small"></el-input>
+          <span v-if="status==='get'">{{ temp.order_code }}</span>
+          <el-input v-else v-model="scope.row.remark" size="small"></el-input>
         </template>
       </el-table-column>
     </el-table>
@@ -141,17 +181,20 @@
 </template>
 
 <script>
-import { updateOrder, fetchOrder } from '@/api/purchase'
+import { createOrder, updateOrder, fetchContractExecuting, fetchContractInfo } from '@/api/purchase'
 import { fetchBuildingList } from '@/api/engineer'
 import { fetchActives, fetchSupplierMaterials } from '@/api/supplier'
+import { getNowTime } from '@/utils/common'
 
 export default {
   data() {
     return {
-      temp: {},
+      status: undefined,
       order_id: undefined,
+      temp: {},
       mkey: undefined,
       temp_materials: [],
+      contracts: [],
       engineers: [],
       suppliers: [],
       rules: {
@@ -167,24 +210,42 @@ export default {
   },
 
   created() {
-    // 先从传参找order_id，找不到再从store找
-    var order_id = undefined
-    order_id = this.$route.params.order_id
-    if (order_id === parseInt(order_id, 10)) {
-      this.$store.dispatch('order/setUpdatingOrderId', order_id)
+    console.log('this.$route.path:', this.$route.path )
+    if (this.$route.path.endsWith('update')) {
+      this.status = 'update'
+      // 先从传参找order_id，找不到再从store找
+      var order_id = undefined
+      order_id = this.$route.params.order_id
+      if (order_id === parseInt(order_id, 10)) {
+        this.$store.dispatch('order/setUpdatingOrderId', order_id)
+      } else {
+        order_id = this.$store.getters.updatingOrderId
+      }
+      // 没有订单则返回列表页
+      if (order_id === undefined) {
+        this.cancel()
+      } else {
+        this.order_id = order_id
+      }
+      // 获取订单明细
+      fetchOrder({ order_id: order_id }).then(res => {
+        this.temp = Object.assign({}, res)
+        this.temp_materials = this.temp.materials
+    })
+    } else if (this.$route.path.endsWith('detail')) {
+      this.status = 'get'
     } else {
-      order_id = this.$store.getters.updatingOrderId
-    }
-
-    if (order_id === undefined) {
-      this.cancel()
-    }
-
-    this.order_id = order_id
-    const data = { order_id: this.order_id }
-    fetchOrder(data).then(res => {
-      this.temp = Object.assign({}, res)
+      this.status = 'create'
+      // 从store找
+      this.temp = this.$store.getters.orderInfo
       this.temp_materials = this.temp.materials
+      if (this.temp.sign_time === undefined) {
+        this.temp.order_time = getNowTime()
+      }
+    }
+
+    fetchContractExecuting().then(res => {
+      this.contracts = res.contracts
     })
     fetchBuildingList().then(res => {
       this.engineers = res.engineers
@@ -198,7 +259,10 @@ export default {
     updateData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          updateOrder(this.temp).then(() => {
+          var data = Object.assign({}, this.temp)
+          data.materials = data.materials.filter(m => m.number !== undefined)
+          var f = this.status === "update" ? updateOrder : createOrder
+          f(data).then(() => {
             this.$notify({
               title: 'Success',
               message: 'Created Successfully',
@@ -211,9 +275,31 @@ export default {
       })
     },
     cancel() {
-      this.$store.dispatch('tagsView/delVisitedViewByPath', '/purchase/order/update')
+      this.$store.dispatch('tagsView/delVisitedViewByPath', '/purchase/order/' + this.status)
+      this.$store.dispatch('contract/clearOrderInfo')
       this.$router.push({
         name: 'order'
+      })
+    },
+    querySearchContract(queryString, cb) {
+      var contracts = this.contracts;
+      var results = queryString ? contracts.filter(this.createContractFilter(queryString)) : contracts;
+      // 调用 callback 返回建议列表的数据
+      cb(results);
+    },
+    createContractFilter(queryString) {
+      return (contracts) => {
+        return (contracts.contract_name.toLowerCase().indexOf(queryString.toLowerCase()) !== -1);
+      };
+    },
+    handleSelectContract(item) {
+      this.temp.contract_id = item.contract_id
+      this.temp.contract_name = item.contract_name
+      fetchContractInfo({ contract_id: item.contract_id }).then(res => {
+        Object.assign(this.temp, res)
+        fetchSupplierMaterials({ supplier_id: this.temp.supplier_id }).then(res => {
+          this.temp_materials = this.temp.materials = res.materials
+        })
       })
     },
     querySearchSupplier(queryString, cb) {

@@ -165,21 +165,21 @@ export const constantRoutes = [
       {
         path: 'order/create',
         name: 'createOrder',
-        component: () => import('@/views/purchase/createOrder'),
+        component: () => import('@/views/purchase/orderDetail'),
         meta: { title: '新建采购订单' },
         hidden: true
       },
       {
         path: 'order/update',
         name: 'updateOrder',
-        component: () => import('@/views/purchase/updateOrder'),
+        component: () => import('@/views/purchase/orderDetail'),
         meta: { title: '更新采购订单' },
         hidden: true
       },
       {
         path: 'order/detail',
         name: 'fetchOrder',
-        component: () => import('@/views/purchase/fetchOrder'),
+        component: () => import('@/views/purchase/orderDetail'),
         meta: { title: '查看采购订单' },
         hidden: true
       }
