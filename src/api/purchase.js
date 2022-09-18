@@ -114,7 +114,7 @@ export function fetchOrderNames(query) {
   })
 }
 
-export function fetchOrderDetail(query) {
+export function fetchOrder(query) {
   return request({
     url: '/purchase/order/detail/',
     method: 'get',

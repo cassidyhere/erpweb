@@ -13,13 +13,13 @@
       <el-row>
         <el-col :span="8">
           <el-form-item class="head-item" label="订单名称" prop="order_name">
-            <span v-if="status==='get'">{{ temp.order_code }}</span>
+            <span v-if="status==='detail'">{{ temp.order_name }}</span>
             <el-input v-else v-model="temp.order_name" style="width: 200px;" />
           </el-form-item>
         </el-col>
         <el-col :span="8">
           <el-form-item label="是否关联采购合同" prop="link_contract" class="head-item">
-            <el-radio-group v-if="status==='get'" v-model="temp.link_contract" disabled>
+            <el-radio-group v-if="status==='detail'" v-model="temp.link_contract" disabled>
               <el-radio label=true>是</el-radio>
               <el-radio label=false>否</el-radio>
             </el-radio-group>
@@ -31,7 +31,7 @@
         </el-col>
         <el-col v-if="temp.link_contract==='true'" :span="8">
           <el-form-item label="合同名称" prop="contract_name" class="head-item">
-            <span v-if="status==='get'">{{ temp.order_code }}</span>
+            <span v-if="status==='detail'">{{ temp.contract_name }}</span>
             <el-autocomplete
               v-else
               v-model="temp.contract_name"
@@ -47,7 +47,7 @@
       <el-row>
         <el-col :span="8">
           <el-form-item label="供应商名称" prop="supplier_name" class="head-item">
-            <span v-if="temp.link_contract==='true' || status==='get'">
+            <span v-if="temp.link_contract==='true' || status==='detail'">
               {{ temp.supplier_name }}
             </span>
             <el-autocomplete
@@ -64,7 +64,7 @@
         <el-col :span="8">
           <el-form-item label="总仓" prop="from_basecamp" class="head-item">
             <el-radio-group 
-              v-if="temp.link_contract==='true' || status==='get'" 
+              v-if="temp.link_contract==='true' || status==='detail'" 
               v-model="temp.from_basecamp"
               disabled
             >
@@ -79,7 +79,7 @@
         </el-col>
         <el-col :span="8">
           <el-form-item v-if="temp.from_basecamp==='false'" label="工程名称" prop="engineer_name" class="head-item">
-            <span v-if="temp.link_contract==='true' || status==='get'">{{ temp.engineer_name }}</span>
+            <span v-if="temp.link_contract==='true' || status==='detail'">{{ temp.engineer_name }}</span>
             <el-autocomplete
               v-else
               v-model="temp.engineer_name"
@@ -95,13 +95,13 @@
       <el-row>
         <el-col :span="8">
           <el-form-item label="订单金额(元)" prop="total" class="head-item">
-            <span v-if="status==='get'">{{ temp.order_code }}</span>
+            <span v-if="status==='detail'">{{ temp.total }}</span>
             <el-input v-else v-model="temp.total" style="width: 200px;" />
           </el-form-item>
         </el-col>
         <el-col :span="8">
           <el-form-item label="下单时间" prop="order_time" class="head-item">
-            <span v-if="status==='get'">{{ temp.order_code }}</span>
+            <span v-if="status==='detail'">{{ temp.order_time }}</span>
             <el-date-picker
               v-else
               v-model="temp.order_time"
@@ -115,7 +115,7 @@
         </el-col>
       </el-row>
       <el-form-item label="备注" prop="remark" style="width: 50%;">
-        <span v-if="status==='get'">{{ temp.remark }}</span>
+        <span v-if="status==='detail'">{{ temp.remark }}</span>
         <el-input v-else v-model="temp.remark" type="textarea" maxlength="128" show-word-limit />
       </el-form-item>
       <el-form-item label="材料列表" class="head-item" style="margin-top:30px">
@@ -156,19 +156,19 @@
       </el-table-column>
       <el-table-column label="价格" width="200">
         <template slot-scope="scope">
-          <span v-if="status==='get'">{{ temp.order_code }}</span>
+          <span v-if="status==='detail'">{{ scope.row.price }}</span>
           <el-input v-else v-model="scope.row.price" size="small"></el-input>
         </template>
       </el-table-column>
       <el-table-column label="数量" width="200">
         <template slot-scope="scope">
-          <span v-if="status==='get'">{{ temp.order_code }}</span>
+          <span v-if="status==='detail'">{{ scope.row.number }}</span>
           <el-input v-else v-model="scope.row.number" size="small"></el-input>
         </template>
       </el-table-column>
       <el-table-column label="备注" width="220">
         <template slot-scope="scope">
-          <span v-if="status==='get'">{{ temp.order_code }}</span>
+          <span v-if="status==='detail'">{{ scope.row.remark }}</span>
           <el-input v-else v-model="scope.row.remark" size="small"></el-input>
         </template>
       </el-table-column>
@@ -181,7 +181,7 @@
 </template>
 
 <script>
-import { createOrder, updateOrder, fetchContractExecuting, fetchContractInfo } from '@/api/purchase'
+import { createOrder, updateOrder, fetchOrder, fetchContractExecuting, fetchContractInfo } from '@/api/purchase'
 import { fetchBuildingList } from '@/api/engineer'
 import { fetchActives, fetchSupplierMaterials } from '@/api/supplier'
 import { getNowTime } from '@/utils/common'
@@ -200,9 +200,10 @@ export default {
       rules: {
         order_name: [{ required: true, message: '请输入采购订单名称', trigger: 'change' }],
         link_contract: [{ required: true, message: '请选择是否关联采购合同', trigger: 'change' }],
+        contract_name: [{ required: true, message: '请选择采购合同名称', trigger: 'change' }],
         supplier_name: [{ required: true, message: '请选择供应商', trigger: 'change' }],
         engineer_name: [{ required: true, message: '请选择工程', trigger: 'change' }],
-        from_basecamp: [{ required: true, message: '', trigger: 'change' }],
+        from_basecamp: [{ required: true, message: '请选择是否从总仓下单', trigger: 'change' }],
         total: [{ required: true, message: '请输入总金额', trigger: 'change' }],
         sign_time: [{ required: true, message: '请选择签订日期', trigger: 'blur' }],
       }
@@ -211,15 +212,24 @@ export default {
 
   created() {
     console.log('this.$route.path:', this.$route.path )
-    if (this.$route.path.endsWith('update')) {
-      this.status = 'update'
+    if (this.$route.path.endsWith('update') || this.$route.path.endsWith('detail')) {
       // 先从传参找order_id，找不到再从store找
-      var order_id = undefined
-      order_id = this.$route.params.order_id
-      if (order_id === parseInt(order_id, 10)) {
-        this.$store.dispatch('order/setUpdatingOrderId', order_id)
+      var order_id = this.$route.params.order_id
+      if (this.$route.path.endsWith('update')) {
+        this.status = 'update'
+        if (order_id === parseInt(order_id, 10)) {
+          this.$store.dispatch('order/setUpdatingOrderId', order_id)
+        } else {
+          order_id = this.$store.getters.updatingOrderId
+        }
       } else {
-        order_id = this.$store.getters.updatingOrderId
+        this.status = 'detail'
+        if (order_id === parseInt(order_id, 10)) {
+          this.$store.dispatch('order/setLookingOrderId', order_id)
+        } else {
+          order_id = this.$store.getters.lookingOrderId
+          console.log('get lookingOrderId:', order_id)
+        }
       }
       // 没有订单则返回列表页
       if (order_id === undefined) {
@@ -231,9 +241,8 @@ export default {
       fetchOrder({ order_id: order_id }).then(res => {
         this.temp = Object.assign({}, res)
         this.temp_materials = this.temp.materials
-    })
-    } else if (this.$route.path.endsWith('detail')) {
-      this.status = 'get'
+      })
+
     } else {
       this.status = 'create'
       // 从store找
@@ -276,7 +285,7 @@ export default {
     },
     cancel() {
       this.$store.dispatch('tagsView/delVisitedViewByPath', '/purchase/order/' + this.status)
-      this.$store.dispatch('contract/clearOrderInfo')
+      this.$store.dispatch('order/clearOrderInfo')
       this.$router.push({
         name: 'order'
       })

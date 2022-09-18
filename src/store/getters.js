@@ -14,7 +14,12 @@ const getters = {
   engineerInfo: state => state.engineer.info,
   contractInfo: state => state.contract.info,
   updatingContractId: state => state.contract.updatingContractId,
+  lookingContractId: state => state.contract.lookingContractId,
   orderInfo: state => state.order.info,
-  updatingOrderId: state => state.order.updatingOrderId
+  updatingOrderId: state => state.order.updatingOrderId,
+  lookingOrderId: state => state.order.lookingOrderId,
+  inInfo: state => state.inout.inInfo,
+  updatingInId: state => state.inout.updatingInId,
+  lookingInId: state => state.inout.lookingInId
 }
 export default getters

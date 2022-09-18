@@ -204,7 +204,7 @@
 import Pagination from '@/components/Pagination'
 import waves from '@/directive/waves' // waves directive
 import { fetchInoutList, fetchInout, createSlip, auditSlip } from '@/api/inout'
-import { fetchOrderElOptionGroup, fetchOrderDetail } from '@/api/purchase'
+import { fetchOrderElOptionGroup, fetchOrder } from '@/api/purchase'
 
 export default {
   components: { Pagination },
@@ -264,11 +264,9 @@ export default {
       this.getList()
     },
     handleCreate() {
-      this.resetTemp()
-      this.dialogStatus = 'create'
-      this.dialogFormVisible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate()
+      this.$store.dispatch('order/clearSlipInfo')
+      this.$router.push({
+        name: 'createSlip'
       })
     },
     resetTemp() {
@@ -329,7 +327,7 @@ export default {
             this.temp.contract_name = options[j].contract_name
             this.temp.supplier_name = options[j].supplier_name
             this.temp.engineer_name = options[j].engineer_name
-            fetchOrderDetail({ order_id: this.temp.purchase_order_id }).then(res => {
+            fetchOrder({ order_id: this.temp.purchase_order_id }).then(res => {
               this.temp.materials = res.materials
             })
             right = true

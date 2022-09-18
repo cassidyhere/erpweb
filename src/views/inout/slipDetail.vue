@@ -4,36 +4,15 @@
       ref="dataForm"
       :model="temp"
       :rules="rules"
-      label-width="110px"
+      label-width="140px"
       style="width: 70%;"
     >
-      <el-form-item class="head-item" label="合同名称" prop="contract_name" style="width: 50%;">
-        <el-input v-model="temp.contract_name" />
-      </el-form-item>
       <el-row>
         <el-col :span="8">
-          <el-form-item label="供应商名称" prop="supplier_name" class="head-item">
+          <el-form-item label="关联工程" prop="engineer_name" class="head-item">
+            <span v-if="temp.link_contract==='true' || status==='detail'">{{ temp.engineer_name }}</span>
             <el-autocomplete
-              v-model="temp.supplier_name"
-              value-key="supplier_name"
-              :fetch-suggestions="querySearchSupplier"
-              placeholder="请输入内容"
-              @select="handleSelectSupplier"
-              style="width: 200px;"
-            />
-          </el-form-item>
-        </el-col>
-        <el-col :span="8">
-          <el-form-item label="总仓" prop="from_basecamp" class="head-item">
-            <el-radio-group v-model="temp.from_basecamp">
-              <el-radio label=true>是</el-radio>
-              <el-radio label=false>否</el-radio>
-            </el-radio-group>
-          </el-form-item>
-        </el-col>
-        <el-col :span="8">
-          <el-form-item v-if="temp.from_basecamp==='false'" label="工程名称" prop="engineer_name" class="head-item">
-            <el-autocomplete
+              v-else
               v-model="temp.engineer_name"
               value-key="engineer_name"
               :fetch-suggestions="querySearchEngineer"
@@ -43,17 +22,19 @@
             />
           </el-form-item>
         </el-col>
+        <el-col :span="8">
+          <el-form-item class="head-item" label="总金额(元):" prop="total">
+            <span>{{ temp.total }}</span>
+          </el-form-item>
+        </el-col>
       </el-row>
       <el-row>
         <el-col :span="8">
-          <el-form-item label="合同金额(元)" prop="total" class="head-item">
-            <el-input v-model="temp.total" style="width: 200px;" />
-          </el-form-item>
-        </el-col>
-        <el-col :span="8">
-          <el-form-item label="签订时间" prop="sign_time" class="head-item">
+          <el-form-item label="下单时间" prop="handling_time" class="head-item">
+            <span v-if="status==='detail'">{{ temp.handling_time }}</span>
             <el-date-picker
-              v-model="temp.sign_time"
+              v-else
+              v-model="temp.handling_time"
               type="date"
               placeholder="选择日期"
               value-format="yyyy-MM-dd"
@@ -63,13 +44,14 @@
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="签订用户" prop="sign_user" class="head-item">
-            <el-input v-model="temp.sign_user" style="width: 200px;" />
+          <el-form-item label="下单用户:" prop="handler" class="head-item">
+            <span>{{ temp.handler }}</span>
           </el-form-item>
         </el-col>
       </el-row>
       <el-form-item label="备注" prop="remark" style="width: 50%;">
-        <el-input v-model="temp.remark" type="textarea" maxlength="128" show-word-limit />
+        <span v-if="status==='detail'">{{ temp.remark }}</span>
+        <el-input v-else v-model="temp.remark" type="textarea" maxlength="128" show-word-limit />
       </el-form-item>
       <el-form-item label="材料列表" class="head-item" style="margin-top:30px">
         <el-input v-model="mkey" placeholder="搜索材料" style="width: 200px;" class="filter-item" @keyup.enter.native="handleSearchMaterial" />
@@ -109,12 +91,24 @@
       </el-table-column>
       <el-table-column label="价格" width="200">
         <template slot-scope="scope">
-          <el-input v-model="scope.row.price" size="small"></el-input>
+          <span>{{ scope.row.price }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column v-if="status!=='detail'" label="未进仓数量" width="200">
+        <template slot-scope="scope">
+          <span>{{ scope.row.unwarehouse_number }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="数量" width="200">
+        <template slot-scope="scope">
+          <span v-if="status==='detail'">{{ scope.row.inout_quantity }}</span>
+          <el-input v-else v-model="scope.row.inout_quantity" size="small" @input="calcTotal"></el-input>
         </template>
       </el-table-column>
       <el-table-column label="备注" width="220">
         <template slot-scope="scope">
-          <el-input v-model="scope.row.remark" size="small"></el-input>
+          <span v-if="status==='detail'">{{ scope.row.remark }}</span>
+          <el-input v-else v-model="scope.row.remark" size="small"></el-input>
         </template>
       </el-table-column>
     </el-table>
@@ -126,56 +120,72 @@
 </template>
 
 <script>
-import { createContract, updateContract, fetchContract } from '@/api/purchase'
+import { updateSlip, createSlip } from '@/api/inout'
+import { fetchOrder } from '@/api/purchase'
 import { fetchBuildingList } from '@/api/engineer'
-import { fetchActives, fetchSupplierMaterials } from '@/api/supplier'
+import { getNowTime } from '@/utils/common'
 
 export default {
   data() {
     return {
       status: undefined,
-      contract_id: undefined,
+      inout_id: undefined,
       temp: {},
       mkey: undefined,
       temp_materials: [],
       engineers: [],
-      suppliers: [],
       rules: {
-        contract_name: [{ required: true, message: '请输入采购合同名称', trigger: 'change' }],
-        supplier_name: [{ required: true, message: '请选择供应商', trigger: 'change' }],
-        engineer_name: [{ required: true, message: '请选择工程', trigger: 'change' }],
-        from_basecamp: [{ required: true, message: '', trigger: 'change' }],
-        total: [{ required: true, message: '请输入总金额', trigger: 'change' }],
-        sign_time: [{ required: true, message: '请选择签订日期', trigger: 'blur' }],
+        purchase_order_name: [{ required: true, message: '请选择关联采购单', trigger: 'change' }],
+        handling_time: [{ required: true, message: '请选择下单时间', trigger: 'change' }],
+        handler: [{ required: true, message: '请输入下单用户', trigger: 'change' }]
       }
     }
   },
 
   created() {
-    // 先从传参找contract_id，找不到再从store找
-    var contract_id = undefined
-    contract_id = this.$route.params.contract_id
-    if (contract_id === parseInt(contract_id, 10)) {
-      this.$store.dispatch('contract/setUpdatingContractId', contract_id)
+    console.log('this.$route.path:', this.$route.path )
+    if (this.$route.path.endsWith('update') || this.$route.path.endsWith('detail')) {
+      // 先从传参找order_id，找不到再从store找
+      var inout_id = this.$route.params.inout_id
+      if (this.$route.path.endsWith('update')) {
+        this.status = 'update'
+        if (inout_id === parseInt(inout_id, 10)) {
+          this.$store.dispatch('inout/setUpdatingInId', inout_id)
+        } else {
+          inout_id = this.$store.getters.updatingInId
+        }
+      } else {
+        this.status = 'detail'
+        if (inout_id === parseInt(inout_id, 10)) {
+          this.$store.dispatch('order/setLookingInId', inout_id)
+        } else {
+          inout_id = this.$store.getters.lookingInId
+        }
+      }
+      // 没有订单则返回列表页
+      if (inout_id === undefined) {
+        this.cancel()
+      } else {
+        this.inout_id = inout_id
+      }
+      // 获取订单明细
+      fetchOrder({ inout_id: inout_id }).then(res => {
+        this.temp = Object.assign({}, res)
+        this.temp_materials = this.temp.materials
+      })
+
     } else {
-      contract_id = this.$store.getters.updatingContractId
-    }
-
-    if (contract_id === undefined) {
-      this.cancel()
-    }
-
-    this.contract_id = contract_id
-    const data = { contract_id: this.contract_id }
-    fetchContract(data).then(res => {
-      this.temp = Object.assign({}, res)
+      this.status = 'create'
+      // 从store找
+      this.temp = this.$store.getters.inInfo
       this.temp_materials = this.temp.materials
-    })
+      if (this.temp.handling_time === undefined) {
+        this.temp.handling_time = getNowTime()
+      }
+    }
+
     fetchBuildingList().then(res => {
       this.engineers = res.engineers
-    })
-    fetchActives().then(res => {
-      this.suppliers = res.suppliers
     })
   },
 
@@ -183,7 +193,10 @@ export default {
     updateData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          updateContract(this.temp).then(() => {
+          var data = Object.assign({}, this.temp)
+          data.materials = data.materials.filter(m => m.inout_quantity !== undefined)
+          var f = this.status === "update" ? updateSlip : createSlip
+          f(data).then(() => {
             this.$notify({
               title: 'Success',
               message: 'Created Successfully',
@@ -196,31 +209,25 @@ export default {
       })
     },
     cancel() {
-      this.$store.dispatch('tagsView/delVisitedViewByPath', '/purchase/contract/update')
-      this.$store.dispatch('contract/clearContractInfo')
+      this.$store.dispatch('tagsView/delVisitedViewByPath', '/warehouse/slip/' + this.status)
+      this.$store.dispatch('inout/clearSlipInfo')
       this.$router.push({
-        name: 'contract'
+        name: 'slip'
       })
     },
-    querySearchSupplier(queryString, cb) {
-      var suppliers = this.suppliers;
-      var results = queryString ? suppliers.filter(this.createSupplierFilter(queryString)) : suppliers;
-      // 调用 callback 返回建议列表的数据
-      cb(results);
-    },
-    createSupplierFilter(queryString) {
-      return (suppliers) => {
-        return (suppliers.supplier_name.toLowerCase().indexOf(queryString.toLowerCase()) !== -1);
-      };
-    },
-    handleSelectSupplier(item) {
-      this.temp.supplier_id = item.supplier_id
-      this.temp.supplier_name = item.supplier_name
-      const query = { supplier_id: item.supplier_id }
-      fetchSupplierMaterials(query).then(res => {
-        this.temp_materials = this.temp.materials = res.materials
-      })
-      console.log('this.temp.materials:', this.temp.materials)
+    calcTotal() {
+      this.temp.total = undefined
+      var n = 0.0
+      var materials = this.temp.materials
+      for (let i = 0; i < materials.length; i++) {
+        if (isNaN(materials[i].inout_quantity) || isNaN(materials[i].price)) {
+          continue
+        } else {
+          n = n + materials[i].inout_quantity * materials[i].price
+        }
+      }
+      this.temp.total = n
+      console.log('this.temp.total:', this.temp.total)
     },
     querySearchEngineer(queryString, cb) {
       var engineers = this.engineers;

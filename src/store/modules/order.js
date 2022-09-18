@@ -30,11 +30,11 @@ const mutations = {
   SET_ORDER_INFO: (state, info) => {
     state.info = info
   },
-  SET_UPDATING_ORDER_ID: (state, contract_id) => {
-    state.updatingOrderId = contract_id
+  SET_UPDATING_ORDER_ID: (state, order_id) => {
+    state.updatingOrderId = order_id
   },
-  SET_LOOKING_ORDER_ID: (state, contract_id) => {
-    state.lookingOrderId = contract_id
+  SET_LOOKING_ORDER_ID: (state, order_id) => {
+    state.lookingOrderId = order_id
   }
 }
 
@@ -68,11 +68,11 @@ const actions = {
     }
     commit('SET_ORDER_INFO', info)
   },
-  setUpdatingOrderId({ commit }, contract_id) {
-    commit('SET_UPDATING_ORDER_ID', contract_id)
+  setUpdatingOrderId({ commit }, order_id) {
+    commit('SET_UPDATING_ORDER_ID', order_id)
   },
-  setLookingOrderId({ commit }, contract_id) {
-    commit('SET_LOOKING_ORDER_ID', contract_id)
+  setLookingOrderId({ commit }, order_id) {
+    commit('SET_LOOKING_ORDER_ID', order_id)
   },
 }
 

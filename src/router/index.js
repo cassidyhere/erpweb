@@ -82,7 +82,7 @@ export const constantRoutes = [
         path: 'engineer',
         name: 'engineer',
         component: () => import('@/views/engineer/index'),
-        meta: { title: '工程列表' }
+        meta: { title: '工程列表', affix: true }
       },
       {
         path: 'budget',
@@ -196,7 +196,7 @@ export const constantRoutes = [
       {
         path: 'in',
         name: 'in',
-        component: () => import('@/views/inout/warehouse'),
+        component: () => import('@/views/inout/in'),
         meta: { title: '入仓单', icon: 'dashboard' },
       },
       {
@@ -229,6 +229,90 @@ export const constantRoutes = [
         component: () => import('@/views/warehouse/batch'),
         meta: { title: '库存批次明细', icon: 'dashboard' },
         hidden: true
+      },
+      {
+        path: 'in/create',
+        name: 'createIn',
+        component: () => import('@/views/inout/inDetail'),
+        meta: { title: '新建入仓单' },
+        hidden: true
+      },
+      {
+        path: 'in/update',
+        name: 'updateIn',
+        component: () => import('@/views/inout/inDetail'),
+        meta: { title: '更新入仓单' },
+        hidden: true
+      },
+      {
+        path: 'in/detail',
+        name: 'fetchIn',
+        component: () => import('@/views/inout/inDetail'),
+        meta: { title: '查看入仓单' },
+        hidden: true
+      },
+      {
+        path: 'pick/create',
+        name: 'createPick',
+        component: () => import('@/views/inout/pickDetail'),
+        meta: { title: '新建出仓单(领料单)' },
+        hidden: true
+      },
+      {
+        path: 'pick/update',
+        name: 'updatePick',
+        component: () => import('@/views/inout/pickDetail'),
+        meta: { title: '更新出仓单(领料单)' },
+        hidden: true
+      },
+      {
+        path: 'pick/detail',
+        name: 'fetchPick',
+        component: () => import('@/views/inout/pickDetail'),
+        meta: { title: '查看出仓单(领料单)' },
+        hidden: true
+      },
+      {
+        path: 'slip/create',
+        name: 'createSlip',
+        component: () => import('@/views/inout/slipDetail'),
+        meta: { title: '新建退库单' },
+        hidden: true
+      },
+      {
+        path: 'slip/update',
+        name: 'updateSlip',
+        component: () => import('@/views/inout/slipDetail'),
+        meta: { title: '更新退库单' },
+        hidden: true
+      },
+      {
+        path: 'slip/detail',
+        name: 'fetchSlip',
+        component: () => import('@/views/inout/slipDetail'),
+        meta: { title: '查看退库单' },
+        hidden: true
+      },
+      {
+        path: 'return/create',
+        name: 'createReturn',
+        component: () => import('@/views/inout/returnDetail'),
+        meta: { title: '新建退货单' },
+        hidden: true
+      },
+      {
+        path: 'return/update',
+        name: 'updateReturn',
+        component: () => import('@/views/inout/returnDetail'),
+        meta: { title: '更新退货单' },
+        hidden: true
+      },
+      {
+        path: 'return/detail',
+        name: 'fetchReturn',
+        component: () => import('@/views/inout/returnDetail'),
+        meta: { title: '查看退货单' },
+        hidden: true
       }
     ]
   },
@@ -258,19 +342,6 @@ export const constantRoutes = [
         component: () => import('@/views/supplier/category'),
         meta: { title: '材料列表管理' },
         hidden: true
-      }
-    ]
-  },
-
-  {
-    path: '/documentation',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/documentation/index'),
-        name: 'Documentation',
-        meta: { title: 'Documentation', icon: 'documentation', affix: true }
       }
     ]
   }

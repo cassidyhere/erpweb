@@ -144,7 +144,7 @@ import waves from '@/directive/waves' // waves directive
 import fileDownload from 'js-file-download'
 import {
   fetchOrderList,
-  fetchOrderDetail,
+  fetchOrder,
   auditOrder,
   deleteOrder,
   downloadOrderExcel
@@ -217,15 +217,29 @@ export default {
     // table
     sortChange(data) {
       const { prop, order } = data
-      if (prop === 'id') {
-        this.sortByID(order)
+      this.listQuery.sort_by = prop
+      if (order === 'ascending') {
+        this.listQuery.ascending = 1
+      } else if (order === 'descending') {
+        this.listQuery.ascending = 0
+      } else {
+        this.listQuery.sort_by = null
+        this.listQuery.ascending = null
       }
+      this.handleFilter()
     },
     handleAuditOrder(order_id) {
-      var data = { order_id: order_id }
-      auditOrder(data).then(() => {
-        this.getList()
-      })
+      this.$confirm('确认审核该采购订单?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        auditOrder({ order_id: order_id }).then(() => {
+          this.getList()
+        })
+      }).catch(() => {
+        this.$message.success('已取消删除')
+      })     
     },
     handleUpdateOrder(order_id) {
       this.$router.push({
@@ -234,10 +248,17 @@ export default {
       })
     },
     handleDeleteOrder(order_id) {
-      const data = { order_id: order_id }
-      deleteOrder(data).then(() => {
-        this.$message.success('删除成功') // 需要引入elemrnt
-        this.getList()
+      this.$confirm('此操作将永久删除该采购订单, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        deleteOrder({ order_id: order_id }).then(() => {
+          this.$message.success('删除成功') // 需要引入elemrnt
+          this.getList()
+        })
+      }).catch(() => {
+        this.$message.success('已取消删除')
       })
     },
     handleGetOrder(order_id) {
@@ -248,7 +269,7 @@ export default {
     },
     handleInOrder(order_id) {
       const data = { order_id: order_id }
-      fetchOrderDetail(data).then(res => {
+      fetchOrder(data).then(res => {
         this.in_materials = []
         for (let i = 0; i < res.materials.length; i++) {
           this.in_materials[i] = res.materials[i]
