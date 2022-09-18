@@ -20,6 +20,15 @@ const getters = {
   lookingOrderId: state => state.order.lookingOrderId,
   inInfo: state => state.inout.inInfo,
   updatingInId: state => state.inout.updatingInId,
-  lookingInId: state => state.inout.lookingInId
+  lookingInId: state => state.inout.lookingInId,
+  pickInfo: state => state.inout.pickInfo,
+  updatingPickId: state => state.inout.updatingPickId,
+  lookingPickId: state => state.inout.lookingPickId,
+  slipInfo: state => state.inout.slipInfo,
+  updatingSlipId: state => state.inout.updatingSlipId,
+  lookingSlipId: state => state.inout.lookingSlipId,
+  returnInfo: state => state.inout.returnInfo,
+  updatingReturnId: state => state.inout.updatingReturnId,
+  lookingReturnId: state => state.inout.lookingReturnId
 }
 export default getters
