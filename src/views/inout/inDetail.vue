@@ -128,7 +128,7 @@
       <el-table-column label="数量" width="200">
         <template slot-scope="scope">
           <span v-if="status==='detail'">{{ scope.row.inout_quantity }}</span>
-          <el-input v-else v-model="scope.row.inout_quantity" size="small" @input="calcTotal"></el-input>
+          <el-input v-else v-model="scope.row.inout_quantity" size="small" @input="handleUpdateQuantity(scope.row)"></el-input>
         </template>
       </el-table-column>
       <el-table-column label="备注" width="220">
@@ -146,7 +146,7 @@
 </template>
 
 <script>
-import { updateWarehouse, createWarehouse } from '@/api/inout'
+import { updateWarehouse, createWarehouse, fetchInout } from '@/api/inout'
 import { fetchOrderElOptionGroup, fetchOrder } from '@/api/purchase'
 import { getNowTime } from '@/utils/common'
 
@@ -194,7 +194,7 @@ export default {
         this.inout_id = inout_id
       }
       // 获取订单明细
-      fetchOrder({ inout_id: inout_id }).then(res => {
+      fetchInout({ inout_id: inout_id, order_type: 1 }).then(res => {
         this.temp = Object.assign({}, res)
         this.temp_materials = this.temp.materials
       })
@@ -262,6 +262,13 @@ export default {
         }
       }
       console.log('this.temp:', this.temp)
+    },
+    handleUpdateQuantity(row) {
+      if (row.inout_quantity > row.unwarehouse_number) {
+        row.inout_quantity = row.unwarehouse_number
+        console.log('over')
+      }
+      this.calcTotal()
     },
     calcTotal() {
       this.temp.total = undefined

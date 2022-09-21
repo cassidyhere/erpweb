@@ -45,22 +45,27 @@
           <span>{{ scope.row.supplier_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="订单金额" width="200" align="center">
+      <el-table-column label="工程" width="200" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.engineer_name }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="订单金额(元)" width="120" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.total }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="已支付金额" width="200" align="center">
+      <el-table-column label="已支付金额(元)" width="120" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.payment }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="下单日期" width="200" align="center">
+      <el-table-column label="下单日期" width="120" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.order_time }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="进仓状态" width="200" align="center">
+      <el-table-column label="进仓状态" width="120" align="center">
         <template slot-scope="scope">
           <span v-if="scope.row.warehouse_status===1">未进仓</span>
           <span v-else-if="scope.row.warehouse_status===2">已进仓</span>
@@ -72,7 +77,7 @@
           <span>{{ scope.row.remark }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="审核状态" width="200" align="center">
+      <el-table-column label="审核状态" width="120" align="center">
         <template slot-scope="scope">
           <el-button v-if="scope.row.audit_status===1" size="mini" type="primary" @click="handleAuditOrder(scope.row.id)">
             审核
