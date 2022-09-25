@@ -7,13 +7,26 @@
       label-width="110px"
       style="width: 70%;"
     >
-      <el-form-item class="head-item" label="合同名称" prop="contract_name" style="width: 50%;">
-        <el-input v-model="temp.contract_name" />
-      </el-form-item>
+      <el-row>
+        <el-col :span="8">
+          <el-form-item class="head-item" label="合同名称" prop="contract_name" style="width: 50%;">
+            <el-input v-model="temp.contract_name" style="width: 300px;" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="8">
+          <el-form-item v-if="status!=='create'" class="head-item" label="合同编号" prop="contract_code">
+            <span>{{ temp.contract_code }}</span>
+          </el-form-item>
+        </el-col>
+      </el-row>
       <el-row>
         <el-col :span="8">
           <el-form-item label="供应商名称" prop="supplier_name" class="head-item">
+            <span v-if="temp.link_contract==='true' || status==='detail'">
+              {{ temp.supplier_name }}
+            </span>
             <el-autocomplete
+              v-else
               v-model="temp.supplier_name"
               value-key="supplier_name"
               :fetch-suggestions="querySearchSupplier"
@@ -25,7 +38,15 @@
         </el-col>
         <el-col :span="8">
           <el-form-item label="总仓" prop="from_basecamp" class="head-item">
-            <el-radio-group v-model="temp.from_basecamp">
+            <el-radio-group 
+              v-if="temp.link_contract==='true' || status==='detail'" 
+              v-model="temp.from_basecamp"
+              disabled
+            >
+              <el-radio label=true>是</el-radio>
+              <el-radio label=false>否</el-radio>
+            </el-radio-group>
+            <el-radio-group v-else v-model="temp.from_basecamp">
               <el-radio label=true>是</el-radio>
               <el-radio label=false>否</el-radio>
             </el-radio-group>
@@ -33,7 +54,9 @@
         </el-col>
         <el-col :span="8">
           <el-form-item v-if="temp.from_basecamp==='false'" label="工程名称" prop="engineer_name" class="head-item">
+            <span v-if="temp.link_contract==='true' || status==='detail'">{{ temp.engineer_name }}</span>
             <el-autocomplete
+              v-else
               v-model="temp.engineer_name"
               value-key="engineer_name"
               :fetch-suggestions="querySearchEngineer"
@@ -47,12 +70,15 @@
       <el-row>
         <el-col :span="8">
           <el-form-item label="合同金额(元)" prop="total" class="head-item">
-            <el-input v-model="temp.total" style="width: 200px;" />
+            <span v-if="status==='detail'">{{ temp.total }}</span>
+            <el-input v-else v-model="temp.total" style="width: 200px;" />
           </el-form-item>
         </el-col>
         <el-col :span="8">
           <el-form-item label="签订时间" prop="sign_time" class="head-item">
+            <span v-if="status==='detail'">{{ temp.sign_time }}</span>
             <el-date-picker
+              v-else
               v-model="temp.sign_time"
               type="date"
               placeholder="选择日期"
@@ -64,7 +90,8 @@
         </el-col>
         <el-col :span="8">
           <el-form-item label="签订用户" prop="sign_user" class="head-item">
-            <el-input v-model="temp.sign_user" style="width: 200px;" />
+            <span v-if="status==='detail'">{{ temp.sign_user }}</span>
+            <el-input v-else v-model="temp.sign_user" style="width: 200px;" />
           </el-form-item>
         </el-col>
       </el-row>
@@ -109,7 +136,8 @@
       </el-table-column>
       <el-table-column label="价格" width="200">
         <template slot-scope="scope">
-          <el-input v-model="scope.row.price" size="small"></el-input>
+          <span v-if="status==='detail'">{{ scope.row.price }}</span>
+          <el-input v-else v-model="scope.row.price" size="small"></el-input>
         </template>
       </el-table-column>
       <el-table-column label="备注" width="220">
@@ -152,25 +180,47 @@ export default {
   },
 
   created() {
-    // 先从传参找contract_id，找不到再从store找
-    var contract_id = undefined
-    contract_id = this.$route.params.contract_id
-    if (contract_id === parseInt(contract_id, 10)) {
-      this.$store.dispatch('contract/setUpdatingContractId', contract_id)
+    console.log('this.$route.path:', this.$route.path )
+    if (this.$route.path.endsWith('update') || this.$route.path.endsWith('detail')) {
+      // 先从传参找contract_id，找不到再从store找
+      var contract_id = this.$route.params.contract_id
+      if (this.$route.path.endsWith('update')) {
+        this.status = 'update'
+        if (contract_id === parseInt(contract_id, 10)) {
+          this.$store.dispatch('contract/setUpdatingContractId', contract_id)
+        } else {
+          contract_id = this.$store.getters.updatingContractId
+        }
+      } else {
+        this.status = 'detail'
+        if (contract_id === parseInt(contract_id, 10)) {
+          this.$store.dispatch('contract/setLookingContractId', contract_id)
+        } else {
+          contract_id = this.$store.getters.lookingContractId
+          console.log('get lookingContractId:', contract_id)
+        }
+      }
+      // 没有合同则返回列表页
+      if (contract_id === undefined) {
+        this.cancel()
+      } else {
+        this.contract_id = contract_id
+      }
+      // 获取合同明细
+      fetchContract({ contract_id: this.contract_id }).then(res => {
+        this.temp = Object.assign({}, res)
+        this.temp_materials = this.temp.materials
+      })
     } else {
-      contract_id = this.$store.getters.updatingContractId
-    }
-
-    if (contract_id === undefined) {
-      this.cancel()
-    }
-
-    this.contract_id = contract_id
-    const data = { contract_id: this.contract_id }
-    fetchContract(data).then(res => {
-      this.temp = Object.assign({}, res)
+      this.status = 'create'
+      // 从store找
+      this.temp = this.$store.getters.contractInfo
       this.temp_materials = this.temp.materials
-    })
+      if (this.temp.sign_time === undefined) {
+        this.temp.sign_time = getNowTime()
+      }
+    }
+
     fetchBuildingList().then(res => {
       this.engineers = res.engineers
     })
@@ -183,7 +233,10 @@ export default {
     updateData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          updateContract(this.temp).then(() => {
+          var data = Object.assign({}, this.temp)
+          data.materials = data.materials.filter(m => m.number !== undefined)
+          var f = this.status === "create" ? createContract : updateContract
+          f(this.temp).then(() => {
             this.$notify({
               title: 'Success',
               message: 'Created Successfully',

@@ -45,27 +45,32 @@
           <span>{{ scope.row.supplier_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="合同金额" prop="total" sortable="custom" width="200" align="center">
+      <el-table-column label="合同金额(元)" prop="total" sortable="custom" width="140" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.total }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="已使用金额" width="200" align="center">
+      <el-table-column label="已使用金额(元)" width="140" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.used_total }}</span>
+          <span>{{ scope.row.ordered_total }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="已支付金额" width="200" align="center">
+      <el-table-column label="可用金额(元)" width="140" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.leftover_total }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="已支付金额(元)" width="140" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.payment }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="签订日期" prop="sign_time" sortable="custom" width="200" align="center">
+      <el-table-column label="签订日期" prop="sign_time" sortable="custom" width="140" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.sign_time }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="完结日期" prop="end_time" sortable="custom" width="200" align="center">
+      <el-table-column label="完结日期" prop="end_time" sortable="custom" width="140" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.end_time }}</span>
         </template>
@@ -75,7 +80,7 @@
           <span>{{ scope.row.remark }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="审核状态" width="200" align="center">
+      <el-table-column label="审核状态" width="140" align="center">
         <template slot-scope="scope">
           <el-button v-if="scope.row.audit_status===1" size="mini" type="primary" @click="handleAuditContract(scope.row.id)">
             审核
@@ -85,7 +90,7 @@
           </el-button>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="300" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" width="200" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             v-if="scope.row.audit_status===1"

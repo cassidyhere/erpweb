@@ -13,8 +13,7 @@
       <el-row>
         <el-col :span="8">
           <el-form-item class="head-item" label="订单名称" prop="order_name">
-            <span v-if="status==='detail'">{{ temp.order_name }}</span>
-            <el-input v-else v-model="temp.order_name" style="width: 200px;" />
+            <el-input v-model="temp.order_name" style="width: 300px;" />
           </el-form-item>
         </el-col>
         <el-col :span="8">
@@ -115,8 +114,7 @@
         </el-col>
       </el-row>
       <el-form-item label="备注" prop="remark" style="width: 50%;">
-        <span v-if="status==='detail'">{{ temp.remark }}</span>
-        <el-input v-else v-model="temp.remark" type="textarea" maxlength="128" show-word-limit />
+        <el-input v-model="temp.remark" type="textarea" maxlength="128" show-word-limit />
       </el-form-item>
       <el-form-item label="材料列表" class="head-item" style="margin-top:30px">
         <el-input v-model="mkey" placeholder="搜索材料" style="width: 200px;" class="filter-item" @keyup.enter.native="handleSearchMaterial" />
@@ -248,7 +246,7 @@ export default {
       // 从store找
       this.temp = this.$store.getters.orderInfo
       this.temp_materials = this.temp.materials
-      if (this.temp.sign_time === undefined) {
+      if (this.temp.order_time === undefined) {
         this.temp.order_time = getNowTime()
       }
     }
@@ -270,7 +268,7 @@ export default {
         if (valid) {
           var data = Object.assign({}, this.temp)
           data.materials = data.materials.filter(m => m.number !== undefined)
-          var f = this.status === "update" ? updateOrder : createOrder
+          var f = this.status === "create" ? createOrder : updateOrder
           f(data).then(() => {
             this.$notify({
               title: 'Success',
