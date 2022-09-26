@@ -22,7 +22,7 @@
       fit
       highlight-current-row
       style="width: 100%;"
-      :default-sort="{prop: 'id', order: 'ascending'}"
+      :default-sort="{prop: 'id', order: 'descending'}"
       @sort-change="sortChange"
     >
       <el-table-column label="ID" prop="id" sortable="custom" align="center" width="80">
@@ -168,8 +168,8 @@ export default {
         status: undefined,
         audit_status: undefined,
         key: undefined,
-        sort_by: null,
-        ascending: 1
+        sort_by: 'id',
+        ascending: 0
       },
       listLoading: true,
       list: null,

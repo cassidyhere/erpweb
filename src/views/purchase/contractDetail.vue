@@ -137,7 +137,7 @@
       <el-table-column label="价格" width="200">
         <template slot-scope="scope">
           <span v-if="status==='detail'">{{ scope.row.price }}</span>
-          <el-input v-else v-model="scope.row.price" size="small"></el-input>
+          <el-input v-else v-model="scope.row.price" size="small" @blur="handleUpdatePrice(scope.row)"></el-input>
         </template>
       </el-table-column>
       <el-table-column label="备注" width="220">
@@ -157,6 +157,7 @@
 import { createContract, updateContract, fetchContract } from '@/api/purchase'
 import { fetchBuildingList } from '@/api/engineer'
 import { fetchActives, fetchSupplierMaterials } from '@/api/supplier'
+import { getNowTime, isNumeric } from '@/utils/common'
 
 export default {
   data() {
@@ -173,7 +174,22 @@ export default {
         supplier_name: [{ required: true, message: '请选择供应商', trigger: 'change' }],
         engineer_name: [{ required: true, message: '请选择工程', trigger: 'change' }],
         from_basecamp: [{ required: true, message: '', trigger: 'change' }],
-        total: [{ required: true, message: '请输入总金额', trigger: 'change' }],
+        total: [
+          { required: true, message: '请输入总金额', trigger: 'change' },
+          {
+            transform(value) {
+              return Number(value);
+            },
+            validator(rule, value, callback) {
+              if (Number.isFinite(value) && value >= 0) {
+                callback();
+              } else {
+                callback(new Error("请输入不小于0的数字"));
+              }
+            },
+            trigger: "blur",
+          }
+        ],
         sign_time: [{ required: true, message: '请选择签订日期', trigger: 'blur' }],
       }
     }
@@ -289,6 +305,12 @@ export default {
     handleSelectEngineer(item) {
       this.temp.engineer_id = item.engineer_id
       this.temp.engineer_name = item.engineer_name
+    },
+    handleUpdatePrice(row) {
+      console.log('row:', row)
+      if (!isNumeric(row.price) || Number(row.price) <= 0) {
+        row.price = null
+      }
     },
     handleSearchMaterial() {
       if (typeof this.mkey === 'string' && this.mkey !== '') {
