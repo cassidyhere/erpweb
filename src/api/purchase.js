@@ -211,3 +211,14 @@ export function downloadOrderExcel(query) {
     responseType: 'blob'
   })
 }
+
+
+export function downloadContractExcel(query) {
+  return request({
+    url: '/purchase/contract/export/',
+    method: 'get',
+    params: query,
+    headers: { 'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' },
+    responseType: 'blob'
+  })
+}

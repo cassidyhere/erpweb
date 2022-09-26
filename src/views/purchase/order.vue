@@ -8,9 +8,9 @@
       <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
         新增
       </el-button>
-      <el-button :loading="loading" class="filter-item" type="primary" @click="handleUpload">
+      <!-- <el-button :loading="loading" class="filter-item" type="primary" @click="handleUpload">
         上传excel
-      </el-button>
+      </el-button> -->
       <input ref="excel-upload-input" class="excel-upload-input" type="file" accept=".xlsx, .xls" @change="handleClick">
     </div>
 

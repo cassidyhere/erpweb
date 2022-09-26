@@ -5,24 +5,24 @@
       :model="temp"
       :rules="rules"
       label-width="140px"
-      style="width: 70%;"
+      style="width: 70%; min-width: 1200px"
     >
       <el-form-item v-if="status!=='create'" class="head-item" label="订单编号" prop="order_code">
         <span>{{ temp.order_code }}</span>
       </el-form-item>
       <el-row>
-        <el-col :span="8">
+        <el-col :span="10">
           <el-form-item class="head-item" label="订单名称" prop="order_name">
             <el-input v-model="temp.order_name" style="width: 300px;" />
           </el-form-item>
         </el-col>
-        <el-col :span="8">
+        <el-col :span="6">
           <el-form-item label="是否关联采购合同" prop="link_contract" class="head-item">
             <el-radio-group v-if="status==='detail'" v-model="temp.link_contract" disabled>
               <el-radio label=true>是</el-radio>
               <el-radio label=false>否</el-radio>
             </el-radio-group>
-            <el-radio-group v-else v-model="temp.link_contract">
+            <el-radio-group v-else v-model="temp.link_contract" @change="handleLinkContract">
               <el-radio label=true>是</el-radio>
               <el-radio label=false>否</el-radio>
             </el-radio-group>
@@ -44,7 +44,7 @@
         </el-col>
       </el-row>
       <el-row>
-        <el-col :span="8">
+        <el-col :span="10">
           <el-form-item label="供应商名称" prop="supplier_name" class="head-item">
             <span v-if="temp.link_contract==='true' || status==='detail'">
               {{ temp.supplier_name }}
@@ -60,7 +60,7 @@
             />
           </el-form-item>
         </el-col>
-        <el-col :span="8">
+        <el-col :span="6">
           <el-form-item label="总仓" prop="from_basecamp" class="head-item">
             <el-radio-group 
               v-if="temp.link_contract==='true' || status==='detail'" 
@@ -94,8 +94,12 @@
       <el-row>
         <el-col :span="8">
           <el-form-item label="订单金额(元)" prop="total" class="head-item">
-            <span v-if="status==='detail'">{{ temp.total }}</span>
-            <el-input v-else v-model="temp.total" style="width: 200px;" />
+            <span>{{ temp.total }}</span>
+          </el-form-item>
+        </el-col>
+        <el-col v-if="temp.link_contract==='true'" :span="8">
+          <el-form-item label="合同可用金额(元)" prop="total" class="head-item">
+            <span>{{ temp.leftover_total }}</span>
           </el-form-item>
         </el-col>
         <el-col :span="8">
@@ -132,7 +136,7 @@
       highlight-current-row
       style="width:70%; margin-left:110px; margin-bottom:20px; margin-right:10px"
     >
-      <el-table-column label="材料类别" width="180">
+      <el-table-column label="材料类别" width="140">
         <template slot-scope="scope">
           <span>{{ scope.row.category_name }}</span>
         </template>
@@ -152,16 +156,16 @@
           <span>{{ scope.row.unit }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="价格" width="200">
+      <el-table-column label="价格(元)" width="140">
         <template slot-scope="scope">
-          <span v-if="status==='detail'">{{ scope.row.price }}</span>
-          <el-input v-else v-model="scope.row.price" size="small"></el-input>
+          <span v-if="temp.link_contract==='true' || status==='detail'">{{ scope.row.price }}</span>
+          <el-input v-else v-model="scope.row.price" size="small" @input="handleUpdatePrice(scope.row)"></el-input>
         </template>
       </el-table-column>
-      <el-table-column label="数量" width="200">
+      <el-table-column label="数量" width="140">
         <template slot-scope="scope">
           <span v-if="status==='detail'">{{ scope.row.number }}</span>
-          <el-input v-else v-model="scope.row.number" size="small"></el-input>
+          <el-input v-else v-model="scope.row.number" size="small" @input="handleUpdateNumber(scope.row)"></el-input>
         </template>
       </el-table-column>
       <el-table-column label="备注" width="220">
@@ -182,7 +186,7 @@
 import { createOrder, updateOrder, fetchOrder, fetchContractExecuting, fetchContractInfo } from '@/api/purchase'
 import { fetchBuildingList } from '@/api/engineer'
 import { fetchActives, fetchSupplierMaterials } from '@/api/supplier'
-import { getNowTime } from '@/utils/common'
+import { getNowTime, getName, isNumeric } from '@/utils/common'
 
 export default {
   data() {
@@ -243,9 +247,20 @@ export default {
 
     } else {
       this.status = 'create'
-      // 从store找
-      this.temp = this.$store.getters.orderInfo
-      this.temp_materials = this.temp.materials
+      var contract_id = this.$route.params.contract_id
+      if (contract_id === undefined) {
+        // 从store找
+        this.temp = this.$store.getters.orderInfo
+        this.temp_materials = this.temp.materials
+      } else {
+        fetchContractInfo({ contract_id: contract_id }).then(res => {
+          Object.assign(this.temp, res)
+          this.temp_materials = this.temp.materials
+        })
+      }
+      if (this.temp.order_name === undefined) {
+        this.temp.order_name = getName('采购订单')
+      }
       if (this.temp.order_time === undefined) {
         this.temp.order_time = getNowTime()
       }
@@ -288,6 +303,14 @@ export default {
         name: 'order'
       })
     },
+    handleLinkContract() {
+      this.temp.contract_id = undefined
+      this.temp.contract_name = undefined
+      this.temp.supplier_id = undefined
+      this.temp.supplier_name = undefined
+      this.temp.materials = this.temp_materials = []
+      this.temp.total = 0
+    },
     querySearchContract(queryString, cb) {
       var contracts = this.contracts;
       var results = queryString ? contracts.filter(this.createContractFilter(queryString)) : contracts;
@@ -302,11 +325,10 @@ export default {
     handleSelectContract(item) {
       this.temp.contract_id = item.contract_id
       this.temp.contract_name = item.contract_name
+      this.temp.total = 0
       fetchContractInfo({ contract_id: item.contract_id }).then(res => {
         Object.assign(this.temp, res)
-        fetchSupplierMaterials({ supplier_id: this.temp.supplier_id }).then(res => {
-          this.temp_materials = this.temp.materials = res.materials
-        })
+        this.temp_materials = this.temp.materials
       })
     },
     querySearchSupplier(queryString, cb) {
@@ -323,6 +345,7 @@ export default {
     handleSelectSupplier(item) {
       this.temp.supplier_id = item.supplier_id
       this.temp.supplier_name = item.supplier_name
+      this.temp.total = 0
       const query = { supplier_id: item.supplier_id }
       fetchSupplierMaterials(query).then(res => {
         this.temp_materials = this.temp.materials = res.materials
@@ -343,6 +366,32 @@ export default {
     handleSelectEngineer(item) {
       this.temp.engineer_id = item.engineer_id
       this.temp.engineer_name = item.engineer_name
+    },
+    handleUpdatePrice(row) {
+      if (!isNumeric(row.price) || Number(row.price) <= 0) {
+        row.price = null
+      }
+      this.calcTotal()
+    },
+    handleUpdateNumber(row) {
+      if (!isNumeric(row.number) || Number(row.number) < 0) {
+        row.number = null
+      }
+      this.calcTotal()
+    },
+    calcTotal() {
+      this.temp.total = undefined
+      var total = 0.0
+      var materials = this.temp.materials
+      for (let i = 0; i < materials.length; i++) {
+        if (isNaN(materials[i].number) || isNaN(materials[i].price)) {
+          continue
+        } else {
+          total = total + materials[i].number * materials[i].price
+        }
+      }
+      this.temp.total = total.toFixed(2)
+      console.log('this.temp.total:', this.temp.total)
     },
     handleSearchMaterial() {
       if (typeof this.mkey === 'string' && this.mkey !== '') {

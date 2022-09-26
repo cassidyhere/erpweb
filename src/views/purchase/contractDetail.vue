@@ -157,7 +157,7 @@
 import { createContract, updateContract, fetchContract } from '@/api/purchase'
 import { fetchBuildingList } from '@/api/engineer'
 import { fetchActives, fetchSupplierMaterials } from '@/api/supplier'
-import { getNowTime, isNumeric } from '@/utils/common'
+import { getNowTime, getName, isNumeric } from '@/utils/common'
 
 export default {
   data() {
@@ -232,6 +232,9 @@ export default {
       // 从store找
       this.temp = this.$store.getters.contractInfo
       this.temp_materials = this.temp.materials
+      if (this.temp.contract_name === undefined) {
+        this.temp.contract_name = getName('采购合同')
+      }
       if (this.temp.sign_time === undefined) {
         this.temp.sign_time = getNowTime()
       }

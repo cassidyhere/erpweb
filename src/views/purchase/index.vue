@@ -8,9 +8,9 @@
       <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
         新增
       </el-button>
-      <el-button :loading="loading" class="filter-item" type="primary" @click="handleUpload">
+      <!-- <el-button :loading="loading" class="filter-item" type="primary" @click="handleUpload">
         上传excel
-      </el-button>
+      </el-button> -->
       <input ref="excel-upload-input" class="excel-upload-input" type="file" accept=".xlsx, .xls" @change="handleClick">
     </div>
 
@@ -90,7 +90,7 @@
           </el-button>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="200" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" width="300" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             v-if="scope.row.audit_status===1"
@@ -119,7 +119,7 @@
           >
             查看
           </el-button>
-          <!-- <el-button
+          <el-button
             v-if="scope.row.audit_status===2 && scope.row.status===1"
             size="mini"
             type="primary"
@@ -127,8 +127,8 @@
             @click="handleCreateOrder(scope.row.id)"
           >
             下采购单
-          </el-button> -->
-          <el-button
+          </el-button>
+          <!-- <el-button
             v-if="scope.row.audit_status===2 && scope.row.status===1"
             size="mini"
             type="primary"
@@ -136,6 +136,15 @@
             @click="handleFinishContract(scope.row.id)"
           >
             完结合同
+          </el-button> -->
+          <el-button
+            v-if="scope.row.status===1"
+            size="mini"
+            type="success"
+            plain
+            @click="handleDownloadContract(scope.row.id, scope.row.contract_name)"
+          >
+            导出
           </el-button>
         </template>
       </el-table-column>
@@ -149,7 +158,8 @@
 <script>
 import Pagination from '@/components/Pagination'
 import waves from '@/directive/waves' // waves directive
-import { fetchContractList, auditContract, deleteContract } from '@/api/purchase'
+import fileDownload from 'js-file-download'
+import { fetchContractList, auditContract, deleteContract, downloadContractExcel } from '@/api/purchase'
 
 export default {
   components: { Pagination },
@@ -271,8 +281,19 @@ export default {
       })
     },
     handleCreateOrder(contract_id) {
+      this.$router.push({
+        name: 'createOrder',
+        params: { contract_id: contract_id }
+      })
     },
     handleFinishContract(contract_id) {
+    },
+    handleDownloadContract(contract_id, contracrt_name) {
+      this.downloadLoading = true
+      downloadContractExcel({ contract_id: contract_id }).then(res => {
+        fileDownload(res.data, contracrt_name + '.xlsx')
+        this.downloadLoading = false
+    })
     }
   }
 }
