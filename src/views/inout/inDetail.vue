@@ -5,31 +5,34 @@
       :model="temp"
       :rules="rules"
       label-width="140px"
-      style="width: 70%;"
+      style="width: 70%; min-width: 1200px"
     >
-      <el-form-item class="head-item" label="关联采购单:" prop="purchase_order_name">
-        <span v-if="status==='detail'">{{ temp.purchase_order_name }}</span>
-        <el-select
-          v-else 
-          v-model="temp.purchase_order_name"
-          filterable placeholder="请选择"
-          @change="selectPurchaseOrder"
-        >
-          <el-option-group
-            v-for="group in purchase_orders"
-            :key="group.label"
-            :label="group.label"
-          >
-            <el-option
-              v-for="item in group.options"
-              :key="item.id"
-              :label="item.order_name"
-              :value="item.order_name"
-            />
-          </el-option-group>
-        </el-select>
-      </el-form-item>
       <el-row>
+        <el-col :span="8">
+          <el-form-item class="head-item" label="关联采购单:" prop="purchase_order_name">
+            <span v-if="status==='detail'">{{ temp.purchase_order_name }}</span>
+            <el-select
+              v-else 
+              v-model="temp.purchase_order_name"
+              filterable
+              placeholder="请选择"
+              @change="selectPurchaseOrder"
+            >
+              <el-option-group
+                v-for="group in purchase_orders"
+                :key="group.label"
+                :label="group.label"
+              >
+                <el-option
+                  v-for="item in group.options"
+                  :key="item.id"
+                  :label="item.order_name"
+                  :value="item.order_name"
+                />
+              </el-option-group>
+            </el-select>
+          </el-form-item>
+        </el-col>
         <el-col :span="8">
           <el-form-item class="head-item" label="关联采购合同:" prop="contract_name">
             <span>{{ temp.contract_name }}</span>
@@ -55,11 +58,11 @@
       </el-row>
       <el-row>
         <el-col :span="8">
-          <el-form-item label="下单时间" prop="handling_time" class="head-item">
-            <span v-if="status==='detail'">{{ temp.handling_time }}</span>
+          <el-form-item label="下单时间" prop="order_time" class="head-item">
+            <span v-if="status==='detail'">{{ temp.order_time }}</span>
             <el-date-picker
               v-else
-              v-model="temp.handling_time"
+              v-model="temp.order_time"
               type="date"
               placeholder="选择日期"
               value-format="yyyy-MM-dd"
@@ -69,9 +72,9 @@
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="下单用户:" prop="handler" class="head-item">
-            <span v-if="status==='detail'">{{ temp.handler }}</span>
-            <el-input v-else v-model="temp.handler" style="width: 150px;" />
+          <el-form-item label="下单用户:" prop="order_user" class="head-item">
+            <span v-if="status==='detail'">{{ temp.order_user }}</span>
+            <el-input v-else v-model="temp.order_user" style="width: 150px;" />
           </el-form-item>
         </el-col>
       </el-row>
@@ -148,7 +151,7 @@
 <script>
 import { updateWarehouse, createWarehouse, fetchInout } from '@/api/inout'
 import { fetchOrderElOptionGroup, fetchOrder } from '@/api/purchase'
-import { getNowTime } from '@/utils/common'
+import { getNowTime, isNumeric } from '@/utils/common'
 
 export default {
   data() {
@@ -161,8 +164,8 @@ export default {
       purchase_orders: [],
       rules: {
         purchase_order_name: [{ required: true, message: '请选择关联采购单', trigger: 'change' }],
-        handling_time: [{ required: true, message: '请选择下单时间', trigger: 'change' }],
-        handler: [{ required: true, message: '请输入下单用户', trigger: 'change' }]
+        order_time: [{ required: true, message: '请选择下单时间', trigger: 'change' }],
+        order_user: [{ required: true, message: '请输入下单用户', trigger: 'change' }]
       }
     }
   },
@@ -204,8 +207,8 @@ export default {
       // 从store找
       this.temp = this.$store.getters.inInfo
       this.temp_materials = this.temp.materials
-      if (this.temp.handling_time === undefined) {
-        this.temp.handling_time = getNowTime()
+      if (this.temp.order_time === undefined) {
+        this.temp.order_time = getNowTime()
       }
     }
 
@@ -264,24 +267,26 @@ export default {
       console.log('this.temp:', this.temp)
     },
     handleUpdateQuantity(row) {
-      if (row.inout_quantity > row.unwarehouse_number) {
+      console.log('row:', row)
+      if (!isNumeric(row.inout_quantity) || Number(row.inout_quantity) < 0) {
+        row.inout_quantity = null
+      } else if (row.inout_quantity > row.unwarehouse_number) {
         row.inout_quantity = row.unwarehouse_number
-        console.log('over')
       }
       this.calcTotal()
     },
     calcTotal() {
       this.temp.total = undefined
-      var n = 0.0
+      var total = 0.0
       var materials = this.temp.materials
       for (let i = 0; i < materials.length; i++) {
         if (isNaN(materials[i].inout_quantity) || isNaN(materials[i].price)) {
           continue
         } else {
-          n = n + materials[i].inout_quantity * materials[i].price
+          total = total + materials[i].inout_quantity * materials[i].price
         }
       }
-      this.temp.total = n
+      this.temp.total = total.toFixed(2)
       console.log('this.temp.total:', this.temp.total)
     },
     handleSearchMaterial() {

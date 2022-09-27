@@ -33,43 +33,50 @@
       fit
       highlight-current-row
       style="width: 100%;"
+      :default-sort="{prop: 'id', order: 'descending'}"
+      @sort-change="sortChange"
     >
-      <el-table-column label="ID" prop="id" align="center" width="80">
+      <el-table-column label="ID" sortable="custom" prop="id" align="center" width="80">
         <template slot-scope="scope">
           <span>{{ scope.row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="关联采购单" width="300" align="center">
+      <el-table-column label="入仓单编号" prop="order_code" sortable="custom" width="140" align="center">
+        <template slot-scope="scope">
+          {{ scope.row.order_code }}
+        </template>
+      </el-table-column>
+      <el-table-column label="关联采购单" prop="order_name" sortable="custom" width="200" align="center">
         <template slot-scope="scope">
           {{ scope.row.order_name }}
         </template>
       </el-table-column>
-      <el-table-column label="关联采购合同" width="300" align="center">
+      <el-table-column label="关联采购合同" prop="contract_name" sortable="custom" width="200" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.contract_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="关联工程名称" width="150" align="center">
+      <el-table-column label="关联工程名称" prop="engineer_name" sortable="custom" width="200" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.engineer_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="总金额" width="150" align="center">
+      <el-table-column label="总金额" prop="total" sortable="custom" width="140" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.total }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="下单日期" width="150" align="center">
+      <el-table-column label="下单日期" width="140" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.handling_time }}</span>
+          <span>{{ scope.row.order_time }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="备注" width="300" align="center">
+      <el-table-column label="备注" width="200" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.remark }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="审核状态" width="80" align="center">
+      <el-table-column label="审核状态" prop="audit_status" sortable="custom" width="120" align="center">
         <template slot-scope="scope">
           <el-button v-if="scope.row.audit_status===1" size="mini" type="primary" @click="handleAuditWarehouse(scope.row.id)">
             审核
@@ -114,7 +121,7 @@ export default {
         status: undefined,
         audit_status: undefined,
         key: undefined,
-        sort_by: null,
+        sort_by: 'id',
         ascending: 1
       },
       loading: false,
@@ -141,6 +148,19 @@ export default {
         this.total = res.total_num
         this.listLoading = false
       })
+    },
+    sortChange(data) {
+      const { prop, order } = data
+      this.listQuery.sort_by = prop
+      if (order === 'ascending') {
+        this.listQuery.ascending = 1
+      } else if (order === 'descending') {
+        this.listQuery.ascending = 0
+      } else {
+        this.listQuery.sort_by = null
+        this.listQuery.ascending = null
+      }
+      this.handleFilter()
     },
 
     handleCreate() {
