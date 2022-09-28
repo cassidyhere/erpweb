@@ -36,26 +36,11 @@ export function downloadInventoryBatchExcel(query) {
   })
 }
 
-export function fetchInventoryContracts(query) {
+export function fetchInventoryForPicked(query) {
   return request({
-    url: '/inventory/contracts/',
+    url: '/inventory/batch/for-picked/',
     method: 'get',
     params: query
   })
 }
 
-export function fetchInventoryBasecampOrders(query) {
-  return request({
-    url: '/inventory/basecamp-orders/',
-    method: 'get',
-    params: query
-  })
-}
-
-export function fetchInventoryContractMaterials(query) {
-  return request({
-    url: '/inventory/contract-materials/',
-    method: 'get',
-    params: query
-  })
-}
