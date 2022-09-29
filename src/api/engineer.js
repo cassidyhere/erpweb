@@ -16,6 +16,22 @@ export function fetchBuildingList(query) {
   })
 }
 
+export function fetchHasPick(query) {
+  return request({
+    url: '/engineer/has-pick/',
+    method: 'get',
+    params: query
+  })
+}
+
+export function fetchPickedMaterials(query) {
+  return request({
+    url: '/engineer/picked-materials/',
+    method: 'get',
+    params: query
+  })
+}
+
 export function fetchEngineerStats(query) {
   return request({
     url: '/engineer/stats/',

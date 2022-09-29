@@ -9,17 +9,22 @@
     >
       <el-row>
         <el-col :span="8">
-          <el-form-item label="关联工程" prop="engineer_name" class="head-item">
-            <span v-if="temp.link_contract==='true' || status==='detail'">{{ temp.engineer_name }}</span>
-            <el-autocomplete
+          <el-form-item class="head-item" label="关联工程:" prop="engineer_name">
+            <span v-if="status==='detail'">{{ temp.engineer_name }}</span>
+            <el-select
               v-else
               v-model="temp.engineer_name"
-              value-key="engineer_name"
-              :fetch-suggestions="querySearchEngineer"
-              placeholder="请输入内容"
-              @select="handleSelectEngineer"
-              style="width: 200px;"
-            />
+              filterable
+              placeholder="请选择"
+              @change="selectEngineer"
+            >
+              <el-option
+                v-for="item in engineers"
+                :key="item.engineer_id"
+                :label="item.engineer_name"
+                :value="item.engineer_id">
+              </el-option>
+            </el-select>
           </el-form-item>
         </el-col>
         <el-col :span="8">
@@ -30,11 +35,11 @@
       </el-row>
       <el-row>
         <el-col :span="8">
-          <el-form-item label="下单时间" prop="handling_time" class="head-item">
-            <span v-if="status==='detail'">{{ temp.handling_time }}</span>
+          <el-form-item label="下单时间" prop="order_time" class="head-item">
+            <span v-if="status==='detail'">{{ temp.order_time }}</span>
             <el-date-picker
               v-else
-              v-model="temp.handling_time"
+              v-model="temp.order_time"
               type="date"
               placeholder="选择日期"
               value-format="yyyy-MM-dd"
@@ -44,8 +49,9 @@
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="下单用户:" prop="handler" class="head-item">
-            <span>{{ temp.handler }}</span>
+          <el-form-item label="下单用户:" prop="order_user" class="head-item">
+            <span v-if="status==='detail'">{{ temp.order_user }}</span>
+            <el-input v-else v-model="temp.order_user" style="width: 150px;" />
           </el-form-item>
         </el-col>
       </el-row>
@@ -69,6 +75,16 @@
       highlight-current-row
       style="width:70%; margin-left:110px; margin-bottom:20px; margin-right:10px"
     >
+      <el-table-column label="采购合同" width="180">
+        <template slot-scope="scope">
+          <span>{{ scope.row.contract_name }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="采购订单" width="180">
+        <template slot-scope="scope">
+          <span>{{ scope.row.order_name }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="材料类别" width="180">
         <template slot-scope="scope">
           <span>{{ scope.row.category_name }}</span>
@@ -94,15 +110,15 @@
           <span>{{ scope.row.price }}</span>
         </template>
       </el-table-column>
-      <el-table-column v-if="status!=='detail'" label="未进仓数量" width="200">
+      <el-table-column v-if="status!=='detail'" label="出仓数量" width="200">
         <template slot-scope="scope">
-          <span>{{ scope.row.unwarehouse_number }}</span>
+          <span>{{ scope.row.picked_quantity }}</span>
         </template>
       </el-table-column>
       <el-table-column label="数量" width="200">
         <template slot-scope="scope">
           <span v-if="status==='detail'">{{ scope.row.inout_quantity }}</span>
-          <el-input v-else v-model="scope.row.inout_quantity" size="small" @input="calcTotal"></el-input>
+          <el-input v-else v-model="scope.row.inout_quantity" size="small" @input="handleUpdateQuantity(scope.row)"></el-input>
         </template>
       </el-table-column>
       <el-table-column label="备注" width="220">
@@ -120,10 +136,9 @@
 </template>
 
 <script>
-import { updateSlip, createSlip } from '@/api/inout'
-import { fetchOrder } from '@/api/purchase'
-import { fetchBuildingList } from '@/api/engineer'
-import { getNowTime } from '@/utils/common'
+import { updateSlip, createSlip, fetchInout } from '@/api/inout'
+import { fetchHasPick, fetchPickedMaterials } from '@/api/engineer'
+import { getNowTime, isNumeric } from '@/utils/common'
 
 export default {
   data() {
@@ -135,9 +150,9 @@ export default {
       temp_materials: [],
       engineers: [],
       rules: {
-        purchase_order_name: [{ required: true, message: '请选择关联采购单', trigger: 'change' }],
-        handling_time: [{ required: true, message: '请选择下单时间', trigger: 'change' }],
-        handler: [{ required: true, message: '请输入下单用户', trigger: 'change' }]
+        engineer_name: [{ required: true, message: '请选择关联工程', trigger: 'change' }],
+        order_time: [{ required: true, message: '请选择下单时间', trigger: 'change' }],
+        order_user: [{ required: true, message: '请输入下单用户', trigger: 'change' }]
       }
     }
   },
@@ -145,23 +160,25 @@ export default {
   created() {
     console.log('this.$route.path:', this.$route.path )
     if (this.$route.path.endsWith('update') || this.$route.path.endsWith('detail')) {
-      // 先从传参找order_id，找不到再从store找
+      // 先从传参找inout_id，找不到再从store找
       var inout_id = this.$route.params.inout_id
       if (this.$route.path.endsWith('update')) {
         this.status = 'update'
         if (inout_id === parseInt(inout_id, 10)) {
-          this.$store.dispatch('inout/setUpdatingInId', inout_id)
+          this.$store.dispatch('inout/setUpdatingSlipId', inout_id)
         } else {
-          inout_id = this.$store.getters.updatingInId
+          inout_id = this.$store.getters.updatingSlipId
         }
       } else {
         this.status = 'detail'
         if (inout_id === parseInt(inout_id, 10)) {
-          this.$store.dispatch('order/setLookingInId', inout_id)
+          this.$store.dispatch('inout/setLookingSlipId', inout_id)
+          console.log('set done', inout_id, this.$store.getters.lookingSlipId)
         } else {
-          inout_id = this.$store.getters.lookingInId
+          inout_id = this.$store.getters.lookingSlipId
         }
       }
+      console.log('going to fetch:', inout_id)
       // 没有订单则返回列表页
       if (inout_id === undefined) {
         this.cancel()
@@ -169,7 +186,7 @@ export default {
         this.inout_id = inout_id
       }
       // 获取订单明细
-      fetchOrder({ inout_id: inout_id }).then(res => {
+      fetchInout({ inout_id: inout_id, order_type: 2 }).then(res => {
         this.temp = Object.assign({}, res)
         this.temp_materials = this.temp.materials
       })
@@ -177,19 +194,33 @@ export default {
     } else {
       this.status = 'create'
       // 从store找
-      this.temp = this.$store.getters.inInfo
+      this.temp = this.$store.getters.slipInfo
+      console.log('this.temp:', this.temp)
       this.temp_materials = this.temp.materials
-      if (this.temp.handling_time === undefined) {
-        this.temp.handling_time = getNowTime()
+      if (this.temp.order_time === undefined) {
+        this.temp.order_time = getNowTime()
       }
     }
 
-    fetchBuildingList().then(res => {
+    fetchHasPick().then(res => {
       this.engineers = res.engineers
     })
   },
 
   methods: {
+    selectEngineer(engineer_id) {
+      this.temp.engineer_id = engineer_id
+      fetchPickedMaterials({ engineer_id: engineer_id }).then(res => {
+        this.temp_materials = this.temp.materials = res.materials
+      })
+    },
+    cancel() {
+      this.$store.dispatch('tagsView/delVisitedViewByPath', '/warehouse/slip/' + this.status)
+      this.$store.dispatch('inout/clearSlipInfo')
+      this.$router.push({
+        name: 'slip'
+      })
+    },
     updateData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
@@ -208,41 +239,32 @@ export default {
         }
       })
     },
-    cancel() {
-      this.$store.dispatch('tagsView/delVisitedViewByPath', '/warehouse/slip/' + this.status)
-      this.$store.dispatch('inout/clearSlipInfo')
-      this.$router.push({
-        name: 'slip'
-      })
+
+    handleUpdateQuantity(row) {
+      console.log('row:', row)
+      if (!isNumeric(row.inout_quantity) || Number(row.inout_quantity) < 0) {
+        row.inout_quantity = null
+      } else if (row.inout_quantity > row.picked_quantity) {
+        row.inout_quantity = row.picked_quantity
+      }
+      this.calcTotal()
     },
     calcTotal() {
       this.temp.total = undefined
-      var n = 0.0
+      var total = 0.0
       var materials = this.temp.materials
       for (let i = 0; i < materials.length; i++) {
         if (isNaN(materials[i].inout_quantity) || isNaN(materials[i].price)) {
+          console.log('continue', materials[i].inout_quantity, materials[i].price)
           continue
         } else {
-          n = n + materials[i].inout_quantity * materials[i].price
+          console.log('cala', materials[i].inout_quantity, materials[i].price)
+          
+          total = total + materials[i].inout_quantity * materials[i].price
         }
       }
-      this.temp.total = n
+      this.temp.total = total.toFixed(2)
       console.log('this.temp.total:', this.temp.total)
-    },
-    querySearchEngineer(queryString, cb) {
-      var engineers = this.engineers;
-      var results = queryString ? engineers.filter(this.createEngineerFilter(queryString)) : engineers;
-      // 调用 callback 返回建议列表的数据
-      cb(results);
-    },
-    createEngineerFilter(queryString) {
-      return (engineers) => {
-        return (engineers.engineer_name.toLowerCase().indexOf(queryString.toLowerCase()) !== -1);
-      };
-    },
-    handleSelectEngineer(item) {
-      this.temp.engineer_id = item.engineer_id
-      this.temp.engineer_name = item.engineer_name
     },
     handleSearchMaterial() {
       if (typeof this.mkey === 'string' && this.mkey !== '') {

@@ -20,9 +20,9 @@
       >
         新增
       </el-button>
-      <el-button :loading="loading" class="filter-item" type="primary" @click="handleUpload">
+      <!-- <el-button :loading="loading" class="filter-item" type="primary" @click="handleUpload">
         上传excel
-      </el-button>
+      </el-button> -->
     </div>
 
     <el-table
