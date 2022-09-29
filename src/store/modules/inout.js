@@ -18,10 +18,7 @@ const state = {
   // pick
   pickInfo: {
     id: undefined,
-    purchase_order_id: undefined,
-    purchase_order_name: undefined,
-    contarct_name: undefined,
-    supplier_name: undefined,
+    engineer_id: undefined,
     engineer_name: undefined,
     total: undefined,
     remark: undefined,
@@ -142,10 +139,7 @@ const actions = {
   clearPickInfo({ commit }) {
     const info = {
       id: undefined,
-      purchase_order_id: undefined,
-      purchase_order_name: undefined,
-      contarct_name: undefined,
-      supplier_name: undefined,
+      engineer_id: undefined,
       engineer_name: undefined,
       total: undefined,
       remark: undefined,

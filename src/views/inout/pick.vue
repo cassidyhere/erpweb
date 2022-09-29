@@ -58,7 +58,7 @@
       </el-table-column>
       <el-table-column label="下单日期" width="150" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.handling_time }}</span>
+          <span>{{ scope.row.order_time }}</span>
         </template>
       </el-table-column>
       <el-table-column label="备注" width="300" align="center">
@@ -96,8 +96,7 @@
 <script>
 import Pagination from '@/components/Pagination'
 import waves from '@/directive/waves' // waves directive
-import { fetchInoutList, fetchInout, deleteInout, createPick, auditPick } from '@/api/inout'
-import { fetchContractEngineers } from '@/api/purchase'
+import { fetchInoutList, deleteInout, auditPick } from '@/api/inout'
 
 export default {
   components: { Pagination },
@@ -161,16 +160,16 @@ export default {
         name: 'createPick'
       })
     },
-    handleUpload(warehouse_order_id) {
+    handleUpload(inout_id) {
       this.$router.push({
         name: 'updatePick',
-        params: { inout_id: warehouse_order_id }
+        params: { inout_id: inout_id }
       })
     },
-    handleGetWarehouse(warehouse_order_id) {
+    handleGetPick(inout_id) {
       this.$router.push({
         name: 'fetchPick',
-        params: { inout_id: warehouse_order_id }
+        params: { inout_id: inout_id }
       })
     },
 

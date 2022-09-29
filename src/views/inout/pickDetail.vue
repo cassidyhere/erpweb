@@ -115,7 +115,7 @@
           <span>{{ scope.row.inventory_quantity }}</span>
         </template>
       </el-table-column>
-      <el-table-column v-if="status!=='detail'" label="预用数量" width="200">
+      <el-table-column v-if="status!=='detail'" label="可用数量" width="200">
         <template slot-scope="scope">
           <span>{{ scope.row.available_quantity }}</span>
         </template>
@@ -123,7 +123,7 @@
       <el-table-column label="数量" width="200">
         <template slot-scope="scope">
           <span v-if="status==='detail'">{{ scope.row.inout_quantity }}</span>
-          <el-input v-else v-model="scope.row.inout_quantity" size="small" @input="handleUpdateQuantity"></el-input>
+          <el-input v-else v-model="scope.row.inout_quantity" size="small" @input="handleUpdateQuantity(scope.row)"></el-input>
         </template>
       </el-table-column>
       <el-table-column label="备注" width="220">
@@ -141,8 +141,7 @@
 </template>
 
 <script>
-import { updatePick, createPick } from '@/api/inout'
-import { fetchOrder } from '@/api/purchase'
+import { updatePick, createPick, fetchInout } from '@/api/inout'
 import { fetchInventoryForPicked } from '@/api/inventory'
 import { fetchBuildingList } from '@/api/engineer'
 import { getNowTime, isNumeric } from '@/utils/common'
@@ -167,7 +166,7 @@ export default {
   created() {
     console.log('this.$route.path:', this.$route.path )
     if (this.$route.path.endsWith('update') || this.$route.path.endsWith('detail')) {
-      // 先从传参找order_id，找不到再从store找
+      // 先从传参找inout_id，找不到再从store找
       var inout_id = this.$route.params.inout_id
       if (this.$route.path.endsWith('update')) {
         this.status = 'update'
@@ -179,11 +178,13 @@ export default {
       } else {
         this.status = 'detail'
         if (inout_id === parseInt(inout_id, 10)) {
-          this.$store.dispatch('order/setLookingPickId', inout_id)
+          this.$store.dispatch('inout/setLookingPickId', inout_id)
+          console.log('set done', inout_id, this.$store.getters.lookingPickId)
         } else {
           inout_id = this.$store.getters.lookingPickId
         }
       }
+      console.log('going to fetch:', inout_id)
       // 没有订单则返回列表页
       if (inout_id === undefined) {
         this.cancel()
@@ -191,7 +192,7 @@ export default {
         this.inout_id = inout_id
       }
       // 获取订单明细
-      fetchOrder({ inout_id: inout_id }).then(res => {
+      fetchInout({ inout_id: inout_id, order_type: 2 }).then(res => {
         this.temp = Object.assign({}, res)
         this.temp_materials = this.temp.materials
       })
@@ -200,6 +201,7 @@ export default {
       this.status = 'create'
       // 从store找
       this.temp = this.$store.getters.pickInfo
+      console.log('this.temp:', this.temp)
       this.temp_materials = this.temp.materials
       if (this.temp.order_time === undefined) {
         this.temp.order_time = getNowTime()
@@ -213,8 +215,9 @@ export default {
 
   methods: {
     selectEngineer(engineer_id) {
+      this.temp.engineer_id = engineer_id
       fetchInventoryForPicked({ engineer_id: engineer_id }).then(res => {
-        this.temp_materials = this.materials = res.materials
+        this.temp_materials = this.temp.materials = res.materials
       })
     },
     cancel() {
@@ -254,16 +257,19 @@ export default {
     },
     calcTotal() {
       this.temp.total = undefined
-      var n = 0.0
+      var total = 0.0
       var materials = this.temp.materials
       for (let i = 0; i < materials.length; i++) {
         if (isNaN(materials[i].inout_quantity) || isNaN(materials[i].price)) {
+          console.log('continue', materials[i].inout_quantity, materials[i].price)
           continue
         } else {
-          n = n + materials[i].inout_quantity * materials[i].price
+          console.log('cala', materials[i].inout_quantity, materials[i].price)
+          
+          total = total + materials[i].inout_quantity * materials[i].price
         }
       }
-      this.temp.total = n
+      this.temp.total = total.toFixed(2)
       console.log('this.temp.total:', this.temp.total)
     },
     handleSearchMaterial() {

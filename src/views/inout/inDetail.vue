@@ -173,7 +173,7 @@ export default {
   created() {
     console.log('this.$route.path:', this.$route.path )
     if (this.$route.path.endsWith('update') || this.$route.path.endsWith('detail')) {
-      // 先从传参找order_id，找不到再从store找
+      // 先从传参找inout_id，找不到再从store找
       var inout_id = this.$route.params.inout_id
       if (this.$route.path.endsWith('update')) {
         this.status = 'update'
@@ -185,7 +185,7 @@ export default {
       } else {
         this.status = 'detail'
         if (inout_id === parseInt(inout_id, 10)) {
-          this.$store.dispatch('order/setLookingInId', inout_id)
+          this.$store.dispatch('inout/setLookingInId', inout_id)
         } else {
           inout_id = this.$store.getters.lookingInId
         }
