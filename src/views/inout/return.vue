@@ -3,7 +3,7 @@
     <div class="filter-container">
       <el-input
         v-model="listQuery.keyword"
-        placeholder="搜索关键字return"
+        placeholder="搜索关键字"
         style="width: 200px;"
         class="filter-item"
         @keyup.enter.native="handleFilter"
@@ -20,9 +20,9 @@
       >
         新增
       </el-button>
-      <el-button :loading="loading" class="filter-item" type="primary" @click="handleUpload">
+      <!-- <el-button :loading="loading" class="filter-item" type="primary" @click="handleUpload">
         上传excel
-      </el-button>
+      </el-button> -->
     </div>
 
     <el-table
@@ -33,35 +33,32 @@
       fit
       highlight-current-row
       style="width: 100%;"
+      :default-sort="{prop: 'id', order: 'descending'}"
+      @sort-change="sortChange"
     >
-      <el-table-column label="ID" prop="id" align="center" width="80">
+      <el-table-column label="ID" prop="id" sortable="custom" align="center" width="80">
         <template slot-scope="scope">
           <span>{{ scope.row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="关联采购单" width="300" align="center">
+      <el-table-column label="退货单编号" prop="order_code" sortable="custom" width="140" align="center">
         <template slot-scope="scope">
-          {{ scope.row.order_name }}
+          {{ scope.row.order_code }}
         </template>
       </el-table-column>
-      <el-table-column label="关联采购合同" width="300" align="center">
+      <el-table-column label="供应商名称" prop="supplier_name" sortable="custom" width="150" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.contract_name }}</span>
+          <span>{{ scope.row.supplier_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="关联工程名称" width="150" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.engineer_name }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="总金额" width="150" align="center">
+      <el-table-column label="总金额" prop="total" sortable="custom" width="150" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.total }}</span>
         </template>
       </el-table-column>
       <el-table-column label="下单日期" width="150" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.handling_time }}</span>
+          <span>{{ scope.row.order_time }}</span>
         </template>
       </el-table-column>
       <el-table-column label="备注" width="300" align="center">
@@ -71,7 +68,7 @@
       </el-table-column>
       <el-table-column label="审核状态" width="80" align="center">
         <template slot-scope="scope">
-          <el-button v-if="scope.row.audit_status===1" size="mini" type="primary" @click="handleAuditWarehouse(scope.row.id)">
+          <el-button v-if="scope.row.audit_status===1" size="mini" type="primary" @click="handleAuditReturn(scope.row.id)">
             审核
           </el-button>
           <el-button v-else size="mini" type="info" disabled>
@@ -81,13 +78,10 @@
       </el-table-column>
       <el-table-column label="操作" align="center" width="230" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button v-if="scope.row.audit_status===1" type="primary" size="mini" @click="handleUpdateWarehouse(scope.row.id)">
-            编辑
-          </el-button>
-          <el-button v-else size="mini" type="info" @click="handleGetInout(scope.row.id)">
+          <el-button size="mini" type="info" @click="handleGetReturn(scope.row.id)">
             查看
           </el-button>
-          <el-button v-if="scope.row.audit_status===1" size="mini" type="danger" @click="handleDeleteWarehouse(scope.row.id)">
+          <el-button v-if="scope.row.audit_status===1" size="mini" type="danger" @click="handleDeleteReturn(scope.row.id)">
             删除
           </el-button>
         </template>
@@ -96,130 +90,13 @@
 
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
 
-    <el-dialog
-      :title="textMap[dialogStatus]"
-      width="800px"
-      :visible.sync="dialogFormVisible"
-    >
-      <el-form
-        ref="dataForm"
-        :model="temp"
-        :rules="rules"
-        label-position="left"
-        label-width="110px"
-        style="width: 600px; margin-left:50px;"
-      >
-        <el-form-item label="关联采购单:" prop="purchase_order_name">
-          <span v-if="dialogStatus==='get'">{{ temp.purchase_order_name }}</span>
-          <el-select v-else v-model="temp.purchase_order_name" filterable placeholder="请选择" @change="selectPurchaseOrder">
-            <el-option-group
-              v-for="group in purchase_orders"
-              :key="group.label"
-              :label="group.label"
-            >
-              <el-option
-                v-for="item in group.options"
-                :key="item.id"
-                :label="item.order_name"
-                :value="item.order_name"
-              />
-            </el-option-group>
-          </el-select>
-        </el-form-item>
-        <el-row type="flex" style="width: 600px;">
-          <el-col :span="12">
-            <el-form-item label="关联采购合同:" prop="contract_name">
-              <span>{{ temp.contract_name }}</span>
-            </el-form-item>
-          </el-col>
-          <el-form-item label="关联供应商:" prop="supplier_name">
-            <span>{{ temp.supplier_name }}</span>
-          </el-form-item>
-        </el-row>
-        <el-row type="flex" style="width: 600px;">
-          <el-col :span="12">
-            <el-form-item label="关联工程:" prop="engineer_name">
-              <span>{{ temp.engineer_name }}</span>
-            </el-form-item>
-          </el-col>
-          <el-form-item label="总金额(元):" prop="total">
-            <span>{{ temp.total }}</span>
-          </el-form-item>
-        </el-row>
-        <el-form-item label="下单时间:" prop="handling_time">
-          <span v-if="dialogStatus==='get'">{{ temp.handling_time }}</span>
-          <el-date-picker
-            v-else
-            v-model="temp.handling_time"
-            type="date"
-            placeholder="选择日期"
-            value-format="yyyy-MM-dd"
-          />
-        </el-form-item>
-        <el-form-item label="下单用户:" prop="handler">
-          <span v-if="dialogStatus==='get'">{{ temp.handler }}</span>
-          <el-input v-else v-model="temp.handler" style="width: 150px;" />
-        </el-form-item>
-        <el-form-item label="备注:" prop="remark">
-          <span v-if="dialogStatus==='get'">{{ temp.remark }}</span>
-          <el-input v-else v-model="temp.remark" type="textarea" maxlength="128" show-word-limit />
-        </el-form-item>
-      </el-form>
-
-      <el-row>
-        <el-col :span="21.6">
-          <div style="font-weight: 700; margin-left:50px; margin-bottom:10px;">材料</div>
-          <el-table
-            :data="temp.materials"
-            element-loading-text="Loading"
-            fit
-            height="350"
-            highlight-current-row
-            style="width:92%; margin-left:50px; margin-bottom:10px; margin-right:10px"
-          >
-            <el-table-column label="材料类别" width="180">
-              <template slot-scope="scope">
-                <span>{{ scope.row.category_name }}</span>
-              </template>
-            </el-table-column>
-            <el-table-column label="材料名称" width="200">
-              <template slot-scope="scope">
-                <span>{{ scope.row.material_name }}</span>
-              </template>
-            </el-table-column>
-            <el-table-column label="数量" width="200">
-              <template slot-scope="scope">
-                <template v-if="dialogStatus!=='get'">
-                  <el-input v-model="scope.row.inout_quantity" size="small" @input="calcTotal" />
-                </template>
-                <span v-else>{{ scope.row.inout_quantity }}</span>
-              </template>
-            </el-table-column>
-          </el-table>
-        </el-col>
-      </el-row>
-
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible=false">
-          取消
-        </el-button>
-        <el-button
-          type="primary"
-          @click="dialogStatus==='create'?handleCreateWarehouse():handleUpdateWarehouse()"
-        >
-          确认
-        </el-button>
-      </div>
-    </el-dialog>
-
   </div>
 </template>
 
 <script>
 import Pagination from '@/components/Pagination'
 import waves from '@/directive/waves' // waves directive
-import { fetchInoutList, fetchInout, createWarehouse, auditWarehouse } from '@/api/inout'
-import { fetchOrderElOptionGroup, fetchOrder } from '@/api/purchase'
+import { fetchInoutList, deleteInout, auditReturn } from '@/api/inout'
 
 export default {
   components: { Pagination },
@@ -229,52 +106,24 @@ export default {
     return {
       // filter
       listQuery: {
-        order_type: 1,
+        order_type: 5,
         page: 1,
         limit: 20,
         status: undefined,
         audit_status: undefined,
         key: undefined,
-        sort_by: null,
+        sort_by: 'id',
         ascending: 1
       },
       loading: false,
-
-      // table
       list: null,
       listLoading: true,
       total: 0,
-
-      // dialog
-      purchase_orders: [],
-      textMap: { update: '编辑', create: '新增', get: '查看' },
-      dialogStatus: '',
-      dialogFormVisible: false,
-      temp: {
-        purchase_order_id: undefined,
-        purchase_order_name: undefined,
-        contarct_name: undefined,
-        supplier_name: undefined,
-        engineer_name: undefined,
-        total: undefined,
-        remark: undefined,
-        handler: undefined,
-        handling_time: undefined,
-        materials: []
-      },
-      rules: {
-        purchase_order_name: [{ required: true, message: '请选择关联采购单', trigger: 'change' }],
-        handling_time: [{ required: true, message: '请选择下单时间', trigger: 'change' }],
-        handler: [{ required: true, message: '请输入下单用户', trigger: 'change' }]
-      }
     }
   },
 
   created() {
     this.getList()
-    fetchOrderElOptionGroup().then(res => {
-      this.purchase_orders = res.el_option_group
-    })
   },
 
   methods: {
@@ -283,101 +132,76 @@ export default {
       this.listQuery.page = 1
       this.getList()
     },
-    handleCreate() {
-      this.resetTemp()
-      this.dialogStatus = 'create'
-      this.dialogFormVisible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate()
-      })
-    },
-    resetTemp() {
-      this.temp = {
-        purchase_order_id: undefined,
-        purchase_order_name: undefined,
-        contarct_name: undefined,
-        supplier_name: undefined,
-        engineer_name: undefined,
-        total: undefined,
-        remark: undefined,
-        handler: undefined,
-        handling_time: undefined,
-        materials: []
-      }
-    },
-
-    // table
     getList() {
       this.listLoading = true
       fetchInoutList(this.listQuery).then(res => {
-        this.list = res.material_list
+        this.list = res.order_list
         this.total = res.total_num
         this.listLoading = false
       })
     },
-    handleUpdate(row) {
-      this.temp = Object.assign({ disused: row.status === 2 }, row) // copy obj
-      this.dialogStatus = 'update'
-      this.dialogFormVisible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate()
+    sortChange(data) {
+      const { prop, order } = data
+      this.listQuery.sort_by = prop
+      if (order === 'ascending') {
+        this.listQuery.ascending = 1
+      } else if (order === 'descending') {
+        this.listQuery.ascending = 0
+      } else {
+        this.listQuery.sort_by = null
+        this.listQuery.ascending = null
+      }
+      this.handleFilter()
+    },
+
+    handleCreate() {
+      this.$store.dispatch('inout/clearReturnInfo')
+      this.$router.push({
+        name: 'createReturn'
       })
     },
-    handleDelete(row) {
-      this.$confirm('此操作将永久删除该材料, 是否继续?', '提示', {
+    handleUpload(inout_id) {
+      this.$router.push({
+        name: 'updateReturn',
+        params: { inout_id: inout_id }
+      })
+    },
+    handleGetReturn(inout_id) {
+      this.$router.push({
+        name: 'fetchReturn',
+        params: { inout_id: inout_id }
+      })
+    },
+
+    handleAuditReturn(return_order_id) {
+      this.$confirm('确认审核该单据?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        deleteMaterial(row).then(() => {
-          this.$message.success('删除成功!') // 需要引入elemrnt
+        const data = { return_order_id: return_order_id }
+        auditReturn(data).then(() => {
           this.getList()
         })
       }).catch(() => {
         this.$message.success('已取消删除')
       })
     },
-
-    // dialog
-    selectPurchaseOrder(order_name) {
-      this.resetTemp()
-      for (let i = 0; i < this.purchase_orders.length; i++) {
-        var options = this.purchase_orders[i].options
-        var right = false
-        for (let j = 0; j < options.length; j++) {
-          if (options[j].order_name === order_name) {
-            this.temp.purchase_order_name = options[j].order_name
-            this.temp.purchase_order_id = options[j].id
-            this.temp.contract_name = options[j].contract_name
-            this.temp.supplier_name = options[j].supplier_name
-            this.temp.engineer_name = options[j].engineer_name
-            fetchOrder({ order_id: this.temp.purchase_order_id }).then(res => {
-              this.temp.materials = res.materials
-            })
-            right = true
-            break
-          }
-        }
-        if (right === true) {
-          break
-        }
-      }
-      console.log('this.temp:', this.temp)
-    },
-    calcTotal() {
-      this.temp.total = undefined
-      var n = 0.0
-      var materials = this.temp.materials
-      for (let i = 0; i < materials.length; i++) {
-        if (isNaN(materials[i].inout_quantity) || isNaN(materials[i].price)) {
-          continue
-        } else {
-          n = n + materials[i].inout_quantity * materials[i].price
-        }
-      }
-      this.temp.total = n
-      console.log('this.temp.total:', this.temp.total)
-    }
+    handleDeleteReturn(return_order_id) {
+      this.$confirm('此操作将永久删除该单据, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        const data = { order_id: return_order_id, order_type: 5 }
+        deleteInout(data).then(() => {
+          this.$message.success('删除成功!') // 需要引入elemrnt
+          this.getList()
+        })
+      }).catch(() => {
+        this.$message.success('已取消删除')
+      })
+    }   
   }
 }
 </script>

@@ -47,11 +47,7 @@ const state = {
   // return
   returnInfo: {
     id: undefined,
-    purchase_order_id: undefined,
-    purchase_order_name: undefined,
-    contarct_name: undefined,
     supplier_name: undefined,
-    engineer_name: undefined,
     total: undefined,
     remark: undefined,
     order_user: undefined,
@@ -188,11 +184,7 @@ const actions = {
   clearReturnInfo({ commit }) {
     const info = {
       id: undefined,
-      purchase_order_id: undefined,
-      purchase_order_name: undefined,
-      contarct_name: undefined,
       supplier_name: undefined,
-      engineer_name: undefined,
       total: undefined,
       remark: undefined,
       order_user: undefined,

@@ -93,3 +93,11 @@ export function fetchMaterialList(query) {
     params: query
   })
 }
+
+export function fetchSupplierInventories(query) {
+  return request({
+    url: '/supplier/inventories/',
+    method: 'get',
+    params: query
+  })
+}

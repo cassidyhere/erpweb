@@ -164,18 +164,6 @@ export default {
       }
     },
     handleDownload() {
-      this.downloadLoading = true
-      import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['材料类别名称']
-        const filterVal = ['category_name']
-        const data = this.formatJson(filterVal)
-        excel.export_json_to_excel({
-          header: tHeader,
-          data,
-          filename: '材料类别表'
-        })
-        this.downloadLoading = false
-      })
     },
     formatJson(filterVal) {
       return this.list.map(v => filterVal.map(j => {

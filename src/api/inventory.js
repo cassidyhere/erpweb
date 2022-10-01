@@ -36,6 +36,14 @@ export function downloadInventoryBatchExcel(query) {
   })
 }
 
+export function fetchInventorySuppliers(query) {
+  return request({
+    url: '/inventory/suppliers/',
+    method: 'get',
+    params: query
+  })
+}
+
 export function fetchInventoryForPicked(query) {
   return request({
     url: '/inventory/batch/for-picked/',
