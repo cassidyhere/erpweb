@@ -8,6 +8,15 @@ export function fetchInventoryList(query) {
   })
 }
 
+fetchInventoryRecord
+export function fetchInventoryRecord(query) {
+  return request({
+    url: '/inventory/record/',
+    method: 'get',
+    params: query
+  })
+}
+
 export function fetchInventoryBatchList(query) {
   return request({
     url: '/inventory/batch/list/',

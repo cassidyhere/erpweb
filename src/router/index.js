@@ -231,6 +231,12 @@ export const constantRoutes = [
         hidden: true
       },
       {
+        path: 'record',
+        name: 'record',
+        component: () => import('@/views/warehouse/record'),
+        meta: { title: '出入库记录', icon: 'dashboard' }
+      },
+      {
         path: 'in/create',
         name: 'createIn',
         component: () => import('@/views/inout/inDetail'),
