@@ -293,7 +293,7 @@ export default {
       downloadContractExcel({ contract_id: contract_id }).then(res => {
         fileDownload(res.data, contracrt_name + '.xlsx')
         this.downloadLoading = false
-    })
+      })
     }
   }
 }

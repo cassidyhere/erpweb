@@ -103,3 +103,43 @@ export function auditReturn(data) {
     data: data
   })
 }
+
+export function downloadInExcel(query) {
+  return request({
+    url: '/inout/warehouse/export/',
+    method: 'get',
+    params: query,
+    headers: { 'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' },
+    responseType: 'blob'
+  })
+}
+
+export function downloadReturnExcel(query) {
+  return request({
+    url: '/inout/return/export/',
+    method: 'get',
+    params: query,
+    headers: { 'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' },
+    responseType: 'blob'
+  })
+}
+
+export function downloadPickExcel(query) {
+  return request({
+    url: '/inout/pick/export/',
+    method: 'get',
+    params: query,
+    headers: { 'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' },
+    responseType: 'blob'
+  })
+}
+
+export function downloadSlipExcel(query) {
+  return request({
+    url: '/inout/slip/export/',
+    method: 'get',
+    params: query,
+    headers: { 'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' },
+    responseType: 'blob'
+  })
+}

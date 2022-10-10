@@ -94,6 +94,14 @@
           <el-button v-if="scope.row.audit_status===1" size="mini" type="danger" @click="handleDeleteWarehouse(scope.row.id)">
             删除
           </el-button>
+          <el-button
+            size="mini"
+            type="success"
+            plain
+            @click="handleDownloadIn(scope.row.id, scope.row.order_code)"
+          >
+            导出
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -106,7 +114,8 @@
 <script>
 import Pagination from '@/components/Pagination'
 import waves from '@/directive/waves' // waves directive
-import { fetchInoutList, deleteInout, auditWarehouse } from '@/api/inout'
+import fileDownload from 'js-file-download'
+import { fetchInoutList, deleteInout, auditWarehouse, downloadInExcel } from '@/api/inout'
 
 export default {
   components: { Pagination },
@@ -209,6 +218,13 @@ export default {
         })
       }).catch(() => {
         this.$message.success('已取消删除')
+      })
+    },
+    handleDownloadIn(inout_id, order_code) {
+      this.downloadLoading = true
+      downloadInExcel({ in_order_id: inout_id }).then(res => {
+        fileDownload(res.data, order_code + '.xlsx')
+        this.downloadLoading = false
       })
     }
   }

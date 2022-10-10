@@ -84,6 +84,14 @@
           <el-button v-if="scope.row.audit_status===1" size="mini" type="danger" @click="handleDeleteReturn(scope.row.id)">
             删除
           </el-button>
+          <el-button
+            size="mini"
+            type="success"
+            plain
+            @click="handleDownloadReturn(scope.row.id, scope.row.order_code)"
+          >
+            导出
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -96,7 +104,8 @@
 <script>
 import Pagination from '@/components/Pagination'
 import waves from '@/directive/waves' // waves directive
-import { fetchInoutList, deleteInout, auditReturn } from '@/api/inout'
+import fileDownload from 'js-file-download'
+import { fetchInoutList, deleteInout, auditReturn, downloadReturnExcel } from '@/api/inout'
 
 export default {
   components: { Pagination },
@@ -201,7 +210,14 @@ export default {
       }).catch(() => {
         this.$message.success('已取消删除')
       })
-    }   
+    },
+    handleDownloadReturn(inout_id, order_code) {
+      this.downloadLoading = true
+      downloadReturnExcel({ return_order_id: inout_id }).then(res => {
+        fileDownload(res.data, order_code + '.xlsx')
+        this.downloadLoading = false
+      })
+    }
   }
 }
 </script>
