@@ -178,15 +178,11 @@ export default {
         name: 'createIn'
       })
     },
-    handleUpload(warehouse_order_id) {
-      this.$router.push({
-        name: 'updateIn',
-        params: { inout_id: warehouse_order_id }
-      })
+    handleUpload() {
     },
     handleGetWarehouse(warehouse_order_id) {
       this.$router.push({
-        name: 'fetchIn',
+        name: 'updateIn',
         params: { inout_id: warehouse_order_id }
       })
     },

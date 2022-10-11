@@ -32,6 +32,14 @@ export function createWarehouse(data) {
   })
 }
 
+export function updateWarehouse(data) {
+  return request({
+    url: '/inout/warehouse/update/',
+    method: 'post',
+    data: data
+  })
+}
+
 export function auditWarehouse(data) {
   return request({
     url: '/inout/warehouse/audit/',
@@ -64,6 +72,14 @@ export function createPick(data) {
   })
 }
 
+export function updatePick(data) {
+  return request({
+    url: '/inout/pick/update/',
+    method: 'post',
+    data: data
+  })
+}
+
 export function auditPick(data) {
   return request({
     url: '/inout/pick/audit/',
@@ -73,6 +89,14 @@ export function auditPick(data) {
 }
 
 export function createSlip(data) {
+  return request({
+    url: '/inout/slip/create/',
+    method: 'post',
+    data: data
+  })
+}
+
+export function updateSlip(data) {
   return request({
     url: '/inout/slip/create/',
     method: 'post',
@@ -91,6 +115,14 @@ export function auditSlip(data) {
 export function createReturn(data) {
   return request({
     url: '/inout/return/create/',
+    method: 'post',
+    data: data
+  })
+}
+
+export function updateReturn(data) {
+  return request({
+    url: '/inout/return/update/',
     method: 'post',
     data: data
   })

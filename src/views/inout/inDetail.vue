@@ -10,7 +10,7 @@
       <el-row>
         <el-col :span="8">
           <el-form-item class="head-item" label="关联采购单:" prop="purchase_order_name">
-            <span v-if="status==='detail'">{{ temp.purchase_order_name }}</span>
+            <span v-if="status==='update' && temp.audit_status===2">{{ temp.purchase_order_name }}</span>
             <el-select
               v-else 
               v-model="temp.purchase_order_name"
@@ -55,11 +55,9 @@
             <span>{{ temp.total }}</span>
           </el-form-item>
         </el-col>
-      </el-row>
-      <el-row>
         <el-col :span="8">
-          <el-form-item label="下单时间" prop="order_time" class="head-item">
-            <span v-if="status==='detail'">{{ temp.order_time }}</span>
+          <el-form-item label="下单时间:" prop="order_time" class="head-item">
+            <span v-if="status==='update' && temp.audit_status===2">{{ temp.order_time }}</span>
             <el-date-picker
               v-else
               v-model="temp.order_time"
@@ -71,18 +69,11 @@
             </el-date-picker>
           </el-form-item>
         </el-col>
-        <el-col :span="8">
-          <el-form-item label="下单用户:" prop="order_user" class="head-item">
-            <span v-if="status==='detail'">{{ temp.order_user }}</span>
-            <el-input v-else v-model="temp.order_user" style="width: 150px;" />
-          </el-form-item>
-        </el-col>
       </el-row>
-      <el-form-item label="备注" prop="remark" style="width: 50%;">
-        <span v-if="status==='detail'">{{ temp.remark }}</span>
-        <el-input v-else v-model="temp.remark" type="textarea" maxlength="128" show-word-limit />
+      <el-form-item label="备注:" prop="remark" style="width: 50%;">
+        <el-input v-model="temp.remark" type="textarea" maxlength="128" show-word-limit />
       </el-form-item>
-      <el-form-item label="材料列表" class="head-item" style="margin-top:30px">
+      <el-form-item label="材料列表:" class="head-item" style="margin-top:30px">
         <el-input v-model="mkey" placeholder="搜索材料" style="width: 200px;" class="filter-item" @keyup.enter.native="handleSearchMaterial" />
         <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleSearchMaterial">
           搜索
@@ -123,21 +114,20 @@
           <span>{{ scope.row.price }}</span>
         </template>
       </el-table-column>
-      <el-table-column v-if="status!=='detail'" label="未进仓数量" width="200">
+      <el-table-column label="未进仓数量" width="200">
         <template slot-scope="scope">
           <span>{{ scope.row.unwarehouse_number }}</span>
         </template>
       </el-table-column>
       <el-table-column label="数量" width="200">
         <template slot-scope="scope">
-          <span v-if="status==='detail'">{{ scope.row.inout_quantity }}</span>
+          <span v-if="status==='update' && temp.audit_status===2">{{ scope.row.inout_quantity }}</span>
           <el-input v-else v-model="scope.row.inout_quantity" size="small" @input="handleUpdateQuantity(scope.row)"></el-input>
         </template>
       </el-table-column>
       <el-table-column label="备注" width="220">
         <template slot-scope="scope">
-          <span v-if="status==='detail'">{{ scope.row.remark }}</span>
-          <el-input v-else v-model="scope.row.remark" size="small"></el-input>
+          <el-input v-model="scope.row.remark" size="small"></el-input>
         </template>
       </el-table-column>
     </el-table>
@@ -171,37 +161,28 @@ export default {
   },
 
   created() {
-    console.log('this.$route.path:', this.$route.path )
-    if (this.$route.path.endsWith('update') || this.$route.path.endsWith('detail')) {
+    if (this.$route.path.endsWith('update')) {
+      this.status = 'update'
       // 先从传参找inout_id，找不到再从store找
       var inout_id = this.$route.params.inout_id
-      if (this.$route.path.endsWith('update')) {
-        this.status = 'update'
-        if (inout_id === parseInt(inout_id, 10)) {
-          this.$store.dispatch('inout/setUpdatingInId', inout_id)
-        } else {
-          inout_id = this.$store.getters.updatingInId
-        }
+      if (inout_id === parseInt(inout_id, 10)) {
+        this.$store.dispatch('inout/setUpdatingInId', inout_id)
+        console.log('this.$store.getters.updatingInId:', this.$store.getters.updatingInId)
       } else {
-        this.status = 'detail'
-        if (inout_id === parseInt(inout_id, 10)) {
-          this.$store.dispatch('inout/setLookingInId', inout_id)
-        } else {
-          inout_id = this.$store.getters.lookingInId
-        }
+        console.log('going to get')
+        inout_id = this.$store.getters.updatingInId
       }
       // 没有订单则返回列表页
       if (inout_id === undefined) {
         this.cancel()
       } else {
         this.inout_id = inout_id
+        // 获取订单明细
+        fetchInout({ inout_id: inout_id, order_type: 1 }).then(res => {
+          this.temp = Object.assign({}, res)
+          this.temp_materials = this.temp.materials
+        })
       }
-      // 获取订单明细
-      fetchInout({ inout_id: inout_id, order_type: 1 }).then(res => {
-        this.temp = Object.assign({}, res)
-        this.temp_materials = this.temp.materials
-      })
-
     } else {
       this.status = 'create'
       // 从store找
@@ -237,6 +218,7 @@ export default {
       })
     },
     cancel() {
+      console.log('cancel')
       this.$store.dispatch('tagsView/delVisitedViewByPath', '/warehouse/in/' + this.status)
       this.$store.dispatch('inout/clearInInfo')
       this.$router.push({
@@ -255,6 +237,7 @@ export default {
               this.temp.engineer_name = res.engineer_name
               this.temp.supplier_name = res.supplier_name
               this.temp_materials = this.temp.materials = res.materials
+              this.temp.total = 0
             })
             right = true
             break
@@ -264,7 +247,6 @@ export default {
           break
         }
       }
-      console.log('this.temp:', this.temp)
     },
     handleUpdateQuantity(row) {
       console.log('row:', row)
