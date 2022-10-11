@@ -2,7 +2,7 @@
   <div class="app-container">
     <div class="filter-container">
       <el-input v-model="listQuery.key" placeholder="关键字" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-button type="primary" icon="el-icon-search" @click="handleFilter">
+      <el-button type="primary" icon="el-icon-search" class="filter-item"  @click="handleFilter">
         搜索
       </el-button>
       <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">

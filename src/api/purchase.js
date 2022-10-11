@@ -222,3 +222,21 @@ export function downloadContractExcel(query) {
     responseType: 'blob'
   })
 }
+
+export function fetchPurchaseList(query) {
+  return request({
+    url: '/purchase/list/',
+    method: 'get',
+    params: query
+  })
+}
+
+export function downloadPurachaseExcel(query) {
+  return request({
+    url: '/purchase/list/export/',
+    method: 'get',
+    params: query,
+    headers: { 'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' },
+    responseType: 'blob'
+  })
+}

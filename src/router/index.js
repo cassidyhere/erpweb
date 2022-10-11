@@ -142,6 +142,12 @@ export const constantRoutes = [
         meta: { title: '采购订单', icon: 'dashboard' }
       },
       {
+        path: 'list',
+        name: 'list',
+        component: () => import('@/views/purchase/list'),
+        meta: { title: '采购明细查询', icon: 'dashboard' }
+      },
+      {
         path: 'contract/create',
         name: 'createContract',
         component: () => import('@/views/purchase/contractDetail'),
