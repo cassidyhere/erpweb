@@ -84,14 +84,14 @@
           <el-button v-if="scope.row.audit_status===1" size="mini" type="danger" @click="handleDeleteReturn(scope.row.id)">
             删除
           </el-button>
-          <el-button
+          <!-- <el-button
             size="mini"
             type="success"
             plain
             @click="handleDownloadReturn(scope.row.id, scope.row.order_code)"
           >
             导出
-          </el-button>
+          </el-button> -->
         </template>
       </el-table-column>
     </el-table>
@@ -177,7 +177,7 @@ export default {
     },
     handleGetReturn(inout_id) {
       this.$router.push({
-        name: 'fetchReturn',
+        name: 'updateReturn',
         params: { inout_id: inout_id }
       })
     },

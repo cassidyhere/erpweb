@@ -8,7 +8,12 @@
       style="width: 70%; min-width: 1200px"
     >
       <el-row>
-        <el-col :span="8">
+        <el-col :span="6">
+          <el-form-item v-if="status==='update'" class="head-item" label="入仓单编号:" prop="order_code">
+            <span>{{ temp.order_code }}</span>
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
           <el-form-item class="head-item" label="关联采购单:" prop="purchase_order_name">
             <span v-if="status==='update' && temp.audit_status===2">{{ temp.purchase_order_name }}</span>
             <el-select
@@ -33,29 +38,29 @@
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="8">
+        <el-col :span="6">
           <el-form-item class="head-item" label="关联采购合同:" prop="contract_name">
             <span>{{ temp.contract_name }}</span>
           </el-form-item>
         </el-col>
-        <el-col :span="8">
+        <el-col :span="6">
           <el-form-item class="head-item" label="关联供应商:" prop="supplier_name">
             <span>{{ temp.supplier_name }}</span>
           </el-form-item>
         </el-col>
       </el-row>
       <el-row>
-        <el-col :span="8">
+        <el-col :span="6">
           <el-form-item class="head-item" label="关联工程:" prop="engineer_name">
             <span>{{ temp.engineer_name }}</span>
           </el-form-item>
         </el-col>
-        <el-col :span="8">
+        <el-col :span="6">
           <el-form-item class="head-item" label="总金额(元):" prop="total">
             <span>{{ temp.total }}</span>
           </el-form-item>
         </el-col>
-        <el-col :span="8">
+        <el-col :span="6">
           <el-form-item label="下单时间:" prop="order_time" class="head-item">
             <span v-if="status==='update' && temp.audit_status===2">{{ temp.order_time }}</span>
             <el-date-picker
@@ -67,6 +72,11 @@
               style="width: 200px;"
             >
             </el-date-picker>
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
+          <el-form-item v-if="status==='update'" class="head-item" label="下单用户:" prop="total">
+            <span>{{ temp.insert_user }}</span>
           </el-form-item>
         </el-col>
       </el-row>
@@ -89,7 +99,7 @@
       highlight-current-row
       style="width:70%; margin-left:110px; margin-bottom:20px; margin-right:10px"
     >
-      <el-table-column label="材料类别" width="180">
+      <el-table-column label="材料类别" width="140">
         <template slot-scope="scope">
           <span>{{ scope.row.category_name }}</span>
         </template>
@@ -104,22 +114,22 @@
           <span>{{ scope.row.specification }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="单位" width="200">
+      <el-table-column label="单位" width="140">
         <template slot-scope="scope">
           <span>{{ scope.row.unit }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="价格" width="200">
+      <el-table-column label="价格(元)" width="140">
         <template slot-scope="scope">
           <span>{{ scope.row.price }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="未进仓数量" width="200">
+      <el-table-column label="未进仓数量" width="140">
         <template slot-scope="scope">
           <span>{{ scope.row.unwarehouse_number }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="数量" width="200">
+      <el-table-column label="数量" width="140">
         <template slot-scope="scope">
           <span v-if="status==='update' && temp.audit_status===2">{{ scope.row.inout_quantity }}</span>
           <el-input v-else v-model="scope.row.inout_quantity" size="small" @input="handleUpdateQuantity(scope.row)"></el-input>
@@ -167,9 +177,7 @@ export default {
       var inout_id = this.$route.params.inout_id
       if (inout_id === parseInt(inout_id, 10)) {
         this.$store.dispatch('inout/setUpdatingInId', inout_id)
-        console.log('this.$store.getters.updatingInId:', this.$store.getters.updatingInId)
       } else {
-        console.log('going to get')
         inout_id = this.$store.getters.updatingInId
       }
       // 没有订单则返回列表页
