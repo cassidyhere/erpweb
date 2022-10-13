@@ -7,18 +7,18 @@
       label-width="140px"
       style="width: 70%; min-width: 1200px"
     >
-      <el-form-item v-if="status!=='create'" class="head-item" label="订单编号" prop="order_code">
+      <el-form-item v-if="status!=='create'" class="head-item" label="订单编号:" prop="order_code">
         <span>{{ temp.order_code }}</span>
       </el-form-item>
       <el-row>
         <el-col :span="10">
-          <el-form-item class="head-item" label="订单名称" prop="order_name">
+          <el-form-item class="head-item" label="订单名称:" prop="order_name">
             <el-input v-model="temp.order_name" style="width: 300px;" />
           </el-form-item>
         </el-col>
         <el-col :span="6">
-          <el-form-item label="是否关联采购合同" prop="link_contract" class="head-item">
-            <el-radio-group v-if="status==='detail'" v-model="temp.link_contract" disabled>
+          <el-form-item label="是否关联采购合同:" prop="link_contract" class="head-item">
+            <el-radio-group v-if="temp.audit_status===2" v-model="temp.link_contract" disabled>
               <el-radio label=true>是</el-radio>
               <el-radio label=false>否</el-radio>
             </el-radio-group>
@@ -29,8 +29,8 @@
           </el-form-item>
         </el-col>
         <el-col v-if="temp.link_contract==='true'" :span="8">
-          <el-form-item label="合同名称" prop="contract_name" class="head-item">
-            <span v-if="status==='detail'">{{ temp.contract_name }}</span>
+          <el-form-item label="合同名称:" prop="contract_name" class="head-item">
+            <span v-if="temp.audit_status===2">{{ temp.contract_name }}</span>
             <el-autocomplete
               v-else
               v-model="temp.contract_name"
@@ -45,8 +45,8 @@
       </el-row>
       <el-row>
         <el-col :span="10">
-          <el-form-item label="供应商名称" prop="supplier_name" class="head-item">
-            <span v-if="temp.link_contract==='true' || status==='detail'">
+          <el-form-item label="供应商名称:" prop="supplier_name" class="head-item">
+            <span v-if="temp.link_contract==='true' || temp.audit_status===2">
               {{ temp.supplier_name }}
             </span>
             <el-autocomplete
@@ -61,9 +61,9 @@
           </el-form-item>
         </el-col>
         <el-col :span="6">
-          <el-form-item label="总仓" prop="from_basecamp" class="head-item">
+          <el-form-item label="总仓:" prop="from_basecamp" class="head-item">
             <el-radio-group 
-              v-if="temp.link_contract==='true' || status==='detail'" 
+              v-if="temp.link_contract==='true' || temp.audit_status===2" 
               v-model="temp.from_basecamp"
               disabled
             >
@@ -77,8 +77,8 @@
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item v-if="temp.from_basecamp==='false'" label="工程名称" prop="engineer_name" class="head-item">
-            <span v-if="temp.link_contract==='true' || status==='detail'">{{ temp.engineer_name }}</span>
+          <el-form-item v-if="temp.from_basecamp==='false'" label="工程名称:" prop="engineer_name" class="head-item">
+            <span v-if="temp.link_contract==='true' || temp.audit_status===2">{{ temp.engineer_name }}</span>
             <el-autocomplete
               v-else
               v-model="temp.engineer_name"
@@ -93,18 +93,18 @@
       </el-row>
       <el-row>
         <el-col :span="8">
-          <el-form-item label="订单金额(元)" prop="total" class="head-item">
+          <el-form-item label="订单金额(元):" prop="total" class="head-item">
             <span>{{ temp.total }}</span>
           </el-form-item>
         </el-col>
         <el-col v-if="temp.link_contract==='true'" :span="8">
-          <el-form-item label="合同可用金额(元)" prop="total" class="head-item">
+          <el-form-item label="合同可用金额(元):" prop="leftover_total" class="head-item">
             <span>{{ temp.leftover_total }}</span>
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="下单时间" prop="order_time" class="head-item">
-            <span v-if="status==='detail'">{{ temp.order_time }}</span>
+          <el-form-item label="下单时间:" prop="order_time" class="head-item">
+            <span v-if="temp.audit_status===2">{{ temp.order_time }}</span>
             <el-date-picker
               v-else
               v-model="temp.order_time"
@@ -117,10 +117,10 @@
           </el-form-item>
         </el-col>
       </el-row>
-      <el-form-item label="备注" prop="remark" style="width: 50%;">
+      <el-form-item label="备注:" prop="remark" style="width: 50%;">
         <el-input v-model="temp.remark" type="textarea" maxlength="128" show-word-limit />
       </el-form-item>
-      <el-form-item label="材料列表" class="head-item" style="margin-top:30px">
+      <el-form-item label="材料列表:" class="head-item" style="margin-top:30px">
         <el-input v-model="mkey" placeholder="搜索材料" style="width: 200px;" class="filter-item" @keyup.enter.native="handleSearchMaterial" />
         <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleSearchMaterial">
           搜索
@@ -151,26 +151,26 @@
           <span>{{ scope.row.specification }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="单位" width="200">
+      <el-table-column label="单位" width="140">
         <template slot-scope="scope">
           <span>{{ scope.row.unit }}</span>
         </template>
       </el-table-column>
       <el-table-column label="价格(元)" width="140">
         <template slot-scope="scope">
-          <span v-if="temp.link_contract==='true' || status==='detail'">{{ scope.row.price }}</span>
+          <span v-if="temp.link_contract==='true' || temp.audit_status===2">{{ scope.row.price }}</span>
           <el-input v-else v-model="scope.row.price" size="small" @input="handleUpdatePrice(scope.row)"></el-input>
         </template>
       </el-table-column>
       <el-table-column label="数量" width="140">
         <template slot-scope="scope">
-          <span v-if="status==='detail'">{{ scope.row.number }}</span>
+          <span v-if="temp.audit_status===2">{{ scope.row.number }}</span>
           <el-input v-else v-model="scope.row.number" size="small" @input="handleUpdateNumber(scope.row)"></el-input>
         </template>
       </el-table-column>
       <el-table-column label="备注" width="220">
         <template slot-scope="scope">
-          <span v-if="status==='detail'">{{ scope.row.remark }}</span>
+          <span v-if="temp.audit_status===2">{{ scope.row.remark }}</span>
           <el-input v-else v-model="scope.row.remark" size="small"></el-input>
         </template>
       </el-table-column>
@@ -200,50 +200,38 @@ export default {
       engineers: [],
       suppliers: [],
       rules: {
-        order_name: [{ required: true, message: '请输入采购订单名称', trigger: 'change' }],
-        link_contract: [{ required: true, message: '请选择是否关联采购合同', trigger: 'change' }],
-        contract_name: [{ required: true, message: '请选择采购合同名称', trigger: 'change' }],
-        supplier_name: [{ required: true, message: '请选择供应商', trigger: 'change' }],
-        engineer_name: [{ required: true, message: '请选择工程', trigger: 'change' }],
-        from_basecamp: [{ required: true, message: '请选择是否从总仓下单', trigger: 'change' }],
-        total: [{ required: true, message: '请输入总金额', trigger: 'change' }],
+        order_name: [{ required: true, message: '请输入采购订单名称', trigger: 'blur' }],
+        link_contract: [{ required: true, message: '请选择是否关联采购合同', trigger: 'blur' }],
+        contract_name: [{ required: true, message: '请选择采购合同名称', trigger: 'blur' }],
+        supplier_name: [{ required: true, message: '请选择供应商', trigger: 'blur' }],
+        engineer_name: [{ required: true, message: '请选择工程', trigger: 'blur' }],
+        from_basecamp: [{ required: true, message: '请选择是否从总仓下单', trigger: 'blur' }],
         sign_time: [{ required: true, message: '请选择签订日期', trigger: 'blur' }],
       }
     }
   },
 
   created() {
-    console.log('this.$route.path:', this.$route.path )
-    if (this.$route.path.endsWith('update') || this.$route.path.endsWith('detail')) {
+    if (this.$route.path.endsWith('update')) {
+      this.status = 'update'
       // 先从传参找order_id，找不到再从store找
       var order_id = this.$route.params.order_id
-      if (this.$route.path.endsWith('update')) {
-        this.status = 'update'
-        if (order_id === parseInt(order_id, 10)) {
-          this.$store.dispatch('order/setUpdatingOrderId', order_id)
-        } else {
-          order_id = this.$store.getters.updatingOrderId
-        }
+      if (order_id === parseInt(order_id, 10)) {
+        this.$store.dispatch('order/setUpdatingOrderId', order_id)
       } else {
-        this.status = 'detail'
-        if (order_id === parseInt(order_id, 10)) {
-          this.$store.dispatch('order/setLookingOrderId', order_id)
-        } else {
-          order_id = this.$store.getters.lookingOrderId
-          console.log('get lookingOrderId:', order_id)
-        }
+        order_id = this.$store.getters.updatingOrderId
       }
       // 没有订单则返回列表页
       if (order_id === undefined) {
         this.cancel()
       } else {
         this.order_id = order_id
+        // 获取订单明细
+        fetchOrder({ order_id: order_id }).then(res => {
+          this.temp = Object.assign({}, res)
+          this.temp_materials = this.temp.materials
+        })
       }
-      // 获取订单明细
-      fetchOrder({ order_id: order_id }).then(res => {
-        this.temp = Object.assign({}, res)
-        this.temp_materials = this.temp.materials
-      })
 
     } else {
       this.status = 'create'
@@ -255,6 +243,7 @@ export default {
       } else {
         fetchContractInfo({ contract_id: contract_id }).then(res => {
           Object.assign(this.temp, res)
+          this.temp.link_contract = "true"
           this.temp_materials = this.temp.materials
         })
       }
@@ -308,6 +297,9 @@ export default {
       this.temp.contract_name = undefined
       this.temp.supplier_id = undefined
       this.temp.supplier_name = undefined
+      this.temp.engineer_id = undefined
+      this.temp.engineer_name = undefined
+      this.temp.leftover_total = undefined
       this.temp.materials = this.temp_materials = []
       this.temp.total = 0
     },

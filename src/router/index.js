@@ -257,13 +257,6 @@ export const constantRoutes = [
         hidden: true
       },
       {
-        path: 'in/detail',
-        name: 'fetchIn',
-        component: () => import('@/views/inout/inDetail'),
-        meta: { title: '查看入仓单' },
-        hidden: true
-      },
-      {
         path: 'pick/create',
         name: 'createPick',
         component: () => import('@/views/inout/pickDetail'),
@@ -275,13 +268,6 @@ export const constantRoutes = [
         name: 'updatePick',
         component: () => import('@/views/inout/pickDetail'),
         meta: { title: '更新出仓单(领料单)' },
-        hidden: true
-      },
-      {
-        path: 'pick/detail',
-        name: 'fetchPick',
-        component: () => import('@/views/inout/pickDetail'),
-        meta: { title: '查看出仓单(领料单)' },
         hidden: true
       },
       {
@@ -299,13 +285,6 @@ export const constantRoutes = [
         hidden: true
       },
       {
-        path: 'slip/detail',
-        name: 'fetchSlip',
-        component: () => import('@/views/inout/slipDetail'),
-        meta: { title: '查看退库单' },
-        hidden: true
-      },
-      {
         path: 'return/create',
         name: 'createReturn',
         component: () => import('@/views/inout/returnDetail'),
@@ -319,13 +298,6 @@ export const constantRoutes = [
         meta: { title: '更新退货单' },
         hidden: true
       },
-      {
-        path: 'return/detail',
-        name: 'fetchReturn',
-        component: () => import('@/views/inout/returnDetail'),
-        meta: { title: '查看退货单' },
-        hidden: true
-      }
     ]
   },
 

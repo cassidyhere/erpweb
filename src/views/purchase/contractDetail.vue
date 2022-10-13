@@ -5,24 +5,24 @@
       :model="temp"
       :rules="rules"
       label-width="110px"
-      style="width: 70%;"
+      style="width: 70%; min-width: 1200px"
     >
       <el-row>
         <el-col :span="8">
-          <el-form-item class="head-item" label="合同名称" prop="contract_name" style="width: 50%;">
+          <el-form-item class="head-item" label="合同名称:" prop="contract_name" style="width: 50%;">
             <el-input v-model="temp.contract_name" style="width: 300px;" />
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item v-if="status!=='create'" class="head-item" label="合同编号" prop="contract_code">
+          <el-form-item v-if="status!=='create'" class="head-item" label="合同编号:" prop="contract_code">
             <span>{{ temp.contract_code }}</span>
           </el-form-item>
         </el-col>
       </el-row>
       <el-row>
         <el-col :span="8">
-          <el-form-item label="供应商名称" prop="supplier_name" class="head-item">
-            <span v-if="temp.link_contract==='true' || status==='detail'">
+          <el-form-item label="供应商名称:" prop="supplier_name" class="head-item">
+            <span v-if="temp.link_contract==='true' || temp.audit_status===2">
               {{ temp.supplier_name }}
             </span>
             <el-autocomplete
@@ -37,9 +37,9 @@
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="总仓" prop="from_basecamp" class="head-item">
+          <el-form-item label="总仓:" prop="from_basecamp" class="head-item">
             <el-radio-group 
-              v-if="temp.link_contract==='true' || status==='detail'" 
+              v-if="temp.link_contract==='true' || temp.audit_status===2" 
               v-model="temp.from_basecamp"
               disabled
             >
@@ -53,8 +53,8 @@
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item v-if="temp.from_basecamp==='false'" label="工程名称" prop="engineer_name" class="head-item">
-            <span v-if="temp.link_contract==='true' || status==='detail'">{{ temp.engineer_name }}</span>
+          <el-form-item v-if="temp.from_basecamp==='false'" label="工程名称:" prop="engineer_name" class="head-item">
+            <span v-if="temp.link_contract==='true' || temp.audit_status===2">{{ temp.engineer_name }}</span>
             <el-autocomplete
               v-else
               v-model="temp.engineer_name"
@@ -69,14 +69,14 @@
       </el-row>
       <el-row>
         <el-col :span="8">
-          <el-form-item label="合同金额(元)" prop="total" class="head-item">
-            <span v-if="status==='detail'">{{ temp.total }}</span>
+          <el-form-item label="合同金额(元):" prop="total" class="head-item">
+            <span v-if="temp.audit_status===2">{{ temp.total }}</span>
             <el-input v-else v-model="temp.total" style="width: 200px;" />
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="签订时间" prop="sign_time" class="head-item">
-            <span v-if="status==='detail'">{{ temp.sign_time }}</span>
+          <el-form-item label="签订时间:" prop="sign_time" class="head-item">
+            <span v-if="temp.audit_status===2">{{ temp.sign_time }}</span>
             <el-date-picker
               v-else
               v-model="temp.sign_time"
@@ -89,16 +89,15 @@
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="签订用户" prop="sign_user" class="head-item">
-            <span v-if="status==='detail'">{{ temp.sign_user }}</span>
-            <el-input v-else v-model="temp.sign_user" style="width: 200px;" />
+          <el-form-item label="签订用户:" prop="sign_user" class="head-item">
+            <span>{{ temp.sign_user }}</span>
           </el-form-item>
         </el-col>
       </el-row>
-      <el-form-item label="备注" prop="remark" style="width: 50%;">
+      <el-form-item label="备注:" prop="remark" style="width: 50%;">
         <el-input v-model="temp.remark" type="textarea" maxlength="128" show-word-limit />
       </el-form-item>
-      <el-form-item label="材料列表" class="head-item" style="margin-top:30px">
+      <el-form-item label="材料列表:" class="head-item" style="margin-top:30px">
         <el-input v-model="mkey" placeholder="搜索材料" style="width: 200px;" class="filter-item" @keyup.enter.native="handleSearchMaterial" />
         <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleSearchMaterial">
           搜索
@@ -114,7 +113,7 @@
       highlight-current-row
       style="width:70%; margin-left:110px; margin-bottom:20px; margin-right:10px"
     >
-      <el-table-column label="材料类别" width="180">
+      <el-table-column label="材料类别" width="140">
         <template slot-scope="scope">
           <span>{{ scope.row.category_name }}</span>
         </template>
@@ -129,14 +128,14 @@
           <span>{{ scope.row.specification }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="单位" width="200">
+      <el-table-column label="单位" width="140">
         <template slot-scope="scope">
           <span>{{ scope.row.unit }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="价格" width="200">
+      <el-table-column label="价格(元)" width="140">
         <template slot-scope="scope">
-          <span v-if="status==='detail'">{{ scope.row.price }}</span>
+          <span v-if="temp.audit_status===2">{{ scope.row.price }}</span>
           <el-input v-else v-model="scope.row.price" size="small" @blur="handleUpdatePrice(scope.row)"></el-input>
         </template>
       </el-table-column>
@@ -196,37 +195,26 @@ export default {
   },
 
   created() {
-    console.log('this.$route.path:', this.$route.path )
-    if (this.$route.path.endsWith('update') || this.$route.path.endsWith('detail')) {
+    if (this.$route.path.endsWith('update')) {
+      this.status = 'update'
       // 先从传参找contract_id，找不到再从store找
       var contract_id = this.$route.params.contract_id
-      if (this.$route.path.endsWith('update')) {
-        this.status = 'update'
-        if (contract_id === parseInt(contract_id, 10)) {
-          this.$store.dispatch('contract/setUpdatingContractId', contract_id)
-        } else {
-          contract_id = this.$store.getters.updatingContractId
-        }
+      if (contract_id === parseInt(contract_id, 10)) {
+        this.$store.dispatch('contract/setUpdatingContractId', contract_id)
       } else {
-        this.status = 'detail'
-        if (contract_id === parseInt(contract_id, 10)) {
-          this.$store.dispatch('contract/setLookingContractId', contract_id)
-        } else {
-          contract_id = this.$store.getters.lookingContractId
-          console.log('get lookingContractId:', contract_id)
-        }
+        contract_id = this.$store.getters.updatingContractId
       }
       // 没有合同则返回列表页
       if (contract_id === undefined) {
         this.cancel()
       } else {
         this.contract_id = contract_id
+        // 获取合同明细
+        fetchContract({ contract_id: this.contract_id }).then(res => {
+          this.temp = Object.assign({}, res)
+          this.temp_materials = this.temp.materials
+        })
       }
-      // 获取合同明细
-      fetchContract({ contract_id: this.contract_id }).then(res => {
-        this.temp = Object.assign({}, res)
-        this.temp_materials = this.temp.materials
-      })
     } else {
       this.status = 'create'
       // 从store找
@@ -268,7 +256,7 @@ export default {
       })
     },
     cancel() {
-      this.$store.dispatch('tagsView/delVisitedViewByPath', '/purchase/contract/update')
+      this.$store.dispatch('tagsView/delViewByPath', '/purchase/contract/update')
       this.$store.dispatch('contract/clearContractInfo')
       this.$router.push({
         name: 'contract'

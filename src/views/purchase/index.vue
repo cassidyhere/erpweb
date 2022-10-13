@@ -93,13 +93,12 @@
       <el-table-column label="操作" align="center" width="300" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
-            v-if="scope.row.audit_status===1"
             size="mini"
-            type="info"
+            type="primary"
             plain
             @click="handleUpdateContract(scope.row.id)"
           >
-            编辑
+            查看
           </el-button>
           <el-button
             v-if="scope.row.audit_status===1"
@@ -109,15 +108,6 @@
             @click="handleDeleteContract(scope.row.id)"
           >
             刪除
-          </el-button>
-          <el-button
-            v-if="scope.row.audit_status===2 && scope.row.status===1"
-            size="mini"
-            type="primary"
-            plain
-            @click="handleGetContract(scope.row.id)"
-          >
-            查看
           </el-button>
           <el-button
             v-if="scope.row.audit_status===2 && scope.row.status===1"
@@ -256,12 +246,6 @@ export default {
     handleUpdateContract(contract_id) {
       this.$router.push({
         name: 'updateContract',
-        params: { contract_id: contract_id }
-      })
-    },
-    handleGetContract(contract_id) {
-      this.$router.push({
-        name: 'fetchContract',
         params: { contract_id: contract_id }
       })
     },
