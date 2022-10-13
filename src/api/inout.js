@@ -98,7 +98,7 @@ export function createSlip(data) {
 
 export function updateSlip(data) {
   return request({
-    url: '/inout/slip/create/',
+    url: '/inout/slip/update/',
     method: 'post',
     data: data
   })

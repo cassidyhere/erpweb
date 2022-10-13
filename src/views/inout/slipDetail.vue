@@ -113,12 +113,12 @@
           <span>{{ scope.row.price }}</span>
         </template>
       </el-table-column>
-      <el-table-column v-if="temp.audit_status!==2" label="出仓数量" width="200">
+      <el-table-column v-if="temp.audit_status!==2" label="出仓数量" width="140">
         <template slot-scope="scope">
           <span>{{ scope.row.picked_quantity }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="数量" width="200">
+      <el-table-column label="数量" width="140">
         <template slot-scope="scope">
           <span v-if="status==='update' && temp.audit_status===2">{{ scope.row.inout_quantity }}</span>
           <el-input v-else v-model="scope.row.inout_quantity" size="small" @input="handleUpdateQuantity(scope.row)"></el-input>
@@ -175,7 +175,7 @@ export default {
       } else {
         this.inout_id = inout_id
         // 获取订单明细
-        fetchInout({ inout_id: inout_id, order_type: 2 }).then(res => {
+        fetchInout({ inout_id: inout_id, order_type: 3 }).then(res => {
           this.temp = Object.assign({}, res)
           this.temp_materials = this.temp.materials
         })

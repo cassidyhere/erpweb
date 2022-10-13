@@ -76,7 +76,12 @@ service.interceptors.response.use(
     }
   },
   error => {
-    console.log('err' + error) // for debug
+    console.log('err:' + error, error.response.status) // for debug
+    if (error.response.status === 401) {
+      store.dispatch('user/resetToken').then(() => {
+        location.reload()
+      })
+    }
     const data = error.response.data
     Message({
       message: data.msg,

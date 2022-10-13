@@ -124,7 +124,7 @@
           <span>{{ scope.row.price }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="未进仓数量" width="140">
+      <el-table-column v-if="temp.audit_status!==2" label="未进仓数量" width="140">
         <template slot-scope="scope">
           <span>{{ scope.row.unwarehouse_number }}</span>
         </template>

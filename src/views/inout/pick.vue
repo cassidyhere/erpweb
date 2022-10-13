@@ -66,7 +66,7 @@
           <span>{{ scope.row.remark }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="审核状态" width="80" align="center">
+      <el-table-column label="审核状态" width="120" align="center">
         <template slot-scope="scope">
           <el-button v-if="scope.row.audit_status===1" size="mini" type="primary" @click="handleAuditPick(scope.row.id)">
             审核

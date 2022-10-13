@@ -113,17 +113,17 @@
           <span>{{ scope.row.price }}</span>
         </template>
       </el-table-column>
-      <el-table-column v-if="temp.audit_status!==2" label="库存数量" width="200">
+      <el-table-column v-if="temp.audit_status!==2" label="库存数量" width="140">
         <template slot-scope="scope">
           <span>{{ scope.row.inventory_quantity }}</span>
         </template>
       </el-table-column>
-      <el-table-column v-if="temp.audit_status!==2" label="可用数量" width="200">
+      <el-table-column v-if="temp.audit_status!==2" label="可用数量" width="140">
         <template slot-scope="scope">
           <span>{{ scope.row.available_quantity }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="数量" width="200">
+      <el-table-column label="数量" width="140">
         <template slot-scope="scope">
           <span v-if="status==='update' && temp.audit_status===2">{{ scope.row.inout_quantity }}</span>
           <el-input v-else v-model="scope.row.inout_quantity" size="small" @input="handleUpdateQuantity(scope.row)"></el-input>
