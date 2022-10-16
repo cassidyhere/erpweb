@@ -108,7 +108,7 @@ export const constantRoutes = [
       {
         path: 'engineer/create',
         name: 'createEngineer',
-        component: () => import('@/views/engineer/createEngineer'),
+        component: () => import('@/views/engineer/updateEngineer'),
         meta: { title: '新建工程' },
         hidden: true
       },

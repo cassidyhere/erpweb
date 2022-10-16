@@ -11,9 +11,9 @@
       <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">
         导出excel
       </el-button>
-      <el-button :loading="loading" class="filter-item" type="primary" @click="handleUpload">
+      <!-- <el-button :loading="loading" class="filter-item" type="primary" @click="handleUpload">
         上传excel
-      </el-button>
+      </el-button> -->
       <input ref="excel-upload-input" class="excel-upload-input" type="file" accept=".xlsx, .xls" @change="handleClick">
     </div>
 
@@ -25,7 +25,7 @@
       fit
       highlight-current-row
       style="width: 100%;"
-      :default-sort="{prop: 'id', order: 'ascending'}"
+      :default-sort="{prop: 'id', order: 'descending'}"
       @sort-change="sortChange"
     >
       <el-table-column label="ID" prop="id" sortable="custom" align="center" width="40">
@@ -195,86 +195,6 @@
 
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
 
-    <el-dialog
-      :title="textMap[dialogStatus]"
-      width="900px"
-      :visible.sync="dialogFormVisible"
-    >
-      <el-form
-        ref="dataForm"
-        :model="temp"
-        :rules="rules"
-        label-position="left"
-        label-width="110px"
-        size="small"
-        style="width: 500px; margin-left:50px;"
-      >
-        <el-form-item v-if="dialogStatus==='update'" label="工程编号:" prop="engineer_code">
-          <el-input v-model="temp.engineer_code" :disabled="true" />
-        </el-form-item>
-        <el-form-item label="工程名称:" prop="engineer_name">
-          <el-input v-if="dialogStatus==='create' || temp.audit_status===1" v-model="temp.engineer_name" />
-          <span v-else>{{ temp.engineer_name }}</span>
-        </el-form-item>
-
-        <el-form-item label="中标情况:" prop="winner">
-          <el-input v-if="dialogStatus==='create' || temp.audit_status===1" v-model="temp.winner" />
-          <span v-else>{{ temp.winner }}</span>
-        </el-form-item>
-        <el-form-item label="甲方:" prop="party_a">
-          <el-input v-if="dialogStatus==='create' || temp.audit_status===1" v-model="temp.party_a" />
-          <span v-else>{{ temp.party_a }}</span>
-        </el-form-item>
-        <el-form-item label="乙方:" prop="party_b">
-          <el-input v-if="dialogStatus==='create' || temp.audit_status===1" v-model="temp.party_b" style="width: 150px;" />
-          <span v-else>{{ temp.party_b }}</span>
-        </el-form-item>
-        <el-form-item label="工程金额(元):" prop="total">
-          <el-input v-if="dialogStatus==='create' || temp.audit_status===1" v-model="temp.total" style="width: 150px;" />
-          <span v-else>{{ temp.total }}</span>
-        </el-form-item>
-        <el-form-item v-if="temp.audit_status===2" label="签订增项:" prop="extension">
-          <el-input v-if="temp.status!==5" v-model="temp.extension" type="textarea" maxlength="128" show-word-limit />
-          <span v-else>{{ temp.extension }}</span>
-        </el-form-item>
-        <el-form-item v-if="temp.audit_status===2" label="结算价(元):" prop="settlement">
-          <el-input v-if="temp.status!==5" v-model="temp.settlement" style="width: 150px;" />
-          <span v-else>{{ temp.settlement }}</span>
-        </el-form-item>
-        <el-form-item label="签订时间:" prop="sign_time">
-          <el-date-picker
-            v-if="dialogStatus==='create' || temp.audit_status===1"
-            v-model="temp.sign_time"
-            type="date"
-            placeholder="选择日期"
-            value-format="yyyy-MM-dd"
-          />
-          <span v-else>{{ temp.sign_time }}</span>
-        </el-form-item>
-        <el-form-item label="备注:" prop="remark">
-          <el-input v-if="temp.status!==5"  v-model="temp.remark" type="textarea" maxlength="128" show-word-limit />
-          <span v-else>{{ temp.remark }}</span>
-        </el-form-item>
-        <el-form-item label="工程类型:" prop="types" style="width: 500px;">
-          <el-checkbox-group v-if="dialogStatus==='create' || temp.audit_status===1" v-model="temp.engineer_types">
-            <el-checkbox v-for="t in engineerTypes" :label="t.name" :key="t.id">{{t.name}}</el-checkbox>
-          </el-checkbox-group>
-          <el-checkbox-group v-else v-model="temp.engineer_types" :disabled="true">
-            <el-checkbox v-for="t in engineerTypes" :label="t.name" :key="t.id">{{t.name}}</el-checkbox>
-          </el-checkbox-group>
-        </el-form-item>
-      </el-form>
-
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">
-          取消
-        </el-button>
-        <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">
-          确认
-        </el-button>
-      </div>
-    </el-dialog>
-
   </div>
 </template>
 
@@ -284,22 +204,10 @@ import waves from '@/directive/waves' // waves directive
 import fileDownload from 'js-file-download'
 import {
   fetchList,
-  fetchEngineer,
-  createEngineer,
-  modifyEngineer,
   auditEngineer,
   updateEngineerStatus,
-  updateEngineer,
   importEngineerExcel,
   downloadEngineerExcel,
-  collectionHistory,
-  engineerCollect,
-  createEngineerBudget,
-  updateEngineerBudget,
-  fetchBudgetList,
-  fetchBudgetDetail,
-  fetchCostList,
-  fetchCostDetail,
   deleteEngineer
 } from '@/api/engineer'
 
@@ -316,49 +224,14 @@ export default {
         status: undefined,
         audit_status: undefined,
         key: undefined,
-        sort_by: null,
-        ascending: 1
+        sort_by: 'id',
+        ascending: 0
       },
       listLoading: true,
       list: null,
       total: 0,
-      temp: {
-        engineer_name: undefined,
-        winner: undefined,
-        total: undefined,
-        party_a: undefined,
-        party_b: undefined,
-        extension: undefined,
-        settlement: undefined,
-        sign_time: undefined,
-        remark: undefined,
-        engineer_types: []
-      },
       downloadLoading: false,
-      loading: false,
-
-      // dialog
-      dialogStatus: '',
-      dialogFormVisible: false,
-      textMap: {
-        update: '编辑',
-        create: '新增'
-      },
-      rules: {
-        engineer_name: [{ required: true, message: '请输入工程名称', trigger: 'change' }],
-        winner: [{ required: true, message: '请输入中标情况', trigger: 'change' }],
-        total: [{ required: true, message: '请输入总金额', trigger: 'change' }],
-        party_a: [{ required: true, message: '请输入甲方', trigger: 'change' }],
-        party_b: [{ required: true, message: '请输入乙方', trigger: 'change' }],
-        sign_time: [{ required: true, message: '请选择签订日期', trigger: 'blur' }],
-        engineer_types: [{ required: true, message: '请选择至少一项工程类型', trigger: 'change' }],
-      },
-      engineerTypes: [
-        { id: 1, name: '电房' },
-        { id: 2, name: '箱变' },
-        { id: 3, name: '表前' },
-        { id: 4, name: '表后' }
-      ]
+      loading: false
     }
   },
 
@@ -381,24 +254,10 @@ export default {
       })
     },
     handleCreate() {
-      this.$store.dispatch('engineer/clearEngineerInfo')
+      // this.$store.dispatch('engineer/clearEngineerInfo')
       this.$router.push({
         name: 'createEngineer'
       })
-    },
-    resetTemp() {
-      this.temp = {
-        engineer_name: undefined,
-        winner: undefined,
-        total: undefined,
-        party_a: undefined,
-        party_b: undefined,
-        sign_time: undefined,
-        extension: undefined,
-        settlement: undefined,
-        remark: undefined,
-        engineer_types: []
-      }
     },
     handleDownload() {
       this.downloadLoading = true
@@ -544,42 +403,6 @@ export default {
       this.$router.push({
         name: 'collection',
         params: { engineer_id: engineer_id, can_edit: can_edit }
-      })
-    },
-
-    // dialog
-    createData() {
-      this.$refs['dataForm'].validate((valid) => {
-        if (valid) {
-          createEngineer(this.temp).then(() => {
-            this.dialogFormVisible = false
-            this.$notify({
-              title: 'Success',
-              message: 'Created Successfully',
-              type: 'success',
-              duration: 2000
-            })
-            this.getList()
-          })
-        }
-      })
-    },
-    updateData() {
-      this.$refs['dataForm'].validate((valid) => {
-        if (valid) {
-          const tempData = Object.assign({ engineer_id: this.temp.id }, this.temp)
-          updateEngineer(tempData).then(() => {
-            const index = this.list.findIndex(v => v.id === this.temp.id)
-            this.list.splice(index, 1, this.temp)
-            this.dialogFormVisible = false
-            this.$notify({
-              title: 'Success',
-              message: 'Update Successfully',
-              type: 'success',
-              duration: 2000
-            })
-          })
-        }
       })
     }
   }

@@ -7,35 +7,61 @@
       label-width="110px"
       style="width: 800px;"
     >
-      <el-form-item label="工程名称:" prop="engineer_name">
-        <span>{{ temp.engineer_name }}</span>
+      <el-form-item v-if="status==='update'" label="工程编号:" prop="engineer_code">
+        <span>{{ temp.engineer_code }}</span>
       </el-form-item>
-      <el-form-item label="中标情况:" prop="winner">
+      <el-form-item label="工程名称:" prop="engineer_name">
+        <el-input v-model="temp.engineer_name" />
+      </el-form-item>
+      <el-form-item v-if="temp.audit_status===2" label="中标情况:" prop="winner">
         <el-radio v-model="temp.winner" label="胜博" disabled>胜博</el-radio>
         <el-radio v-model="temp.winner" label="元天" disabled>元天</el-radio>
       </el-form-item>
+      <el-form-item v-else label="中标情况:" prop="winner">
+        <el-radio v-model="temp.winner" label="胜博" @input="handleUpdateWinner">胜博</el-radio>
+        <el-radio v-model="temp.winner" label="元天" @input="handleUpdateWinner">元天</el-radio>
+      </el-form-item>
       <el-form-item label="甲方:" prop="party_a">
-        <span>{{ temp.party_a }}</span>
+        <span v-if="temp.audit_status===2">{{ temp.party_a }}</span>
+        <el-input v-else v-model="temp.party_a" />
       </el-form-item>
       <el-form-item label="乙方:" prop="party_b">
-        <span>{{ temp.party_b }}</span>
+        <span v-if="temp.audit_status===2">{{ temp.party_b }}</span>
+        <el-input v-else v-model="temp.party_b" style="width: 150px;" />
       </el-form-item>
       <el-form-item label="工程金额(元):" prop="total">
-        <span>{{ temp.total }}</span>
+        <span v-if="temp.audit_status===2">{{ temp.total }}</span>
+        <el-input v-else model="temp.total" @input="handleUpdateTotal(temp.total)" style="width: 150px;" />
       </el-form-item>
       <el-form-item label="签订时间:" prop="sign_time">
-        <span>{{ temp.sign_time }}</span>
+        <span v-if="temp.audit_status===2">{{ temp.sign_time }}</span>
+        <el-date-picker
+          v-else
+          v-model="temp.sign_time"
+          type="date"
+          placeholder="选择日期"
+          value-format="yyyy-MM-dd"
+        />
+      </el-form-item>
+      <el-form-item v-if="temp.audit_status===2" label="签订增项:" prop="extension">
+        <el-input v-model="temp.extension" type="textarea" maxlength="128" show-word-limit />
+      </el-form-item>
+      <el-form-item v-if="temp.audit_status===2" label="结算价(元):" prop="settlement">
+        <el-input v-model="temp.settlement" @input="handleUpdateSettlement(temp.settlement)" style="width: 150px;" />
       </el-form-item>
       <el-form-item label="备注:" prop="remark">
         <el-input v-model="temp.remark" type="textarea" maxlength="128" show-word-limit />
       </el-form-item>
       <el-form-item label="工程类型:" prop="types" style="width: 500px;">
-        <el-checkbox-group v-model="temp.engineer_types">
+        <el-checkbox-group v-if="temp.audit_status===2" v-model="temp.engineer_types">
           <el-checkbox v-for="t in engineerTypes" :label="t.name" :key="t.id" disabled>{{t.name}}</el-checkbox>
+        </el-checkbox-group>
+        <el-checkbox-group v-else v-model="temp.engineer_types">
+          <el-checkbox v-for="t in engineerTypes" :label="t.name" :key="t.id">{{t.name}}</el-checkbox>
         </el-checkbox-group>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="createData">确定</el-button>
+        <el-button type="primary" @click="updateData">确定</el-button>
         <el-button @click="cancel">取消</el-button>
       </el-form-item>
     </el-form>
@@ -43,7 +69,8 @@
 </template>
 
 <script>
-import { fetchEngineer, updateEngineer } from '@/api/engineer'
+import { fetchEngineer, updateEngineer, createEngineer } from '@/api/engineer'
+import { getNowTime, isNumeric } from '@/utils/common'
 
 export default {
   data() {
@@ -68,37 +95,71 @@ export default {
   },
 
   created() {
-    this.engineer_id = this.$route.params.engineer_id
-    if (this.engineer_id === parseInt(this.engineer_id, 10)) {
-      const data = { engineer_id: this.engineer_id }
-      fetchEngineer(data).then(res => {
-        this.temp = Object.assign({}, res)
-      })
+    if (this.$route.path.endsWith('update')) {
+      this.status = 'update'
+      // 先从传参找inout_id，找不到再从store找
+      var engineer_id = this.$route.params.engineer_id
+      if (engineer_id === parseInt(engineer_id, 10)) {
+        this.$store.dispatch('engineer/setEngineerId', engineer_id)
+      } else {
+        engineer_id = this.$store.getters.updatingEngineerId
+      }
+      // 没有订单则返回列表页
+      if (engineer_id === undefined) {
+        this.cancel()
+      } else {
+        this.engineer_id = engineer_id
+        // 获取订单明细
+        fetchEngineer({ engineer_id: engineer_id }).then(res => {
+          this.temp = Object.assign({}, res)
+        })
+      }
+    } else {
+      this.status = 'create'
+      // 从store找
+      this.temp = this.$store.getters.engineerInfo
+      if (this.temp.sign_time === undefined) {
+        this.temp.sign_time = getNowTime()
+      }
     }
   },
 
   methods: {
-    createData() {
+    updateData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          createEngineer(this.temp).then(() => {
+          var f = this.status === "update" ? updateEngineer : createEngineer
+          var args = Object.assign({engineer_id: this.engineer_id}, this.temp)
+          f(args).then(() => {
             this.$notify({
               title: 'Success',
               message: 'Created Successfully',
               type: 'success',
               duration: 2000
             })
-            this.$store.dispatch('tagsView/delVisitedViewByPath', '/engineer/create', 'createEngineer')
-            this.$store.dispatch('engineer/clearEngineerInfo')
-            this.$router.push({
-              name: 'engineer'
-            })
+            this.cancel()
           })
         }
       })
     },
+    handleUpdateWinner() {
+      var party_b = this.temp.party_b
+      if (party_b === undefined || party_b === '' || party_b === null || party_b === '胜博' || party_b === '元天') {
+        this.temp.party_b = this.temp.winner
+      }
+    },
+    handleUpdateTotal(total) {
+      if (!isNumeric(total) || Number(total) < 0) {
+        this.temp.total = null
+      }
+    },
+    handleUpdateSettlement(settlement) {
+      if (!isNumeric(settlement) || Number(settlement) < 0) {
+        this.temp.settlement = null
+      }
+    },
     cancel() {
-      this.$store.dispatch('tagsView/delVisitedViewByPath', '/engineer/create', 'createEngineer')
+      this.$store.dispatch('tagsView/delVisitedViewByPath', '/engineer/' + this.status, this.status + 'Engineer')
       this.$store.dispatch('engineer/clearEngineerInfo')
       this.$router.push({
         name: 'engineer'
