@@ -19,6 +19,8 @@
       highlight-current-row
       style="width: 100%;"
       :default-sort="{prop: 'id', order: 'ascending'}"
+      class="sticky-head"
+      v-sticky="{ top: 0, parent: '.app-container' }"
       @sort-change="sortChange"
     >
       <el-table-column fixed label="ID" prop="id" sortable="custom" align="center" width="40">
@@ -150,6 +152,7 @@ import Pagination from '@/components/Pagination'
 import waves from '@/directive/waves' // waves directive
 import fileDownload from 'js-file-download'
 import { fetchEngineerStats } from '@/api/engineer'
+import '@/directive/table-sticky.js'
 
 export default {
   components: { Pagination },

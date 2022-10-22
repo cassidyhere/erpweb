@@ -1,3 +1,4 @@
+import './theme/geryTheme/theme/index.css'
 import Vue from 'vue'
 
 import Cookies from 'js-cookie'

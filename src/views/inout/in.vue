@@ -94,14 +94,14 @@
           <el-button v-if="scope.row.audit_status===1" size="mini" type="danger" @click="handleDeleteWarehouse(scope.row.id)">
             删除
           </el-button>
-          <!-- <el-button
+          <el-button
             size="mini"
             type="success"
             plain
             @click="handleDownloadIn(scope.row.id, scope.row.order_code)"
           >
             导出
-          </el-button> -->
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -218,7 +218,7 @@ export default {
     },
     handleDownloadIn(inout_id, order_code) {
       this.downloadLoading = true
-      downloadInExcel({ in_order_id: inout_id }).then(res => {
+      downloadInExcel({ warehouse_order_id: inout_id }).then(res => {
         fileDownload(res.data, order_code + '.xlsx')
         this.downloadLoading = false
       })
