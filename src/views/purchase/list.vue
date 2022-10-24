@@ -60,7 +60,7 @@
       border
       fit
       highlight-current-row
-      style="width: 100%;"
+      :header-cell-style="{background:'#F1F3F7'}"
     >
       <el-table-column label="ID" prop="id" align="center" width="60">
         <template slot-scope="scope">

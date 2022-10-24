@@ -25,6 +25,7 @@
       fit
       highlight-current-row
       style="width: 100%;"
+      :header-cell-style="{background:'#F1F3F7'}"
       :default-sort="{prop: 'id', order: 'descending'}"
       @sort-change="sortChange"
     >
@@ -415,3 +416,4 @@ export default {
   z-index: -9999;
 }
 </style>
+

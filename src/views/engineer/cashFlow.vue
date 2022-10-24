@@ -20,6 +20,7 @@
       style="width: 100%;"
       :default-sort="{prop: 'id', order: 'ascending'}"
       class="sticky-head"
+      :header-cell-style="{background:'#F1F3F7'}"
       v-sticky="{ top: 0, parent: '.app-container' }"
       @sort-change="sortChange"
     >

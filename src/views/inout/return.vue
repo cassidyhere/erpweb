@@ -34,6 +34,7 @@
       highlight-current-row
       style="width: 100%;"
       :default-sort="{prop: 'id', order: 'descending'}"
+      :header-cell-style="{background:'#F1F3F7'}"
       @sort-change="sortChange"
     >
       <el-table-column label="ID" prop="id" sortable="custom" align="center" width="80">

@@ -39,6 +39,7 @@
       border
       fit
       highlight-current-row
+      :header-cell-style="{background:'#F1F3F7'}"
       style="width: 100%;"
     >
       <el-table-column label="ID" prop="id" align="center" width="80">

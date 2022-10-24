@@ -21,6 +21,7 @@
       fit
       highlight-current-row
       :default-sort="{prop: 'id', order: 'descending'}"
+      :header-cell-style="{background:'#F1F3F7'}"
       @sort-change="sortChange"
     >
       <el-table-column label="ID" sortable="custom" prop="id" align="center" width="80">

@@ -76,6 +76,7 @@
       fit
       height="800px"
       highlight-current-row
+      :header-cell-style="{background:'#F1F3F7'}"
       style="width:70%; margin-left:110px; margin-bottom:20px; margin-right:10px"
     >
       <el-table-column label="采购合同" width="200">
