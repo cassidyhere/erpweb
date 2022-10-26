@@ -18,23 +18,24 @@
     </div>
 
     <el-table
-      v-loading="listLoading"
       :data="list"
+      v-loading="listLoading"
       element-loading-text="Loading"
       border
       fit
       highlight-current-row
       style="width: 100%;"
+      :max-height="tableHeight"
       :header-cell-style="{background:'#F1F3F7'}"
       :default-sort="{prop: 'id', order: 'descending'}"
       @sort-change="sortChange"
     >
-      <el-table-column label="ID" prop="id" sortable="custom" align="center" width="40">
+      <el-table-column label="ID" prop="id" sortable="custom" align="center" width="60">
         <template slot-scope="scope">
           <span>{{ scope.row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="工程名称" prop="engineer_name" sortable="custom" width="240" align="center">
+      <el-table-column label="工程名称" prop="engineer_name" sortable="custom" min-width="240" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.engineer_name }}</span>
         </template>
@@ -54,7 +55,7 @@
           <span>{{ scope.row.total }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="签订增项" width="200" align="center">
+      <el-table-column label="签订增项" min-width="200" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.extension }}</span>
         </template>
@@ -79,7 +80,7 @@
           <span>{{ scope.row.sign_time }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="备注" width="200" align="center">
+      <el-table-column label="备注" min-width="200" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.remark }}</span>
         </template>
@@ -116,7 +117,7 @@
           </el-button>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="400" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" min-width="360" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             v-if="canEditDetail(scope.row.status)"
@@ -232,8 +233,17 @@ export default {
       list: null,
       total: 0,
       downloadLoading: false,
-      loading: false
+      loading: false,
+      tableHeight: "100px"
     }
+  },
+
+  mounted() {
+    this.getAutoHeight()
+    const self = this;
+    window.onresize = function() {
+      self.getAutoHeight();
+    };
   },
 
   created() {
@@ -405,6 +415,23 @@ export default {
         name: 'collection',
         params: { engineer_id: engineer_id, can_edit: can_edit }
       })
+    },
+    getAutoHeight() {
+      // 窗口高度减去表格外元素的高度
+      let h = window.innerHeight - 84 - 20 - 56 - 96 - 20 - 30
+      // 最小高度
+      h = h > 600 ? h : 600
+      this.$nextTick(() => {
+        this.tableHeight = h
+      })
+    },
+    getStyle(obj, attr) {
+      // 兼容IE浏览器
+      let result = obj.currentStyle
+        ? obj.currentStyle[attr].replace("px", "")
+        : document.defaultView
+            .getComputedStyle(obj, null)[attr].replace("px", "");
+      return Number(result);
     }
   }
 }
@@ -414,6 +441,9 @@ export default {
 .excel-upload-input{
   display: none;
   z-index: -9999;
+}
+.app-container {
+  overflow: hidden;
 }
 </style>
 

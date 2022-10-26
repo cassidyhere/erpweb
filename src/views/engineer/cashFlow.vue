@@ -11,17 +11,16 @@
     </div>
 
     <el-table
-      v-loading="listLoading"
       :data="list"
+      v-loading="listLoading"
       element-loading-text="Loading"
       border
       fit
       highlight-current-row
       style="width: 100%;"
-      :default-sort="{prop: 'id', order: 'ascending'}"
-      class="sticky-head"
+      :max-height="tableHeight"
       :header-cell-style="{background:'#F1F3F7'}"
-      v-sticky="{ top: 0, parent: '.app-container' }"
+      :default-sort="{prop: 'id', order: 'descending'}"
       @sort-change="sortChange"
     >
       <el-table-column fixed label="ID" prop="id" sortable="custom" align="center" width="40">
@@ -173,12 +172,21 @@ export default {
       list: null,
       total: 0,
       downloadLoading: false,
-      loading: false
+      loading: false,
+      tableHeight: "100px"
     }
   },
 
   created() {
     this.getList()
+  },
+
+  mounted() {
+    this.getAutoHeight()
+    const self = this;
+    window.onresize = function() {
+      self.getAutoHeight();
+    };
   },
 
   methods: {
@@ -213,7 +221,16 @@ export default {
         fileDownload(res.data, '资金流概况表.xlsx')
         this.downloadLoading = false
       })
-    }
+    },
+    getAutoHeight() {
+      // 窗口高度减去表格外元素的高度
+      let h = window.innerHeight - 84 - 20 - 56 - 96 - 20 - 30
+      // 最小高度
+      h = h > 600 ? h : 600
+      this.$nextTick(() => {
+        this.tableHeight = h
+      })
+    },
   }
 }
 </script>

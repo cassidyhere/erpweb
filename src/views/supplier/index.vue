@@ -28,36 +28,37 @@
       fit
       highlight-current-row
       style="width: 100%;"
+      :max-height="tableHeight"
       :default-sort="{prop: 'id', order: 'ascending'}"
       :header-cell-style="{background:'#F1F3F7'}"
       @sort-change="sortChange"
     >
-      <el-table-column label="ID" prop="id" sortable="custom" align="center" width="80">
+      <el-table-column label="ID" prop="id" sortable="custom" align="center" width="60">
         <template slot-scope="scope">
           <span>{{ scope.row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="供应商编号" prop="supplier_code" width="300">
+      <el-table-column label="供应商编号" prop="supplier_code" min-width="200" align="center">
         <template slot-scope="scope">
           {{ scope.row.supplier_code }}
         </template>
       </el-table-column>
-      <el-table-column label="供应商名称" prop="supplier_name" sortable="custom" width="300" align="center">
+      <el-table-column label="供应商名称" prop="supplier_name" sortable="custom" min-width="200" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.supplier_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="联系人" width="150" align="center">
+      <el-table-column label="联系人" min-width="130" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.contact }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="电话" width="150" align="center">
+      <el-table-column label="电话" min-width="130" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.phone }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="传真" width="150" align="center">
+      <el-table-column label="传真" min-width="130" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.fax }}</span>
         </template>
@@ -67,7 +68,7 @@
           <span>{{ scope.row.address }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="230" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" min-width="140" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button type="primary" size="mini" @click="handleUpdate(scope.row)">
             编辑
@@ -258,7 +259,8 @@ export default {
       rules: {
         supplier_name: [{ required: true, message: '请输入工程名称', trigger: 'change' }]
       },
-      multipleSelection: []
+      multipleSelection: [],
+      tableHeight: "100px"
     }
   },
 
@@ -270,6 +272,14 @@ export default {
     fetchCategoryList().then(res => {
       this.categories = res.category_list
     })
+  },
+
+  mounted() {
+    this.getAutoHeight()
+    const self = this;
+    window.onresize = function() {
+      self.getAutoHeight();
+    };
   },
 
   methods: {
@@ -505,6 +515,15 @@ export default {
             this.getList()
           })
         }
+      })
+    },
+    getAutoHeight() {
+      // 窗口高度减去表格外元素的高度
+      let h = window.innerHeight - 84 - 20 - 56 - 96 - 20 - 30
+      // 最小高度
+      h = h > 600 ? h : 600
+      this.$nextTick(() => {
+        this.tableHeight = h
       })
     }
   }

@@ -33,51 +33,52 @@
       fit
       highlight-current-row
       style="width: 100%;"
+      :max-height="tableHeight"
       :header-cell-style="{background:'#F1F3F7'}"
       :default-sort="{prop: 'id', order: 'descending'}"
       @sort-change="sortChange"
     >
-      <el-table-column label="ID" sortable="custom" prop="id" align="center" width="80">
+      <el-table-column label="ID" sortable="custom" prop="id" align="center" width="60">
         <template slot-scope="scope">
           <span>{{ scope.row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="入仓单编号" prop="order_code" sortable="custom" width="140" align="center">
+      <el-table-column label="入仓单编号" prop="order_code" sortable="custom" min-width="140" align="center">
         <template slot-scope="scope">
           {{ scope.row.order_code }}
         </template>
       </el-table-column>
-      <el-table-column label="关联采购单" prop="order_name" sortable="custom" width="200" align="center">
+      <el-table-column label="关联采购单" prop="order_name" sortable="custom" min-width="200" align="center">
         <template slot-scope="scope">
           {{ scope.row.order_name }}
         </template>
       </el-table-column>
-      <el-table-column label="关联采购合同" prop="contract_name" sortable="custom" width="200" align="center">
+      <el-table-column label="关联采购合同" prop="contract_name" sortable="custom" min-width="200" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.contract_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="关联工程名称" prop="engineer_name" sortable="custom" width="200" align="center">
+      <el-table-column label="关联工程名称" prop="engineer_name" sortable="custom" min-width="200" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.engineer_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="总金额" prop="total" sortable="custom" width="140" align="center">
+      <el-table-column label="总金额" prop="total" sortable="custom"min- width="140" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.total }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="下单日期" width="140" align="center">
+      <el-table-column label="下单日期" min-width="140" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.order_time }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="备注" width="200" align="center">
+      <el-table-column label="备注" min-width="200" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.remark }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="审核状态" prop="audit_status" sortable="custom" width="120" align="center">
+      <el-table-column label="审核状态" prop="audit_status" sortable="custom" min-width="120" align="center">
         <template slot-scope="scope">
           <el-button v-if="scope.row.audit_status===1" size="mini" type="primary" @click="handleAuditWarehouse(scope.row.id)">
             审核
@@ -138,11 +139,20 @@ export default {
       list: null,
       listLoading: true,
       total: 0,
+      tableHeight: "100px"
     }
   },
 
   created() {
     this.getList()
+  },
+
+  mounted() {
+    this.getAutoHeight()
+    const self = this;
+    window.onresize = function() {
+      self.getAutoHeight();
+    };
   },
 
   methods: {
@@ -222,6 +232,15 @@ export default {
       downloadInExcel({ warehouse_order_id: inout_id }).then(res => {
         fileDownload(res.data, order_code + '.xlsx')
         this.downloadLoading = false
+      })
+    },
+    getAutoHeight() {
+      // 窗口高度减去表格外元素的高度
+      let h = window.innerHeight - 84 - 20 - 56 - 96 - 20 - 30
+      // 最小高度
+      h = h > 600 ? h : 600
+      this.$nextTick(() => {
+        this.tableHeight = h
       })
     }
   }

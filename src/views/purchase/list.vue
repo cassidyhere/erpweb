@@ -60,6 +60,7 @@
       border
       fit
       highlight-current-row
+      :max-height="tableHeight"
       :header-cell-style="{background:'#F1F3F7'}"
     >
       <el-table-column label="ID" prop="id" align="center" width="60">
@@ -67,67 +68,67 @@
           <span>{{ scope.row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="采购单编号" width="140" align="center">
+      <el-table-column label="采购单编号" min-width="140" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.order_code }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="供应商" width="200" align="center">
+      <el-table-column label="供应商" min-width="200" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.supplier_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="经手人" width="100" align="center">
+      <el-table-column label="经手人" min-width="100" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.engineer_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="日期" width="100" align="center">
+      <el-table-column label="日期" min-width="100" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.insert_time }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="材料名称" width="200" align="center">
+      <el-table-column label="材料名称" min-width="200" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.material_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="材料规格" width="200" align="center">
+      <el-table-column label="材料规格" min-width="200" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.specification }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="单位" width="100" align="center">
+      <el-table-column label="单位" min-width="100" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.unit }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="采购数量" width="80" align="center">
+      <el-table-column label="采购数量" min-width="80" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.number }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="单价(元)" width="80" align="center">
+      <el-table-column label="单价(元)" min-width="80" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.price }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="金额(元)" width="100" align="center">
+      <el-table-column label="金额(元)" min-width="100" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.total }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="已到货数量" width="100" align="center">
+      <el-table-column label="已到货数量" min-width="100" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.warehoused_number }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="采购单审核状态" width="120" align="center">
+      <el-table-column label="采购单审核状态" min-width="120" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.audit_status }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="备注" width="200" align="center">
+      <el-table-column label="备注" min-width="200" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.remark }}</span>
         </template>
@@ -167,11 +168,20 @@ export default {
       total: 0,
       downloadLoading: false,
       loading: false,
+      tableHeight: "100px"
     }
   },
 
   created() {
     this.getList()
+  },
+
+  mounted() {
+    this.getAutoHeight()
+    const self = this;
+    window.onresize = function() {
+      self.getAutoHeight();
+    };
   },
 
   methods: {
@@ -193,6 +203,15 @@ export default {
       downloadPurachaseExcel(this.listQuery).then(res => {
         fileDownload(res.data, '采购明细.xlsx')
         this.downloadLoading = false
+      })
+    },
+    getAutoHeight() {
+      // 窗口高度减去表格外元素的高度
+      let h = window.innerHeight - 84 - 20 - 102-53 - 96 - 20 - 30
+      // 最小高度
+      h = h > 600 ? h : 600
+      this.$nextTick(() => {
+        this.tableHeight = h
       })
     }
   }

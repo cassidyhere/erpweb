@@ -22,31 +22,32 @@
       fit
       highlight-current-row
       style="width: 100%;"
+      :max-height="tableHeight"
       :header-cell-style="{background:'#F1F3F7'}"
       :default-sort="{prop: 'id', order: 'descending'}"
       @sort-change="sortChange"
     >
-      <el-table-column label="ID" prop="id" sortable="custom" align="center" width="80">
+      <el-table-column label="ID" prop="id" sortable="custom" align="center" width="60">
         <template slot-scope="scope">
           <span>{{ scope.row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="采购订单" width="200" align="center">
+      <el-table-column label="采购订单" min-width="200" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.order_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="采购合同" width="200" align="center">
+      <el-table-column label="采购合同" min-width="200" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.contract_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="供应商" width="200" align="center">
+      <el-table-column label="供应商" min-width="200" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.supplier_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="工程" width="200" align="center">
+      <el-table-column label="工程" min-width="200" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.engineer_name }}</span>
         </template>
@@ -73,7 +74,7 @@
           <span v-else>全部进仓</span>
         </template>
       </el-table-column>
-      <el-table-column label="备注" width="200" align="center">
+      <el-table-column label="备注" min-width="200" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.remark }}</span>
         </template>
@@ -177,11 +178,20 @@ export default {
       total: 0,
       downloadLoading: false,
       loading: false,
+      tableHeight: "100px"
     }
   },
 
   created() {
     this.getList()
+  },
+
+  mounted() {
+    this.getAutoHeight()
+    const self = this;
+    window.onresize = function() {
+      self.getAutoHeight();
+    };
   },
 
   methods: {
@@ -288,6 +298,15 @@ export default {
       downloadOrderExcel({ order_id: order_id }).then(res => {
         fileDownload(res.data, order_name + '.xlsx')
         this.downloadLoading = false
+      })
+    },
+    getAutoHeight() {
+      // 窗口高度减去表格外元素的高度
+      let h = window.innerHeight - 84 - 20 - 56 - 96 - 20 - 30
+      // 最小高度
+      h = h > 600 ? h : 600
+      this.$nextTick(() => {
+        this.tableHeight = h
       })
     }
   }

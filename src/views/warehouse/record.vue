@@ -20,61 +20,62 @@
       border
       fit
       highlight-current-row
+      :max-height="tableHeight"
       :default-sort="{prop: 'id', order: 'descending'}"
       :header-cell-style="{background:'#F1F3F7'}"
       @sort-change="sortChange"
     >
-      <el-table-column label="ID" sortable="custom" prop="id" align="center" width="80">
+      <el-table-column label="ID" sortable="custom" prop="id" align="center" width="60">
         <template slot-scope="scope">
           <span>{{ scope.row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="单据编号" prop="order_code" width="140" align="center">
+      <el-table-column label="单据编号" prop="order_code" min-width="140" align="center">
         <template slot-scope="scope">
           {{ scope.row.order_code }}
         </template>
       </el-table-column>
-      <el-table-column label="单据类型" prop="flag" width="100" align="center">
+      <el-table-column label="单据类型" prop="flag" min-width="100" align="center">
         <template slot-scope="scope">
           {{ scope.row.flag }}
         </template>
       </el-table-column>
-      <el-table-column label="材料名称" prop="material_name" width="200" align="center">
+      <el-table-column label="材料名称" prop="material_name" min-width="200" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.material_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="材料类别" prop="category_name" width="200" align="center">
+      <el-table-column label="材料类别" prop="category_name" min-width="120" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.category_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="规格" prop="specification" width="140" align="center">
+      <el-table-column label="规格" prop="specification" min-width="200" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.specification }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="单位" width="140" align="center">
+      <el-table-column label="单位" min-width="100" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.unit }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="出入库数量" width="100" align="center">
+      <el-table-column label="出入库数量" min-width="100" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.inout_quantity }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="起始数量" width="100" align="center">
+      <el-table-column label="起始数量" min-width="100" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.start_quantity }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="结存数量" width="100" align="center">
+      <el-table-column label="结存数量" min-width="100" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.end_quantity }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="出入库时间" width="100" align="center">
+      <el-table-column label="出入库时间" min-width="100" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.inout_time }}</span>
         </template>
@@ -111,11 +112,20 @@ export default {
       list: null,
       listLoading: true,
       total: 0,
+      tableHeight: "100px"
     }
   },
 
   created() {
     this.getList()
+  },
+
+  mounted() {
+    this.getAutoHeight()
+    const self = this;
+    window.onresize = function() {
+      self.getAutoHeight();
+    };
   },
 
   methods: {
@@ -144,6 +154,15 @@ export default {
         this.listQuery.ascending = null
       }
       this.handleFilter()
+    },
+    getAutoHeight() {
+      // 窗口高度减去表格外元素的高度
+      let h = window.innerHeight - 84 - 20 - 56 - 96 - 20 - 30
+      // 最小高度
+      h = h > 600 ? h : 600
+      this.$nextTick(() => {
+        this.tableHeight = h
+      })
     }
   }
 }

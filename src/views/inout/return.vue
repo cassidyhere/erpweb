@@ -33,41 +33,42 @@
       fit
       highlight-current-row
       style="width: 100%;"
+      :max-height="tableHeight"
       :default-sort="{prop: 'id', order: 'descending'}"
       :header-cell-style="{background:'#F1F3F7'}"
       @sort-change="sortChange"
     >
-      <el-table-column label="ID" prop="id" sortable="custom" align="center" width="80">
+      <el-table-column label="ID" prop="id" sortable="custom" align="center" width="60">
         <template slot-scope="scope">
           <span>{{ scope.row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="退货单编号" prop="order_code" sortable="custom" width="140" align="center">
+      <el-table-column label="退货单编号" prop="order_code" sortable="custom" min-width="140" align="center">
         <template slot-scope="scope">
           {{ scope.row.order_code }}
         </template>
       </el-table-column>
-      <el-table-column label="供应商名称" prop="supplier_name" sortable="custom" width="150" align="center">
+      <el-table-column label="供应商名称" prop="supplier_name" sortable="custom" min-width="150" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.supplier_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="总金额" prop="total" sortable="custom" width="150" align="center">
+      <el-table-column label="总金额" prop="total" sortable="custom" min-width="150" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.total }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="下单日期" width="150" align="center">
+      <el-table-column label="下单日期" min-width="150" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.order_time }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="备注" width="300" align="center">
+      <el-table-column label="备注" min-width="300" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.remark }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="审核状态" width="80" align="center">
+      <el-table-column label="审核状态" min-width="80" align="center">
         <template slot-scope="scope">
           <el-button v-if="scope.row.audit_status===1" size="mini" type="primary" @click="handleAuditReturn(scope.row.id)">
             审核
@@ -77,7 +78,7 @@
           </el-button>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="230" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" min-width="230" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button size="mini" type="info" @click="handleGetReturn(scope.row.id)">
             查看
@@ -129,11 +130,20 @@ export default {
       list: null,
       listLoading: true,
       total: 0,
+      tableHeight: "100px"
     }
   },
 
   created() {
     this.getList()
+  },
+
+  mounted() {
+    this.getAutoHeight()
+    const self = this;
+    window.onresize = function() {
+      self.getAutoHeight();
+    };
   },
 
   methods: {
@@ -217,6 +227,15 @@ export default {
       downloadReturnExcel({ return_order_id: inout_id }).then(res => {
         fileDownload(res.data, order_code + '.xlsx')
         this.downloadLoading = false
+      })
+    },
+    getAutoHeight() {
+      // 窗口高度减去表格外元素的高度
+      let h = window.innerHeight - 84 - 20 - 56 - 96 - 20 - 30
+      // 最小高度
+      h = h > 600 ? h : 600
+      this.$nextTick(() => {
+        this.tableHeight = h
       })
     }
   }

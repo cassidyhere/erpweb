@@ -39,20 +39,21 @@
       border
       fit
       highlight-current-row
+      :max-height="tableHeight"
       :header-cell-style="{background:'#F1F3F7'}"
       style="width: 100%;"
     >
-      <el-table-column label="ID" prop="id" align="center" width="80">
+      <el-table-column label="ID" prop="id" align="center" width="60">
         <template slot-scope="scope">
           <span>{{ scope.row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="材料类别名称" width="300" align="center">
+      <el-table-column label="材料类别名称" min-width="300" align="center">
         <template slot-scope="scope">
           {{ scope.row.category_name }}
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="230" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" min-width="230" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button type="primary" size="mini" @click="handleUpdate(scope.row)">
             编辑
@@ -140,12 +141,21 @@ export default {
       },
       rules: {
         category_name: [{ required: true, message: '请输入材料类别', trigger: 'change' }]
-      }
+      },
+      tableHeight: "100px"
     }
   },
 
   created() {
     this.getList()
+  },
+
+  mounted() {
+    this.getAutoHeight()
+    const self = this;
+    window.onresize = function() {
+      self.getAutoHeight();
+    };
   },
 
   methods: {
@@ -244,6 +254,15 @@ export default {
             this.getList()
           })
         }
+      })
+    },
+    getAutoHeight() {
+      // 窗口高度减去表格外元素的高度
+      let h = window.innerHeight - 84 - 20 - 56 - 96 - 20 - 30
+      // 最小高度
+      h = h > 600 ? h : 600
+      this.$nextTick(() => {
+        this.tableHeight = h
       })
     }
   }

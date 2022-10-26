@@ -38,45 +38,46 @@
       border
       fit
       highlight-current-row
+      :max-height="tableHeight"
       :header-cell-style="{background:'#F1F3F7'}"
       style="width: 100%;"
     >
-      <el-table-column label="ID" prop="id" align="center" width="80">
+      <el-table-column label="ID" prop="id" align="center" width="60">
         <template slot-scope="scope">
           <span>{{ scope.row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="材料类别名称" width="300" align="center">
+      <el-table-column label="材料类别名称" min-width="120" align="center">
         <template slot-scope="scope">
           {{ scope.row.category_name }}
         </template>
       </el-table-column>
-      <el-table-column label="材料名称" width="300" align="center">
+      <el-table-column label="材料名称" min-width="200" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.material_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="单位" width="150" align="center">
+      <el-table-column label="单位" min-width="120" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.unit }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="规格" width="150" align="center">
+      <el-table-column label="规格" min-width="200" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.specification }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="备注" width="300" align="center">
+      <el-table-column label="备注" min-width="300" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.remark }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="是否淘汰" width="80" align="center">
+      <el-table-column label="是否淘汰" min-width="80" align="center">
         <template slot-scope="scope">
           <span>{{ disabled_status[scope.row.status] }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="230" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" min-width="140" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button type="primary" size="mini" @click="handleUpdate(scope.row)">
             编辑
@@ -215,7 +216,8 @@ export default {
         material_name: [{ required: true, message: '请输入材料名称', trigger: 'change' }],
         unit: [{ required: true, message: '请输入单位', trigger: 'change' }],
         specification: [{ required: true, message: '请输入规格', trigger: 'change' }]
-      }
+      },
+      tableHeight: "100px"
     }
   },
 
@@ -224,6 +226,14 @@ export default {
     fetchCategories().then(res => {
       this.categories = res.category_list
     })
+  },
+
+  mounted() {
+    this.getAutoHeight()
+    const self = this;
+    window.onresize = function() {
+      self.getAutoHeight();
+    };
   },
 
   methods: {
@@ -328,6 +338,15 @@ export default {
             this.getList()
           })
         }
+      })
+    },
+    getAutoHeight() {
+      // 窗口高度减去表格外元素的高度
+      let h = window.innerHeight - 84 - 20 - 56 - 96 - 20 - 30
+      // 最小高度
+      h = h > 600 ? h : 600
+      this.$nextTick(() => {
+        this.tableHeight = h
       })
     }
   }

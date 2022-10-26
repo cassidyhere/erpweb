@@ -21,6 +21,7 @@
       fit
       highlight-current-row
       style="width: 100%;"
+      :max-height="tableHeight"
       :default-sort="{prop: 'id', order: 'ascending'}"
       :header-cell-style="{background:'#F1F3F7'}"
       @sort-change="sortChange"
@@ -30,57 +31,57 @@
           <span>{{ scope.row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="采购合同" prop="contract_name" sortable="custom" width="200" align="center">
+      <el-table-column label="采购合同" prop="contract_name" sortable="custom" min-width="200" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.contract_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="采购订单" prop="order_name" sortable="custom" width="200" align="center">
+      <el-table-column label="采购订单" prop="order_name" sortable="custom" min-width="200" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.order_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="材料类别" prop="category_name" sortable="custom" width="120" align="center">
+      <el-table-column label="材料类别" prop="category_name" sortable="custom" min-width="120" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.category_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="材料名称" prop="material_name" sortable="custom" width="200" align="center">
+      <el-table-column label="材料名称" prop="material_name" sortable="custom" min-width="200" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.material_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="单位" width="120" align="center">
+      <el-table-column label="单位" min-width="80" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.unit }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="规格" width="200" align="center">
+      <el-table-column label="规格" min-width="200" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.specification }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="平均单价(元)" prop="price" sortable="custom" width="160" align="center">
+      <el-table-column label="平均单价(元)" prop="price" sortable="custom" min-width="140" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.price }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="库存" prop="inventory_quantity" sortable="custom" width="160" align="center">
+      <el-table-column label="库存" prop="inventory_quantity" sortable="custom" min-width="100" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.inventory_quantity }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="预用库存" width="160" align="center">
+      <el-table-column label="预用库存" min-width="100" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.lock_quantity }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="可用库存" width="160" align="center">
+      <el-table-column label="可用库存" min-width="100" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.available_quantity }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="总价" prop="total" sortable="custom" width="160" align="center">
+      <el-table-column label="总价(元)" prop="total" sortable="custom" min-width="140" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.total }}</span>
         </template>
@@ -115,12 +116,21 @@ export default {
       list: null,
       total: 0,
       downloadLoading: false,
-      loading: false
+      loading: false,
+      tableHeight: "100px"
     }
   },
 
   created() {
     this.getList()
+  },
+
+  mounted() {
+    this.getAutoHeight()
+    const self = this;
+    window.onresize = function() {
+      self.getAutoHeight();
+    };
   },
 
   methods: {
@@ -161,6 +171,15 @@ export default {
         this.listQuery.ascending = null
       }
       this.handleFilter()
+    },
+    getAutoHeight() {
+      // 窗口高度减去表格外元素的高度
+      let h = window.innerHeight - 84 - 20 - 56 - 96 - 20 - 30
+      // 最小高度
+      h = h > 600 ? h : 600
+      this.$nextTick(() => {
+        this.tableHeight = h
+      })
     }
   }
 }
