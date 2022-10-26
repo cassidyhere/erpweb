@@ -519,7 +519,7 @@ export default {
     },
     getAutoHeight() {
       // 窗口高度减去表格外元素的高度
-      let h = window.innerHeight - 84 - 20 - 56 - 96 - 20 - 30
+      let h = window.innerHeight - 84 - 20 - 56 - 32 - 20 - 30
       // 最小高度
       h = h > 600 ? h : 600
       this.$nextTick(() => {
