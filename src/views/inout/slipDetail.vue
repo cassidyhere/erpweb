@@ -5,7 +5,7 @@
       :model="temp"
       :rules="rules"
       label-width="140px"
-      style="width: 70%; min-width: 1200px"
+      style="min-width: 1200px; max-width: 2000px"
     >
       <el-row>
         <el-col :span="6">
@@ -63,74 +63,75 @@
         <el-input v-model="temp.remark" type="textarea" maxlength="128" show-word-limit />
       </el-form-item>
       <el-form-item label="材料列表" class="head-item" style="margin-top:30px">
-        <el-input v-model="mkey" placeholder="搜索材料" style="width: 200px;" class="filter-item" @keyup.enter.native="handleSearchMaterial" />
-        <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleSearchMaterial">
-          搜索
-        </el-button>
+        <el-table
+          :data="temp_materials"
+          element-loading-text="Loading"
+          fit
+          border
+          max-height="800px"
+          highlight-current-row
+          :header-cell-style="{background:'#F1F3F7'}"
+          style="width:90%"
+        >
+          <el-table-column label="采购合同" max-width="200" align="center">
+            <template slot-scope="scope">
+              <span>{{ scope.row.contract_name }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="采购订单" max-width="200" align="center">
+            <template slot-scope="scope">
+              <span>{{ scope.row.order_name }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="材料类别" max-width="140" align="center">
+            <template slot-scope="scope">
+              <span>{{ scope.row.category_name }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="材料名称" max-width="200" align="center">
+            <template slot-scope="scope">
+              <span>{{ scope.row.material_name }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="规格" max-width="200" align="center">
+            <template slot-scope="scope">
+              <span>{{ scope.row.specification }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="单位" max-width="140" align="center">
+            <template slot-scope="scope">
+              <span>{{ scope.row.unit }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="价格(元)" max-width="140" align="center">
+            <template slot-scope="scope">
+              <span>{{ scope.row.price }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column v-if="temp.audit_status!==2" label="出仓数量" max-width="140" align="center">
+            <template slot-scope="scope">
+              <span>{{ scope.row.picked_quantity }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="数量" max-width="140" align="center">
+            <template slot-scope="scope">
+              <span v-if="status==='update' && temp.audit_status===2">{{ scope.row.inout_quantity }}</span>
+              <el-input v-else v-model="scope.row.inout_quantity" size="small" @input="handleUpdateQuantity(scope.row)"></el-input>
+            </template>
+          </el-table-column>
+          <el-table-column label="备注" max-width="220" align="center">
+            <template slot-scope="scope">
+              <el-input v-model="scope.row.remark" size="small"></el-input>
+            </template>
+          </el-table-column>
+          <el-table-column align="right" min-width="150">
+            <template slot="header">
+              <el-input v-model="mkey" size="small" placeholder="输入关键字搜索" @input="handleSearchMaterial"></el-input>
+            </template>
+          </el-table-column>
+        </el-table>
       </el-form-item>
     </el-form>
-
-    <el-table
-      :data="temp_materials"
-      element-loading-text="Loading"
-      fit
-      height="800px"
-      highlight-current-row
-      :header-cell-style="{background:'#F1F3F7'}"
-      style="width:70%; margin-left:110px; margin-bottom:20px; margin-right:10px"
-    >
-      <el-table-column label="采购合同" width="200">
-        <template slot-scope="scope">
-          <span>{{ scope.row.contract_name }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="采购订单" width="200">
-        <template slot-scope="scope">
-          <span>{{ scope.row.order_name }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="材料类别" width="140">
-        <template slot-scope="scope">
-          <span>{{ scope.row.category_name }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="材料名称" width="200">
-        <template slot-scope="scope">
-          <span>{{ scope.row.material_name }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="规格" width="200">
-        <template slot-scope="scope">
-          <span>{{ scope.row.specification }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="单位" width="140">
-        <template slot-scope="scope">
-          <span>{{ scope.row.unit }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="价格(元)" width="140">
-        <template slot-scope="scope">
-          <span>{{ scope.row.price }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column v-if="temp.audit_status!==2" label="出仓数量" width="140">
-        <template slot-scope="scope">
-          <span>{{ scope.row.picked_quantity }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="数量" width="140">
-        <template slot-scope="scope">
-          <span v-if="status==='update' && temp.audit_status===2">{{ scope.row.inout_quantity }}</span>
-          <el-input v-else v-model="scope.row.inout_quantity" size="small" @input="handleUpdateQuantity(scope.row)"></el-input>
-        </template>
-      </el-table-column>
-      <el-table-column label="备注" width="220">
-        <template slot-scope="scope">
-          <el-input v-model="scope.row.remark" size="small"></el-input>
-        </template>
-      </el-table-column>
-    </el-table>
 
     <el-button type="primary" @click="updateData" style="margin-left: 110px;">确定</el-button>
     <el-button @click="cancel">取消</el-button>

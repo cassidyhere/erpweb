@@ -4,47 +4,48 @@
       ref="form"
       :model="listQuery"
       label-width="100px"
-      style="width: 70%; min-width: 1200px;"
+      style="width: 100%; min-width: 1400px;"
     >
       <el-row>
-        <el-col :span="5">
+        <el-col :span="4">
           <el-form-item label="采购单编号:">
             <el-input v-model="listQuery.order_code" style="width: 140px;" />
           </el-form-item>
         </el-col>
-        <el-col :span="5">
+        <el-col :span="4">
           <el-form-item label="经手人:">
             <el-input v-model="listQuery.insert_user" style="width: 140px;" />
           </el-form-item>
         </el-col>
-      </el-row>
-      <el-row>
-        <el-col :span="5">
+        <el-col :span="4">
           <el-form-item label="供应商:">
             <el-input v-model="listQuery.supplier" style="width: 140px;" />
           </el-form-item>
         </el-col>
-        <el-col :span="5.5">
+        <el-col :span="4">
           <el-form-item label="审核状态:">
             <el-radio v-model="listQuery.audit_status" label=1>未审核</el-radio>
             <el-radio v-model="listQuery.audit_status" label=2>已审核</el-radio>
           </el-form-item>
         </el-col>
-        <el-col :span="5">
+        <el-col :span="4">
           <el-form-item label="工程:">
             <el-input v-model="listQuery.engineer" style="width: 140px;" />
           </el-form-item>
         </el-col>
-        <el-col :span="5">
+        <el-col :span="4">
           <el-form-item label="材料:">
             <el-input v-model="listQuery.key" style="width: 140px;" />
           </el-form-item>
         </el-col>
       </el-row>
+      <el-row>
+
+      </el-row>
 
     </el-form>
 
-    <div class="filter-container" style="margin-left: 800px;">
+    <div class="filter-container" style="float: right;">
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         搜索
       </el-button>
@@ -207,9 +208,9 @@ export default {
     },
     getAutoHeight() {
       // 窗口高度减去表格外元素的高度
-      let h = window.innerHeight - 84 - 20 - 102-53 - 32 - 20 - 30
+      let h = window.innerHeight - 84 - 20 - 102-53 - 42 - 20 - 30
       // 最小高度
-      h = h > 600 ? h : 600
+      h = h > 500 ? h : 500
       this.$nextTick(() => {
         this.tableHeight = h
       })
