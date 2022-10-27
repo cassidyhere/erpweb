@@ -37,6 +37,7 @@
       :default-sort="{prop: 'id', order: 'descending'}"
       :header-cell-style="{background:'#F1F3F7'}"
       @sort-change="sortChange"
+      @row-click="handleGetReturn"
     >
       <el-table-column label="ID" prop="id" sortable="custom" align="center" width="60">
         <template slot-scope="scope">
@@ -70,7 +71,7 @@
       </el-table-column>
       <el-table-column label="审核状态" min-width="80" align="center">
         <template slot-scope="scope">
-          <el-button v-if="scope.row.audit_status===1" size="mini" type="primary" @click="handleAuditReturn(scope.row.id)">
+          <el-button v-if="scope.row.audit_status===1" size="mini" type="primary" @click.native.stop="handleAuditReturn(scope.row.id)">
             审核
           </el-button>
           <el-button v-else size="mini" type="info" disabled>
@@ -80,17 +81,14 @@
       </el-table-column>
       <el-table-column label="操作" align="center" min-width="230" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button size="mini" type="info" @click="handleGetReturn(scope.row.id)">
-            查看
-          </el-button>
-          <el-button v-if="scope.row.audit_status===1" size="mini" type="danger" @click="handleDeleteReturn(scope.row.id)">
+          <el-button v-if="scope.row.audit_status===1" size="mini" type="danger" @click.native.stop="handleDeleteReturn(scope.row.id)">
             删除
           </el-button>
           <el-button
             size="mini"
             type="success"
             plain
-            @click="handleDownloadReturn(scope.row.id, scope.row.order_code)"
+            @click.native.stop="handleDownloadReturn(scope.row.id, scope.row.order_code)"
           >
             导出
           </el-button>
@@ -186,10 +184,10 @@ export default {
         params: { inout_id: inout_id }
       })
     },
-    handleGetReturn(inout_id) {
+    handleGetReturn(row) {
       this.$router.push({
         name: 'updateReturn',
-        params: { inout_id: inout_id }
+        params: { inout_id: row.id }
       })
     },
 

@@ -26,6 +26,7 @@
       :header-cell-style="{background:'#F1F3F7'}"
       :default-sort="{prop: 'id', order: 'descending'}"
       @sort-change="sortChange"
+      @row-click="handleUpdateOrder"
     >
       <el-table-column label="ID" prop="id" sortable="custom" align="center" width="60">
         <template slot-scope="scope">
@@ -81,7 +82,7 @@
       </el-table-column>
       <el-table-column label="审核状态" width="120" align="center">
         <template slot-scope="scope">
-          <el-button v-if="scope.row.audit_status===1" size="mini" type="primary" @click="handleAuditOrder(scope.row.id)">
+          <el-button v-if="scope.row.audit_status===1" size="mini" type="primary" @click.native.stop="handleAuditOrder(scope.row.id)">
             审核
           </el-button>
           <el-button v-else size="mini" type="info" disabled>
@@ -94,18 +95,9 @@
           <el-button
             v-if="scope.row.audit_status===1"
             size="mini"
-            type="info"
-            plain
-            @click="handleUpdateOrder(scope.row.id)"
-          >
-            编辑
-          </el-button>
-          <el-button
-            v-if="scope.row.audit_status===1"
-            size="mini"
             type="danger"
             plain
-            @click="handleDeleteOrder(scope.row.id)"
+            @click.native.stop="handleDeleteOrder(scope.row.id)"
           >
             刪除
           </el-button>
@@ -114,16 +106,7 @@
             size="mini"
             type="primary"
             plain
-            @click="handleGetOrder(scope.row.id)"
-          >
-            查看
-          </el-button>
-          <el-button
-            v-if="scope.row.audit_status===2 && scope.row.status===1"
-            size="mini"
-            type="primary"
-            plain
-            @click="handleInOrder(scope.row.id)"
+            @click.native.stop="handleInOrder(scope.row.id)"
           >
             入仓
           </el-button>
@@ -132,7 +115,7 @@
             size="mini"
             type="success"
             plain
-            @click="handleDownloadOrder(scope.row.id, scope.row.order_name)"
+            @click.native.stop="handleDownloadOrder(scope.row.id, scope.row.order_name)"
           >
             导出
           </el-button>
@@ -257,10 +240,10 @@ export default {
         this.$message.success('已取消删除')
       })     
     },
-    handleUpdateOrder(order_id) {
+    handleUpdateOrder(row) {
       this.$router.push({
         name: 'updateOrder',
-        params: { order_id: order_id }
+        params: { order_id: row.id }
       })
     },
     handleDeleteOrder(order_id) {
@@ -275,12 +258,6 @@ export default {
         })
       }).catch(() => {
         this.$message.success('已取消删除')
-      })
-    },
-    handleGetOrder(order_id) {
-      this.$router.push({
-        name: 'fetchOrder',
-        params: { order_id: order_id }
       })
     },
     handleInOrder(order_id) {

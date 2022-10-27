@@ -26,6 +26,7 @@
       :header-cell-style="{background:'#F1F3F7'}"
       :default-sort="{prop: 'id', order: 'descending'}"
       @sort-change="sortChange"
+      @row-click="handleUpdateContract"
     >
       <el-table-column label="ID" prop="id" sortable="custom" align="center" width="60">
         <template slot-scope="scope">
@@ -84,10 +85,10 @@
       </el-table-column>
       <el-table-column label="审核状态" width="140" align="center">
         <template slot-scope="scope">
-          <el-button v-if="scope.row.audit_status===1" size="mini" type="primary" @click="handleAuditContract(scope.row.id)">
+          <el-button v-if="scope.row.audit_status===1" size="mini" type="primary" @click.native.stop="handleAuditContract(scope.row.id)">
             审核
           </el-button>
-          <el-button v-else size="mini" type="info" disabled>
+          <el-button v-else size="mini" type="info">
             已审核
           </el-button>
         </template>
@@ -95,19 +96,11 @@
       <el-table-column label="操作" align="center" width="300" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
-            size="mini"
-            type="primary"
-            plain
-            @click="handleUpdateContract(scope.row.id)"
-          >
-            查看
-          </el-button>
-          <el-button
             v-if="scope.row.audit_status===1"
             size="mini"
             type="danger"
             plain
-            @click="handleDeleteContract(scope.row.id)"
+            @click.native.stop="handleDeleteContract(scope.row.id)"
           >
             刪除
           </el-button>
@@ -116,7 +109,7 @@
             size="mini"
             type="primary"
             plain
-            @click="handleCreateOrder(scope.row.id)"
+            @click.native.stop="handleCreateOrder(scope.row.id)"
           >
             下采购单
           </el-button>
@@ -134,7 +127,7 @@
             size="mini"
             type="success"
             plain
-            @click="handleDownloadContract(scope.row.id, scope.row.contract_name)"
+            @click.native.stop="handleDownloadContract(scope.row.id, scope.row.contract_name)"
           >
             导出
           </el-button>
@@ -254,10 +247,10 @@ export default {
         this.$message.success('已取消删除')
       })
     },
-    handleUpdateContract(contract_id) {
+    handleUpdateContract(row) {
       this.$router.push({
         name: 'updateContract',
-        params: { contract_id: contract_id }
+        params: { contract_id: row.id }
       })
     },
     handleDeleteContract(contract_id) {

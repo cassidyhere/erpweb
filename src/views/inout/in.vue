@@ -37,6 +37,7 @@
       :header-cell-style="{background:'#F1F3F7'}"
       :default-sort="{prop: 'id', order: 'descending'}"
       @sort-change="sortChange"
+      @row-click="handleGetWarehouse"
     >
       <el-table-column label="ID" sortable="custom" prop="id" align="center" width="60">
         <template slot-scope="scope">
@@ -63,7 +64,7 @@
           <span>{{ scope.row.engineer_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="总金额" prop="total" sortable="custom"min- width="140" align="center">
+      <el-table-column label="总金额" prop="total" sortable="custom" min-width="140" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.total }}</span>
         </template>
@@ -80,7 +81,7 @@
       </el-table-column>
       <el-table-column label="审核状态" prop="audit_status" sortable="custom" min-width="120" align="center">
         <template slot-scope="scope">
-          <el-button v-if="scope.row.audit_status===1" size="mini" type="primary" @click="handleAuditWarehouse(scope.row.id)">
+          <el-button v-if="scope.row.audit_status===1" size="mini" type="primary" @click.native.stop="handleAuditWarehouse(scope.row.id)">
             审核
           </el-button>
           <el-button v-else size="mini" type="info" disabled>
@@ -90,17 +91,14 @@
       </el-table-column>
       <el-table-column label="操作" align="center" width="230" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button size="mini" type="info" @click="handleGetWarehouse(scope.row.id)">
-            查看
-          </el-button>
-          <el-button v-if="scope.row.audit_status===1" size="mini" type="danger" @click="handleDeleteWarehouse(scope.row.id)">
+          <el-button v-if="scope.row.audit_status===1" size="mini" type="danger" @click.native.stop="handleDeleteWarehouse(scope.row.id)">
             删除
           </el-button>
           <el-button
             size="mini"
             type="success"
             plain
-            @click="handleDownloadIn(scope.row.id, scope.row.order_code)"
+            @click.native.stop="handleDownloadIn(scope.row.id, scope.row.order_code)"
           >
             导出
           </el-button>
@@ -191,10 +189,10 @@ export default {
     },
     handleUpload() {
     },
-    handleGetWarehouse(warehouse_order_id) {
+    handleGetWarehouse(row) {
       this.$router.push({
         name: 'updateIn',
-        params: { inout_id: warehouse_order_id }
+        params: { inout_id: row.id }
       })
     },
 
