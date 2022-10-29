@@ -165,8 +165,7 @@
           </el-table-column>
           <el-table-column label="备注" min-width="200" align="center">
             <template slot-scope="scope">
-              <span v-if="temp.audit_status===2">{{ scope.row.remark }}</span>
-              <el-input v-else v-model="scope.row.remark" size="small"></el-input>
+              <el-input v-model="scope.row.remark" size="small"></el-input>
             </template>
           </el-table-column>
           <el-table-column align="right" min-width="150">

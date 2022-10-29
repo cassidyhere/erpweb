@@ -33,22 +33,22 @@
           <span>{{ scope.row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="采购订单" min-width="200" align="center">
+      <el-table-column label="采购订单" min-width="180" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.order_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="采购合同" min-width="200" align="center">
+      <el-table-column label="采购合同" min-width="180" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.contract_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="供应商" min-width="200" align="center">
+      <el-table-column label="供应商" min-width="180" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.supplier_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="工程" min-width="200" align="center">
+      <el-table-column label="工程" min-width="180" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.engineer_name }}</span>
         </template>
@@ -68,14 +68,14 @@
           <span>{{ scope.row.order_time }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="进仓状态" width="120" align="center">
+      <el-table-column label="进仓状态" width="100" align="center">
         <template slot-scope="scope">
           <span v-if="scope.row.warehouse_status===1">未进仓</span>
           <span v-else-if="scope.row.warehouse_status===2">已进仓</span>
           <span v-else>全部进仓</span>
         </template>
       </el-table-column>
-      <el-table-column label="备注" min-width="200" align="center">
+      <el-table-column label="备注" min-width="180" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.remark }}</span>
         </template>
@@ -90,7 +90,7 @@
           </el-button>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="300" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" width="200" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             v-if="scope.row.audit_status===1"
