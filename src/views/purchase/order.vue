@@ -261,6 +261,11 @@ export default {
       })
     },
     handleInOrder(order_id) {
+      this.$router.push({
+        name: 'createIn',
+        params: { order_id: order_id }
+      })
+
       const data = { order_id: order_id }
       fetchOrder(data).then(res => {
         this.in_materials = []

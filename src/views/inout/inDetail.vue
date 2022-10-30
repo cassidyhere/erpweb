@@ -165,9 +165,9 @@ export default {
       temp_materials: [],
       purchase_orders: [],
       rules: {
-        purchase_order_name: [{ required: true, message: '请选择关联采购单', trigger: 'change' }],
-        order_time: [{ required: true, message: '请选择下单时间', trigger: 'change' }],
-        order_user: [{ required: true, message: '请输入下单用户', trigger: 'change' }]
+        purchase_order_name: [{ required: true, message: '请选择关联采购单', trigger: 'blur' }],
+        order_time: [{ required: true, message: '请选择下单时间', trigger: 'blur' }],
+        order_user: [{ required: true, message: '请输入下单用户', trigger: 'blur' }]
       }
     }
   },
@@ -195,9 +195,24 @@ export default {
       }
     } else {
       this.status = 'create'
-      // 从store找
-      this.temp = this.$store.getters.inInfo
-      this.temp_materials = this.temp.materials
+      var order_id = this.$route.params.order_id
+      console.log('order_id:', order_id)
+      if (order_id === undefined) {
+        // 从store找
+        this.temp = this.$store.getters.inInfo
+        this.temp_materials = this.temp.materials
+      } else {
+        this.temp.purchase_order_id = order_id
+        fetchOrder({ order_id: order_id }).then(res => {
+          console.log('order:', res)
+          this.temp.purchase_order_name = res.order_name
+          this.temp.contract_name = res.contract_name
+          this.temp.engineer_name = res.engineer_name
+          this.temp.supplier_name = res.supplier_name
+          this.temp_materials = this.temp.materials = res.materials
+          this.temp.total = 0
+        })
+      }
       if (this.temp.order_time === undefined) {
         this.temp.order_time = getNowTime()
       }
