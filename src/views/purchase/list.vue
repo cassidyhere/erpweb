@@ -7,52 +7,25 @@
       style="width: 100%; min-width: 1400px;"
     >
       <el-row>
-        <el-col :span="4">
-          <el-form-item label="采购单编号:">
-            <el-input v-model="listQuery.order_code" style="width: 140px;" />
-          </el-form-item>
+        <el-col :span="3.5">
+          <el-input v-model="listQuery.key" placeholder="输入关键字" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
         </el-col>
-        <el-col :span="4">
-          <el-form-item label="经手人:">
-            <el-input v-model="listQuery.insert_user" style="width: 140px;" />
-          </el-form-item>
-        </el-col>
-        <el-col :span="4">
-          <el-form-item label="供应商:">
-            <el-input v-model="listQuery.supplier" style="width: 140px;" />
-          </el-form-item>
-        </el-col>
-        <el-col :span="4">
+        <el-col :span="5">
           <el-form-item label="审核状态:">
             <el-radio v-model="listQuery.audit_status" label=1>未审核</el-radio>
             <el-radio v-model="listQuery.audit_status" label=2>已审核</el-radio>
           </el-form-item>
         </el-col>
-        <el-col :span="4">
-          <el-form-item label="工程:">
-            <el-input v-model="listQuery.engineer" style="width: 140px;" />
-          </el-form-item>
-        </el-col>
-        <el-col :span="4">
-          <el-form-item label="材料:">
-            <el-input v-model="listQuery.key" style="width: 140px;" />
-          </el-form-item>
+        <el-col :span="6">
+          <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
+            搜索
+          </el-button>
+          <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">
+            导出excel
+          </el-button>
         </el-col>
       </el-row>
-      <el-row>
-
-      </el-row>
-
     </el-form>
-
-    <div class="filter-container" style="float: right;">
-      <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
-        搜索
-      </el-button>
-      <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">
-        导出excel
-      </el-button>
-    </div>
 
     <el-table
       v-loading="listLoading"
