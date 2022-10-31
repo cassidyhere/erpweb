@@ -19,7 +19,7 @@
       highlight-current-row
       style="width: 100%;"
       :max-height="tableHeight"
-      :header-cell-style="{background:'#F1F3F7'}"
+      :header-cell-style="{background:'#F1F3F7', color: 'black'}"
       :default-sort="{prop: 'id', order: 'descending'}"
       @sort-change="sortChange"
     >

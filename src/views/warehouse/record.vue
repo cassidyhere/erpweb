@@ -22,7 +22,7 @@
       highlight-current-row
       :max-height="tableHeight"
       :default-sort="{prop: 'id', order: 'descending'}"
-      :header-cell-style="{background:'#F1F3F7'}"
+      :header-cell-style="{background:'#F1F3F7', color: 'black'}"
       @sort-change="sortChange"
     >
       <el-table-column label="ID" sortable="custom" prop="id" align="center" width="60">

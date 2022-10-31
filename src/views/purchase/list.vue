@@ -62,7 +62,7 @@
       fit
       highlight-current-row
       :max-height="tableHeight"
-      :header-cell-style="{background:'#F1F3F7'}"
+      :header-cell-style="{background:'#F1F3F7', color: 'black'}"
     >
       <el-table-column label="ID" prop="id" align="center" width="60">
         <template slot-scope="scope">

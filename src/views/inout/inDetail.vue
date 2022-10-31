@@ -91,7 +91,7 @@
           border
           max-height="800px"
           highlight-current-row
-          :header-cell-style="{background:'#F1F3F7'}"
+          :header-cell-style="{background:'#F1F3F7', color: 'black'}"
           style="width:90%"
         >
           <el-table-column label="材料类别" max-width="140" align="center">

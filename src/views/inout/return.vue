@@ -35,7 +35,7 @@
       style="width: 100%;"
       :max-height="tableHeight"
       :default-sort="{prop: 'id', order: 'descending'}"
-      :header-cell-style="{background:'#F1F3F7'}"
+      :header-cell-style="{background:'#F1F3F7', color: 'black'}"
       @sort-change="sortChange"
       @row-click="handleGetReturn"
     >

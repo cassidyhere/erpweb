@@ -70,7 +70,7 @@
           border
           max-height="800px"
           highlight-current-row
-          :header-cell-style="{background:'#F1F3F7'}"
+          :header-cell-style="{background:'#F1F3F7', color: 'black'}"
           style="width:90%"
         >
           <el-table-column label="采购合同" max-width="200" align="center">
