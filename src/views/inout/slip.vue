@@ -34,12 +34,13 @@
       highlight-current-row
       style="width: 100%;"
       :max-height="tableHeight"
-      :header-cell-style="{background:'#F1F3F7', color: 'black'}"
+      :header-cell-style="{background:'#F1F3F7', color: 'black', 'font-size': '16px', padding: '4px'}"
+      :cell-style="{'padding': '3px', 'font-size': '16px', 'font-weight': 500}"
       :default-sort="{prop: 'id', order: 'descending'}"
       @sort-change="sortChange"
       @row-click="handleGetSlip"
     >
-      <el-table-column label="ID" prop="id" sortable="custom" align="center" width="60">
+      <el-table-column label="ID" prop="id" sortable="custom" align="center" width="70">
         <template slot-scope="scope">
           <span>{{ scope.row.id }}</span>
         </template>
@@ -69,7 +70,7 @@
           <span>{{ scope.row.remark }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="审核状态" min-width="80" align="center">
+      <el-table-column label="审核状态" min-width="85" align="center">
         <template slot-scope="scope">
           <el-button v-if="scope.row.audit_status===1" size="mini" type="primary" @click.native.stop="handleAuditSlip(scope.row.id)">
             审核

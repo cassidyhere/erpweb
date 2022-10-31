@@ -26,11 +26,12 @@
       highlight-current-row
       style="width: 100%;"
       :max-height="tableHeight"
-      :header-cell-style="{background:'#F1F3F7', color: 'black'}"
+      :header-cell-style="{background:'#F1F3F7', color: 'black', 'font-size': '16px', padding: '4px'}"
+      :cell-style="{'padding': '3px', 'font-size': '16px', 'font-weight': 500}"
       :default-sort="{prop: 'id', order: 'descending'}"
       @sort-change="sortChange"
     >
-      <el-table-column label="ID" prop="id" sortable="custom" align="center" width="60">
+      <el-table-column label="ID" prop="id" sortable="custom" align="center" width="70">
         <template slot-scope="scope">
           <span>{{ scope.row.id }}</span>
         </template>
@@ -45,12 +46,12 @@
           <span>{{ scope.row.engineer_type }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="中标情况" width="90" align="center">
+      <el-table-column label="中标情况" width="100" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.winner }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="工程金额(元)" prop="total" sortable="custom" width="140" align="center">
+      <el-table-column label="工程金额(元)" prop="total" sortable="custom" width="150" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.total }}</span>
         </template>
@@ -65,17 +66,17 @@
           <span>{{ scope.row.settlement }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="内部暂定成本(元)" width="140" align="center">
+      <el-table-column label="内部暂定成本(元)" width="160" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.tentative_cost }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="已收款(已实收)" width="140" align="center">
+      <el-table-column label="已收款(已实收)" width="150" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.collection }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="签订日期" prop="sign_time" sortable="custom" width="110" align="center">
+      <el-table-column label="签订日期" prop="sign_time" sortable="custom" width="120" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.sign_time }}</span>
         </template>
@@ -85,7 +86,7 @@
           <span>{{ scope.row.remark }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="审核状态" prop="audit_status" sortable="custom" width="110" align="center">
+      <el-table-column label="审核状态" prop="audit_status" sortable="custom" width="120" align="center">
         <template slot-scope="scope">
           <el-button v-if="scope.row.audit_status===1" size="mini" type="primary" @click="handleAuditEngineer(scope.row.id)">
             审核
@@ -117,7 +118,7 @@
           </el-button>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" min-width="360" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" min-width="300" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             v-if="canEditDetail(scope.row.status)"

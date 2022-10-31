@@ -19,11 +19,12 @@
       highlight-current-row
       style="width: 100%;"
       :max-height="tableHeight"
-      :header-cell-style="{background:'#F1F3F7', color: 'black'}"
+      :header-cell-style="{background:'#F1F3F7', color: 'black', 'font-size': '16px', padding: '4px'}"
+      :cell-style="{'padding': '3px', 'font-size': '16px', 'font-weight': 500}"
       :default-sort="{prop: 'id', order: 'descending'}"
       @sort-change="sortChange"
     >
-      <el-table-column fixed label="ID" prop="id" sortable="custom" align="center" width="40">
+      <el-table-column fixed label="ID" prop="id" sortable="custom" align="center" width="70">
         <template slot-scope="scope">
           <span>{{ scope.row.id }}</span>
         </template>
@@ -38,12 +39,12 @@
           <span>{{ scope.row.engineer_type }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="中标情况" width="90" align="center">
+      <el-table-column label="中标情况" width="100" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.winner }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="工程金额(元)" prop="total" sortable="custom" width="140" align="center">
+      <el-table-column label="工程金额(元)" prop="total" sortable="custom" width="150" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.total }}</span>
         </template>
@@ -53,17 +54,17 @@
           <span>{{ scope.row.extension }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="结算价(元)" width="140" align="center">
+      <el-table-column label="结算价(元)" width="120" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.settlement }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="内部暂定成本(元)" width="140" align="center">
+      <el-table-column label="内部暂定成本(元)" width="160" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.tentative_cost }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="预计利润(%)" width="100" align="center">
+      <el-table-column label="预计利润(%)" width="120" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.expected_profit }}</span>
         </template>

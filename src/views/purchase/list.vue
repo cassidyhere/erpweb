@@ -62,14 +62,15 @@
       fit
       highlight-current-row
       :max-height="tableHeight"
-      :header-cell-style="{background:'#F1F3F7', color: 'black'}"
+      :header-cell-style="{background:'#F1F3F7', color: 'black', 'font-size': '16px', padding: '4px'}"
+      :cell-style="{'padding': '3px', 'font-size': '16px', 'font-weight': 500}"
     >
-      <el-table-column label="ID" prop="id" align="center" width="60">
+      <el-table-column label="ID" prop="id" align="center" width="65">
         <template slot-scope="scope">
           <span>{{ scope.row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="采购单编号" min-width="140" align="center">
+      <el-table-column label="采购单编号" min-width="150" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.order_code }}</span>
         </template>
@@ -84,7 +85,7 @@
           <span>{{ scope.row.engineer_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="日期" min-width="100" align="center">
+      <el-table-column label="日期" min-width="110" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.insert_time }}</span>
         </template>
@@ -99,17 +100,17 @@
           <span>{{ scope.row.specification }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="单位" min-width="100" align="center">
+      <el-table-column label="单位" min-width="80" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.unit }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="采购数量" min-width="80" align="center">
+      <el-table-column label="采购数量" min-width="100" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.number }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="单价(元)" min-width="80" align="center">
+      <el-table-column label="单价(元)" min-width="90" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.price }}</span>
         </template>
@@ -119,12 +120,12 @@
           <span>{{ scope.row.total }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="已到货数量" min-width="100" align="center">
+      <el-table-column label="已到货数量" min-width="110" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.warehoused_number }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="采购单审核状态" min-width="120" align="center">
+      <el-table-column label="采购单审核状态" min-width="150" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.audit_status }}</span>
         </template>

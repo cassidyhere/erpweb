@@ -34,12 +34,13 @@
       highlight-current-row
       style="width: 100%;"
       :max-height="tableHeight"
-      :header-cell-style="{background:'#F1F3F7', color: 'black'}"
+      :header-cell-style="{background:'#F1F3F7', color: 'black', 'font-size': '16px', padding: '4px'}"
+      :cell-style="{'padding': '3px', 'font-size': '16px', 'font-weight': 500}"
       :default-sort="{prop: 'id', order: 'descending'}"
       @sort-change="sortChange"
       @row-click="handleGetPick"
     >
-      <el-table-column label="ID" prop="id" sortable="custom" align="center" width="60">
+      <el-table-column label="ID" prop="id" sortable="custom" align="center" width="70">
         <template slot-scope="scope">
           <span>{{ scope.row.id }}</span>
         </template>
