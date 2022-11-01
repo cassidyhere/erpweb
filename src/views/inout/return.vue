@@ -35,8 +35,9 @@
       style="width: 100%;"
       :max-height="tableHeight"
       :default-sort="{prop: 'id', order: 'descending'}"
+      stripe
       :header-cell-style="{background:'#F1F3F7', color: 'black', 'font-size': '16px', padding: '4px'}"
-      :cell-style="{'padding': '3px', 'font-size': '16px', 'font-weight': 500}"
+      :cell-style="{'padding': '3px', 'font-size': '16px', 'font-weight': 600}"
       @sort-change="sortChange"
       @row-click="handleGetReturn"
     >

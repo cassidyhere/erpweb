@@ -91,8 +91,9 @@
           border
           max-height="800px"
           highlight-current-row
-          :header-cell-style="{background:'#F1F3F7', color: 'black', 'font-size': '16px', padding: '4px'}"
-      :cell-style="{'padding': '3px', 'font-size': '16px', 'font-weight': 500}"
+          stripe
+      :header-cell-style="{background:'#F1F3F7', color: 'black', 'font-size': '16px', padding: '4px'}"
+      :cell-style="{'padding': '3px', 'font-size': '16px', 'font-weight': 600}"
           style="width:90%"
         >
           <el-table-column label="材料类别" max-width="140" align="center">

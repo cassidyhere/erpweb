@@ -11,13 +11,6 @@
       <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">
         导出excel
       </el-button>
-      <el-button :loading="loading" class="filter-item" type="primary" @click="handleUpload">
-        上传excel
-      </el-button>
-      <input ref="excel-upload-input" class="excel-upload-input" type="file" accept=".xlsx, .xls" @change="handleClick">
-      <!-- <el-checkbox v-model="showReviewer" class="filter-item" style="margin-left:15px;" @change="tableKey=tableKey+1">
-        reviewer
-      </el-checkbox> -->
     </div>
 
     <el-table
@@ -30,9 +23,11 @@
       style="width: 100%;"
       :max-height="tableHeight"
       :default-sort="{prop: 'id', order: 'ascending'}"
+      stripe
       :header-cell-style="{background:'#F1F3F7', color: 'black', 'font-size': '16px', padding: '4px'}"
-      :cell-style="{'padding': '3px', 'font-size': '16px', 'font-weight': 500}"
+      :cell-style="{'padding': '3px', 'font-size': '16px', 'font-weight': 600}"
       @sort-change="sortChange"
+      @row-click="handleUpdate"
     >
       <el-table-column label="ID" prop="id" sortable="custom" align="center" width="70">
         <template slot-scope="scope">
@@ -71,9 +66,6 @@
       </el-table-column>
       <el-table-column label="操作" align="center" min-width="140" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button type="primary" size="mini" @click="handleUpdate(scope.row)">
-            编辑
-          </el-button>
           <el-button
             v-if="scope.row.status!='deleted' && scope.row.can_delete===true"
             size="mini"
@@ -91,6 +83,7 @@
     <el-dialog
       :title="textMap[dialogStatus]"
       width="900px"
+      :close-on-click-modal="false"
       :visible.sync="dialogFormVisible"
     >
       <el-form

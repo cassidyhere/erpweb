@@ -35,8 +35,9 @@
       fit
       highlight-current-row
       :max-height="tableHeight"
+      stripe
       :header-cell-style="{background:'#F1F3F7', color: 'black', 'font-size': '16px', padding: '4px'}"
-      :cell-style="{'padding': '3px', 'font-size': '16px', 'font-weight': 500}"
+      :cell-style="{'padding': '3px', 'font-size': '16px', 'font-weight': 600}"
     >
       <el-table-column label="ID" prop="id" align="center" width="65">
         <template slot-scope="scope">
