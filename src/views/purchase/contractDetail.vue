@@ -132,8 +132,7 @@
           </el-table-column>
           <el-table-column label="价格(元)" min-width="140" align="center">
             <template slot-scope="scope">
-              <span v-if="temp.audit_status===2">{{ scope.row.price }}</span>
-              <el-input v-else v-model="scope.row.price" size="small" @blur="handleUpdatePrice(scope.row)"></el-input>
+              <el-input v-model="scope.row.price" size="small" @blur="handleUpdatePrice(scope.row)"></el-input>
             </template>
           </el-table-column>
           <el-table-column label="备注" min-width="200" align="center">

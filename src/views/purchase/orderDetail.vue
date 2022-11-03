@@ -155,14 +155,13 @@
           </el-table-column>
           <el-table-column label="价格(元)" min-width="110" align="center">
             <template slot-scope="scope">
-              <span v-if="temp.link_contract==='true' || temp.audit_status===2">{{ scope.row.price }}</span>
+              <span v-if="temp.link_contract==='true'">{{ scope.row.price }}</span>
               <el-input v-else v-model="scope.row.price" size="small" @input="handleUpdatePrice(scope.row)"></el-input>
             </template>
           </el-table-column>
           <el-table-column label="数量" min-width="110" align="center">
             <template slot-scope="scope">
-              <span v-if="temp.audit_status===2">{{ scope.row.number }}</span>
-              <el-input v-else v-model="scope.row.number" size="small" @input="handleUpdateNumber(scope.row)"></el-input>
+              <el-input v-model="scope.row.number" size="small" @input="handleUpdateNumber(scope.row)"></el-input>
             </template>
           </el-table-column>
           <el-table-column label="备注" min-width="200" align="center">
