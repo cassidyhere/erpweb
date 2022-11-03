@@ -62,7 +62,7 @@
           <span>{{ scope.row.unit }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="出入库数量" min-width="100" align="center">
+      <el-table-column label="出入库数量" min-width="110" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.inout_quantity }}</span>
         </template>
@@ -77,7 +77,7 @@
           <span>{{ scope.row.end_quantity }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="出入库时间" min-width="100" align="center">
+      <el-table-column label="出入库时间" min-width="110" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.inout_time }}</span>
         </template>

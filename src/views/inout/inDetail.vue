@@ -121,7 +121,7 @@
               <span>{{ scope.row.price }}</span>
             </template>
           </el-table-column>
-          <el-table-column v-if="temp.audit_status!==2" label="未进仓数量" max-width="140" align="center">
+          <el-table-column v-if="temp.audit_status!==2" label="未进仓数量" max-width="140" min-width="100" align="center">
             <template slot-scope="scope">
               <span>{{ scope.row.unwarehouse_number }}</span>
             </template>
@@ -159,6 +159,14 @@ import { getNowTime, isNumeric } from '@/utils/common'
 
 export default {
   data() {
+    var validatePass = (rule, value, callback) => {
+      console.log('value:', value)
+      if (value === '') {
+        callback(new Error('请选择关联采购单'));
+      } else {
+        callback()
+      }
+    }
     return {
       status: undefined,
       inout_id: undefined,
@@ -167,7 +175,7 @@ export default {
       temp_materials: [],
       purchase_orders: [],
       rules: {
-        purchase_order_name: [{ required: true, message: '请选择关联采购单', trigger: 'blur' }],
+        purchase_order_name: [{ required: true, validator: validatePass, trigger: 'blur' }],
         order_time: [{ required: true, message: '请选择下单时间', trigger: 'blur' }],
         order_user: [{ required: true, message: '请输入下单用户', trigger: 'blur' }]
       }
@@ -213,6 +221,7 @@ export default {
           this.temp.supplier_name = res.supplier_name
           this.temp_materials = this.temp.materials = res.materials
           this.temp.total = 0
+          console.log('temp:', this.temp)
         })
       }
       if (this.temp.order_time === undefined) {
@@ -227,6 +236,7 @@ export default {
 
   methods: {
     updateData() {
+      console.log('this.temp2:', this.temp)
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           var data = Object.assign({}, this.temp)
