@@ -106,8 +106,8 @@
           max-height="800px"
           highlight-current-row
           stripe
-      :header-cell-style="{background:'#F1F3F7', color: 'black', 'font-size': '16px', padding: '4px'}"
-      :cell-style="{'padding': '3px', 'font-size': '16px', 'font-weight': 600}"
+          :header-cell-style="{background:'#F1F3F7', color: 'black', 'font-size': '16px', padding: '4px'}"
+          :cell-style="{'padding': '3px', 'font-size': '16px', 'font-weight': 600}"
           style="width:90%"
         >
           <el-table-column label="材料类别" min-width="120" align="center">
@@ -132,7 +132,7 @@
           </el-table-column>
           <el-table-column label="价格(元)" min-width="140" align="center">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.price" size="small" @blur="handleUpdatePrice(scope.row)"></el-input>
+              <el-input v-model="scope.row.price" size="small" @change="handleUpdatePrice(scope.row)"></el-input>
             </template>
           </el-table-column>
           <el-table-column label="备注" min-width="200" align="center">
@@ -185,7 +185,7 @@ export default {
               return Number(value);
             },
             validator(rule, value, callback) {
-              if (Number.isFinite(value) && value >= 0) {
+              if (Number.isFinite(value) && value > 0) {
                 callback();
               } else {
                 callback(new Error("请输入不小于0的数字"));
@@ -285,7 +285,6 @@ export default {
       fetchSupplierMaterials(query).then(res => {
         this.temp_materials = this.temp.materials = res.materials
       })
-      console.log('this.temp.materials:', this.temp.materials)
     },
     querySearchEngineer(queryString, cb) {
       var engineers = this.engineers;
@@ -303,7 +302,6 @@ export default {
       this.temp.engineer_name = item.engineer_name
     },
     handleUpdatePrice(row) {
-      console.log('row:', row)
       if (!isNumeric(row.price) || Number(row.price) <= 0) {
         row.price = null
       }
@@ -318,7 +316,6 @@ export default {
               materials[i].specification.indexOf(this.mkey) !== -1 ||
               materials[i].unit.indexOf(this.mkey) !== -1
           ) {
-            console.log('here', materials[i])
             ret.push(materials[i])
           }
         }
