@@ -103,7 +103,7 @@
           >
             刪除
           </el-button>
-          <el-button
+          <!-- <el-button
             v-if="scope.row.audit_status===2 && scope.row.status===1"
             size="mini"
             type="primary"
@@ -111,7 +111,7 @@
             @click.native.stop="handleInOrder(scope.row.id)"
           >
             入仓
-          </el-button>
+          </el-button> -->
           <el-button
             v-if="scope.row.status===1"
             size="mini"

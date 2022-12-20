@@ -106,7 +106,7 @@
           >
             刪除
           </el-button>
-          <el-button
+          <!-- <el-button
             v-if="scope.row.audit_status===2 && scope.row.status===1"
             size="mini"
             type="primary"
@@ -114,7 +114,7 @@
             @click.native.stop="handleCreateOrder(scope.row.id)"
           >
             下采购单
-          </el-button>
+          </el-button> -->
           <!-- <el-button
             v-if="scope.row.audit_status===2 && scope.row.status===1"
             size="mini"
