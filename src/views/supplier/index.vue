@@ -27,21 +27,20 @@
       :header-cell-style="{background:'#F1F3F7', color: 'black', 'font-size': '16px', padding: '4px'}"
       :cell-style="{'padding': '3px', 'font-size': '16px', 'font-weight': 600}"
       @sort-change="sortChange"
-      @row-click="handleUpdate"
     >
       <el-table-column label="ID" prop="id" sortable="custom" align="center" width="70">
         <template slot-scope="scope">
           <span>{{ scope.row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="供应商编号" prop="supplier_code" min-width="200" align="center">
-        <template slot-scope="scope">
-          {{ scope.row.supplier_code }}
-        </template>
-      </el-table-column>
       <el-table-column label="供应商名称" prop="supplier_name" sortable="custom" min-width="200" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.supplier_name }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="供应信息" min-width="200" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.msg }}</span>
         </template>
       </el-table-column>
       <el-table-column label="联系人" min-width="130" align="center">
@@ -66,10 +65,12 @@
       </el-table-column>
       <el-table-column label="操作" align="center" min-width="140" class-name="small-padding fixed-width">
         <template slot-scope="scope">
+          <el-button size="mini" type="info" plain @click="handleUpdate(scope.row)">查看</el-button>
           <el-button
             v-if="scope.row.status!='deleted' && scope.row.can_delete===true"
             size="mini"
             type="danger"
+            plain
             @click="handleDelete(scope.row)"
           >
             删除

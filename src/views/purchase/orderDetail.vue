@@ -204,9 +204,9 @@ export default {
       rules: {
         order_name: [{ required: true, message: '请输入采购订单名称', trigger: 'blur' }],
         link_contract: [{ required: true, message: '请选择是否关联采购合同', trigger: 'blur' }],
-        // contract_name: [{ required: true, message: '请选择采购合同名称', trigger: 'change' }],
-        supplier_name: [{ required: true, message: '请选择供应商', trigger: 'blur' }],
-        engineer_name: [{ required: true, message: '请选择工程', trigger: 'blur' }],
+        contract_name: [{ required: true, message: '请选择采购合同名称', trigger: 'change' }],
+        supplier_name: [{ required: true, message: '请选择供应商', trigger: 'change' }],
+        engineer_name: [{ required: true, message: '请选择工程', trigger: 'change' }],
         from_basecamp: [{ required: true, message: '请选择是否从总仓下单', trigger: 'blur' }],
         sign_time: [{ required: true, message: '请选择签订日期', trigger: 'blur' }],
       }

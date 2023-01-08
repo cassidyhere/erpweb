@@ -235,6 +235,7 @@ export default {
 
     fetchBuildingList().then(res => {
       this.engineers = res.engineers
+      console.log("engineer:", this.engineers)
     })
     fetchActives().then(res => {
       this.suppliers = res.suppliers

@@ -28,7 +28,6 @@
       :cell-style="{'padding': '3px', 'font-size': '16px', 'font-weight': 600}"
       :default-sort="{prop: 'id', order: 'descending'}"
       @sort-change="sortChange"
-      @row-click="handleUpdateContract"
     >
       <el-table-column label="ID" prop="id" sortable="custom" align="center" width="70">
         <template slot-scope="scope">
@@ -95,8 +94,16 @@
           </el-button>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="200" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" min-width="220" class-name="small-padding fixed-width">
         <template slot-scope="scope">
+          <el-button
+            size="mini"
+            type="info"
+            plain
+            @click.native.stop="handleUpdateContract"
+          >
+            查看
+          </el-button>
           <el-button
             v-if="scope.row.audit_status===1"
             size="mini"
