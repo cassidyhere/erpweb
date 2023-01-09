@@ -284,12 +284,7 @@ export default {
       this.getList()
     },
     handleCreate() {
-      this.resetTemp()
-      this.dialogStatus = 'create'
-      this.dialogFormVisible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate()
-      })
+      this.$router.push({name: 'createSupplier'})
     },
     resetTemp() {
       this.temp = {
@@ -351,14 +346,9 @@ export default {
       })
     },
     handleUpdate(row) {
-      const query = { supplier_id: row.id }
-      fetchSupplierDetail(query).then(res => {
-        this.temp = Object.assign({}, res)
-        this.dialogStatus = 'update'
-        this.dialogFormVisible = true
-        this.$nextTick(() => {
-          this.$refs['dataForm'].clearValidate()
-        })
+      this.$router.push({
+        name: 'updateSupplier',
+        params: { supplier_id: row.id }
       })
     },
     handleDelete(row) {
