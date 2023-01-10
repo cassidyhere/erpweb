@@ -56,7 +56,7 @@
 
       <el-form-item label="材料列表:" class="head-item" style="margin-top:30px">
         <el-table
-          :data="temp_materials"
+          :data="materials"
           element-loading-text="Loading"
           fit
           border
@@ -77,16 +77,39 @@
               <span>{{ scope.row.material_name }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="备注" min-width="200" align="center">
+          <el-table-column label="单位" min-width="150" align="center">
+            <template slot-scope="scope">
+              <span>{{ scope.row.unit }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="规格" min-width="200" align="center">
+            <template slot-scope="scope">
+              <span>{{ scope.row.specification }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="备注" min-width="220" align="center">
             <template slot-scope="scope">
               <el-input v-model="scope.row.remark" size="small"></el-input>
             </template>
           </el-table-column>
-          <el-table-column type="selection" min-width="55" />
-          <el-table-column align="right" min-width="150">
-            <template slot="header">
-              <el-input v-model="mkey" size="small" placeholder="输入关键字搜索" @input="handleSearchMaterial"></el-input>
+          <el-table-column label="是否可供应材料" min-width="130" align="center">
+            <template slot-scope="scope">
+              <el-switch v-model="scope.row.relate" active-color="#13ce66"></el-switch>
             </template>
+          </el-table-column>
+          <!-- <el-table-column type="selection" min-width="55" /> -->
+          <el-table-column min-width="200">
+            <template slot="header">
+              <el-switch
+                v-model="onlyRelate"
+                active-text="只显示可供应材料">
+              </el-switch>
+            </template>
+            <el-table-column align="right" min-width="200">
+              <template slot="header">
+                <el-input v-model="mkey" size="small" placeholder="输入关键字搜索" @input="handleSearchMaterial"></el-input>
+              </template>
+            </el-table-column>
           </el-table-column>
         </el-table>
       </el-form-item>
@@ -102,15 +125,10 @@ import Pagination from '@/components/Pagination'
 import waves from '@/directive/waves' // waves directive
 import fileDownload from 'js-file-download'
 import {
-  fetchList,
   fetchSupplierDetail,
+  fetchSupplierMaterials,
   createSupplier,
-  updateSupplier,
-  importSupplierExcel,
-  downloadSupplierExcel,
-  fetchCategoryList,
-  fetchMaterialList,
-  deleteSupplier
+  updateSupplier
 } from '@/api/supplier'
 
 export default {
@@ -118,51 +136,43 @@ export default {
   directives: { waves },
   data() {
     return {
-      // table
-      list: null,
-      listLoading: true,
-      total: 0,
-
-      // dialog
+      status: undefined,
+      onlyRelate: true,  // 只显示可供应材料
+      supplier_id: undefined,
+      temp: {},
+      mkey: undefined,
+      temp_materials: [],
       materials: [],
-      categories: [],
-      textMap: {
-        update: '编辑',
-        create: '新增'
-      },
-      dialogStatus: '',
-      dialogFormVisible: false,
-      temp: {
-        supplier_id: null,
-        supplier_code: '',
-        supplier_name: '',
-        contact: '',
-        phone: '',
-        fax: '',
-        address: '',
-        remark: '',
-        materials: []
-      },
+
       rules: {
         supplier_name: [{ required: true, message: '请输入工程名称', trigger: 'change' }],
         contact: [{ required: true, message: '请输入联系人', trigger: 'change' }],
         eliminate: [{ required: true, message: '请选择是否淘汰', trigger: 'change' }],
         msg: [{ required: true, message: '请输入供应信息', trigger: 'change' }],
         address: [{ required: true, message: '请输入地址', trigger: 'change' }],
-      },
-      multipleSelection: [],
-      tableHeight: "100px"
+      }
     }
   },
 
   created() {
-    this.getList()
-    fetchMaterialList().then(res => {
-      this.materials = res.material_list
-    })
-    fetchCategoryList().then(res => {
-      this.categories = res.category_list
-    })
+    if (this.$route.path.endsWith('update')) {
+      this.status = 'update'
+      // 先从传参找contract_id，找不到再从store找
+      var supplier_id = this.$route.params.supplier_id
+
+      this.supplier_id = supplier_id
+      fetchSupplierDetail({ supplier_id: this.supplier_id }).then(res => {
+        this.temp = Object.assign({}, res)
+        this.materials = this.temp.materials
+      })
+      fetchSupplierMaterials({ supplier_id: this.supplier_id }).then(res => {
+        // this.materials = Object.assign({}, res)
+        this.materials = res.materials
+        this.total = res.total_num
+        this.listLoading = false
+      })
+
+    }
   },
 
   mounted() {
@@ -174,109 +184,8 @@ export default {
   },
 
   methods: {
-    // dialog
-    handleSelectionChange(val) {
-      this.multipleSelection = val
-    },
-    querySearchCategory(queryString, cb) {
-      var categories = this.categories
-      var results = queryString ? categories.filter(this.createStateFilter(queryString)) : categories
+    
 
-      clearTimeout(this.timeout)
-      this.timeout = setTimeout(() => {
-        cb(results)
-      }, 30 * Math.random())
-    },
-    createStateFilter(queryString) {
-      return (state) => {
-        return (state.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0)
-      }
-    },
-    selectCategory(value, row) {
-      var renull = null
-      this.materials.forEach((v, i) => {
-        if ((row.material_name === v.value) && (v.category_name === value)) {
-          renull = false
-        }
-      })
-      if (renull === true) {
-        row.category_name = null
-        row.material_name = null
-      }
-    },
-    renullCategory(row) {
-      var renull = true
-      this.categories.forEach((v, i) => {
-        if (row.category_name === v.value) {
-          renull = false
-        }
-      })
-      if (renull === true) {
-        row.category_name = null
-        row.material_name = null
-      }
-    },
-    querySearchMaterial(queryString, cb) {
-      var materials = this.materials
-      var results = queryString ? materials.filter(this.createStateFilter(queryString)) : materials
-
-      clearTimeout(this.timeout)
-      this.timeout = setTimeout(() => {
-        cb(results)
-      }, 30 * Math.random())
-    },
-    selectMaterial(value, row) {
-      var category_name = null
-      var category_id = null
-      var material_id = null
-      this.materials.forEach((v, i) => {
-        if (value === v.value) {
-          category_name = v.category_name
-          category_id = v.category_id
-          material_id = v.id
-          return
-        }
-      })
-      row.category_name = category_name
-      row.category_id = category_id
-      row.material_id = material_id
-      console.log(row)
-    },
-    renullMaterial(row) {
-      var renull = true
-      this.materials.forEach((v, i) => {
-        if (row.material_name === v.value) {
-          renull = false
-        }
-      })
-      if (renull === true) {
-        row.material_name = null
-        row.material_id = null
-        row.category_name = null
-        row.category_id = null
-      }
-    },
-    addRow() {
-      var list = {
-        category_id: null,
-        category_name: '',
-        material_id: null,
-        material_name: '',
-        remark: '',
-        editing: true
-      }
-      this.temp.materials.unshift(list)
-    },
-    delRow() {
-      for (let i = 0; i < this.multipleSelection.length; i++) {
-        const val = this.multipleSelection[i]
-        this.temp.materials.forEach((v, i) => {
-          if (val.category_id === v.category_id && val.material_id === v.material_id) {
-            this.temp.materials.splice(i, 1)
-          }
-        })
-      }
-    },
     handleCreateSupplier() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
@@ -308,15 +217,6 @@ export default {
             this.getList()
           })
         }
-      })
-    },
-    getAutoHeight() {
-      // 窗口高度减去表格外元素的高度
-      let h = window.innerHeight - 84 - 20 - 56 - 32 - 20 - 30
-      // 最小高度
-      h = h > 600 ? h : 600
-      this.$nextTick(() => {
-        this.tableHeight = h
       })
     }
   }

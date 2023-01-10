@@ -318,13 +318,15 @@ export const constantRoutes = [
         path: 'supplier/create',
         name: 'createSupplier',
         component: () => import('@/views/supplier/supplierDetail'),
-        meta: { title: '新建供应商', icon: 'dashboard' }
+        meta: { title: '新建供应商', icon: 'dashboard' },
+        hidden: true
       },
       {
         path: 'supplier/update',
         name: 'updateSupplier',
         component: () => import('@/views/supplier/supplierDetail'),
-        meta: { title: '更新供应商', icon: 'dashboard' }
+        meta: { title: '更新供应商', icon: 'dashboard' },
+        hidden: true
       },
       {
         path: 'material',
