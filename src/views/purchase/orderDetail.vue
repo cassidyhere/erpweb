@@ -93,7 +93,7 @@
       </el-row>
       <el-row>
         <el-col :span="8">
-          <el-form-item label="订单金额(元):" prop="total" class="head-item">
+          <el-form-item label="合计总金额(元):" prop="total" class="head-item">
             <span>{{ temp.total }}</span>
           </el-form-item>
         </el-col>
@@ -153,15 +153,20 @@
               <span>{{ scope.row.unit }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="价格(元)" min-width="110" align="center">
+          <el-table-column label="数量" min-width="110" align="center">
+            <template slot-scope="scope">
+              <el-input v-model="scope.row.number" size="small" @input="handleUpdateNumber(scope.row)"></el-input>
+            </template>
+          </el-table-column>
+          <el-table-column label="单价(元)" min-width="110" align="center">
             <template slot-scope="scope">
               <span v-if="temp.link_contract==='true'">{{ scope.row.price }}</span>
               <el-input v-else v-model="scope.row.price" size="small" @input="handleUpdatePrice(scope.row)"></el-input>
             </template>
           </el-table-column>
-          <el-table-column label="数量" min-width="110" align="center">
+          <el-table-column label="小计金额(元)" min-width="110" align="center">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.number" size="small" @input="handleUpdateNumber(scope.row)"></el-input>
+              <span>{{ scope.row.total }}</span>
             </template>
           </el-table-column>
           <el-table-column label="备注" min-width="200" align="center">
@@ -362,16 +367,25 @@ export default {
       this.temp.engineer_name = item.engineer_name
     },
     handleUpdatePrice(row) {
-      if (!isNumeric(row.price) || Number(row.price) <= 0) {
+      if (!isNumeric(row.price) || Number(row.price) < 0) {
         row.price = null
       }
+      this.clacRowTotal(row)
       this.calcTotal()
     },
     handleUpdateNumber(row) {
       if (!isNumeric(row.number) || Number(row.number) < 0) {
         row.number = null
       }
+      this.clacRowTotal(row)
       this.calcTotal()
+    },
+    clacRowTotal(row) {
+      if (isNaN(row.number) || isNaN(row.price)) {
+        row.total = null
+      } else {
+        row.total = row.number * row.price
+      }
     },
     calcTotal() {
       this.temp.total = undefined

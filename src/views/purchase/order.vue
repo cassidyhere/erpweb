@@ -28,29 +28,28 @@
       :cell-style="{'padding': '3px', 'font-size': '16px', 'font-weight': 600}"
       :default-sort="{prop: 'id', order: 'descending'}"
       @sort-change="sortChange"
-      @row-click="handleUpdateOrder"
     >
       <el-table-column label="ID" prop="id" sortable="custom" align="center" width="70">
         <template slot-scope="scope">
           <span>{{ scope.row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="采购订单" min-width="180" align="center">
+      <el-table-column label="采购订单" min-width="160" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.order_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="采购合同" min-width="180" align="center">
+      <el-table-column label="采购合同" min-width="160" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.contract_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="供应商" min-width="180" align="center">
+      <el-table-column label="供应商" min-width="160" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.supplier_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="工程" min-width="180" align="center">
+      <el-table-column label="工程" min-width="160" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.engineer_name }}</span>
         </template>
@@ -65,7 +64,7 @@
           <span>{{ scope.row.payment }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="下单日期" width="120" align="center">
+      <el-table-column label="下单日期" width="110" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.order_time }}</span>
         </template>
@@ -77,12 +76,12 @@
           <span v-else>全部进仓</span>
         </template>
       </el-table-column>
-      <el-table-column label="备注" min-width="180" align="center">
+      <el-table-column label="备注" min-width="200" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.remark }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="审核状态" width="120" align="center">
+      <el-table-column label="审核状态" width="100" align="center">
         <template slot-scope="scope">
           <el-button v-if="scope.row.audit_status===1" size="mini" type="primary" @click.native.stop="handleAuditOrder(scope.row.id)">
             审核
@@ -92,8 +91,16 @@
           </el-button>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="200" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" width="220" class-name="small-padding fixed-width">
         <template slot-scope="scope">
+          <el-button
+            size="mini"
+            type="info"
+            plain
+            @click.native.stop="handleUpdateOrder(scope.row.id)"
+          >
+            查看
+          </el-button>
           <el-button
             v-if="scope.row.audit_status===1"
             size="mini"
@@ -242,10 +249,10 @@ export default {
         this.$message.success('已取消删除')
       })     
     },
-    handleUpdateOrder(row) {
+    handleUpdateOrder(order_id) {
       this.$router.push({
         name: 'updateOrder',
-        params: { order_id: row.id }
+        params: { order_id: order_id }
       })
     },
     handleDeleteOrder(order_id) {
