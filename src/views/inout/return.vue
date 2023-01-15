@@ -39,7 +39,6 @@
       :header-cell-style="{background:'#F1F3F7', color: 'black', 'font-size': '16px', padding: '4px'}"
       :cell-style="{'padding': '3px', 'font-size': '16px', 'font-weight': 600}"
       @sort-change="sortChange"
-      @row-click="handleGetReturn"
     >
       <el-table-column label="ID" prop="id" sortable="custom" align="center" width="70">
         <template slot-scope="scope">
@@ -83,6 +82,14 @@
       </el-table-column>
       <el-table-column label="操作" align="center" min-width="230" class-name="small-padding fixed-width">
         <template slot-scope="scope">
+          <el-button
+            size="mini"
+            type="info"
+            plain
+            @click.native.stop="handleGetReturn(scope.row.id)"
+          >
+            查看
+          </el-button>
           <el-button v-if="scope.row.audit_status===1" size="mini" type="danger" @click.native.stop="handleDeleteReturn(scope.row.id)">
             删除
           </el-button>
@@ -186,10 +193,10 @@ export default {
         params: { inout_id: inout_id }
       })
     },
-    handleGetReturn(row) {
+    handleGetReturn(return_order_id) {
       this.$router.push({
         name: 'updateReturn',
-        params: { inout_id: row.id }
+        params: { inout_id: return_order_id }
       })
     },
 

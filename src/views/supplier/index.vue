@@ -63,7 +63,7 @@
           <span>{{ scope.row.address }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" min-width="140" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" min-width="150" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button size="mini" type="info" plain @click="handleUpdate(scope.row)">查看</el-button>
           <el-button

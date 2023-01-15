@@ -55,6 +55,15 @@
       </el-form-item>
 
       <el-form-item label="材料列表:" class="head-item" style="margin-top:30px">
+        <div  class="filter-container">
+          <el-input placeholder="搜索关键字" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+          <el-button plain class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
+            搜索
+          </el-button>
+          <el-button plain class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="addRow">
+            新增一行
+          </el-button>
+        </div>
         <el-table
           :data="materials"
           element-loading-text="Loading"
@@ -74,7 +83,16 @@
           </el-table-column>
           <el-table-column label="材料名称" min-width="200" align="center">
             <template slot-scope="scope">
-              <span>{{ scope.row.material_name }}</span>
+              <span v-if="scope.row.type === 'new'" >{{ scope.row.material_name }}</span>
+              <el-autocomplete
+                v-else
+                v-model="scope.row.material_name"
+                value-key="material_name"
+                :fetch-suggestions="querySearchMaterial"
+                placeholder="请输入内容"
+                @select="handleSelectMaterial(scope.row)"
+                style="width: 200px;"
+              />
             </template>
           </el-table-column>
           <el-table-column label="单位" min-width="150" align="center">
@@ -92,24 +110,10 @@
               <el-input v-model="scope.row.remark" size="small"></el-input>
             </template>
           </el-table-column>
-          <el-table-column label="是否可供应材料" min-width="130" align="center">
+          <el-table-column label="操作" min-width="140" align="center">
             <template slot-scope="scope">
-              <el-switch v-model="scope.row.relate" active-color="#13ce66"></el-switch>
+              <el-button size="mini" type="danger" plain @click="delRow(scope.row)">删除</el-button>
             </template>
-          </el-table-column>
-          <!-- <el-table-column type="selection" min-width="55" /> -->
-          <el-table-column min-width="200">
-            <template slot="header">
-              <el-switch
-                v-model="onlyRelate"
-                active-text="只显示可供应材料">
-              </el-switch>
-            </template>
-            <el-table-column align="right" min-width="200">
-              <template slot="header">
-                <el-input v-model="mkey" size="small" placeholder="输入关键字搜索" @input="handleSearchMaterial"></el-input>
-              </template>
-            </el-table-column>
           </el-table-column>
         </el-table>
       </el-form-item>
@@ -121,9 +125,6 @@
 </template>
 
 <script>
-import Pagination from '@/components/Pagination'
-import waves from '@/directive/waves' // waves directive
-import fileDownload from 'js-file-download'
 import {
   fetchSupplierDetail,
   fetchSupplierMaterials,
@@ -132,23 +133,26 @@ import {
 } from '@/api/supplier'
 
 export default {
-  components: { Pagination },
-  directives: { waves },
   data() {
     return {
+      listQuery: {
+        page: 1,
+        limit: 20,
+        keyword: undefined
+      },
+
       status: undefined,
-      onlyRelate: true,  // 只显示可供应材料
       supplier_id: undefined,
       temp: {},
       mkey: undefined,
-      temp_materials: [],
       materials: [],
+      search_categories: [],
+      search_materials: [],
 
       rules: {
         supplier_name: [{ required: true, message: '请输入工程名称', trigger: 'change' }],
         contact: [{ required: true, message: '请输入联系人', trigger: 'change' }],
         eliminate: [{ required: true, message: '请选择是否淘汰', trigger: 'change' }],
-        msg: [{ required: true, message: '请输入供应信息', trigger: 'change' }],
         address: [{ required: true, message: '请输入地址', trigger: 'change' }],
       }
     }
@@ -184,8 +188,47 @@ export default {
   },
 
   methods: {
-    
+    addRow() {
+      var list = {
+        category_id: null,
+        category_name: '',
+        material_id: null,
+        material_name: '',
+        remark: '',
+        editing: true
+      }
+      this.materials.unshift(list)
+    },
 
+    delRow(row) {
+      this.materials.forEach((v, i) => {
+        if (row.material_id === v.material_id) {
+          this.materials.splice(i, 1)
+        }
+      })
+    },
+
+    querySearchMaterial(queryString, cb) {
+      var materials = this.materials;
+      var results = queryString ? materials.filter(this.createMaterialFilter(queryString)) : materials;
+      // 调用 callback 返回建议列表的数据
+      cb(results);
+    },
+    createMaterialFilter(queryString) {
+      return (materials) => {
+        return (materials.material_name.toLowerCase().indexOf(queryString.toLowerCase()) !== -1);
+      };
+    },
+    handleSelectMaterial(row) {
+      this.temp.contract_id = item.contract_id
+      this.temp.contract_name = item.contract_name
+      this.temp.total = 0
+      fetchContractInfo({ contract_id: item.contract_id }).then(res => {
+        Object.assign(this.temp, res)
+        this.temp_materials = this.temp.materials
+      })
+    },
+    
     handleCreateSupplier() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {

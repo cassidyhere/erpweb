@@ -39,7 +39,6 @@
       :cell-style="{'padding': '3px', 'font-size': '16px', 'font-weight': 600}"
       :default-sort="{prop: 'id', order: 'descending'}"
       @sort-change="sortChange"
-      @row-click="handleGetPick"
     >
       <el-table-column label="ID" prop="id" sortable="custom" align="center" width="70">
         <template slot-scope="scope">
@@ -83,6 +82,14 @@
       </el-table-column>
       <el-table-column label="操作" align="center" min-width="230" class-name="small-padding fixed-width">
         <template slot-scope="scope">
+          <el-button
+            size="mini"
+            type="info"
+            plain
+            @click.native.stop="handleGetPick(scope.row.id)"
+          >
+            查看
+          </el-button>
           <el-button v-if="scope.row.audit_status===1" size="mini" type="danger" @click.native.stop="handleDeletePick(scope.row.id)">
             删除
           </el-button>
@@ -186,10 +193,10 @@ export default {
         params: { inout_id: inout_id }
       })
     },
-    handleGetPick(row) {
+    handleGetPick(pick_order_id) {
       this.$router.push({
         name: 'updatePick',
-        params: { inout_id: row.id }
+        params: { inout_id: pick_order_id }
       })
     },
 
