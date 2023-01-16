@@ -72,8 +72,8 @@
       <el-table-column label="进仓状态" width="100" align="center">
         <template slot-scope="scope">
           <span v-if="scope.row.warehouse_status===1">未进仓</span>
-          <span v-else-if="scope.row.warehouse_status===2">已进仓</span>
-          <span v-else>全部进仓</span>
+          <span v-else-if="scope.row.warehouse_status===2">全部进仓</span>
+          <span v-else>部分进仓</span>
         </template>
       </el-table-column>
       <el-table-column label="备注" min-width="200" align="center">

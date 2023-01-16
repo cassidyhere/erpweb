@@ -384,7 +384,7 @@ export default {
       if (isNaN(row.number) || isNaN(row.price)) {
         row.total = null
       } else {
-        row.total = row.number * row.price
+        row.total = (row.number * row.price).toFixed(2)
       }
     },
     calcTotal() {
