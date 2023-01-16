@@ -56,7 +56,7 @@
 
       <el-form-item label="材料列表:" class="head-item" style="margin-top:30px">
         <div  class="filter-container">
-          <el-input placeholder="搜索关键字" style="width: 200px;" class="filter-item" @keyup.enter.native="handleSearchMaterial" />
+          <el-input v-model="mkey" placeholder="搜索关键字" style="width: 200px;" class="filter-item" @keyup.enter.native="handleSearchMaterial" />
           <el-button plain class="filter-item" type="primary" icon="el-icon-search" @click="handleSearchMaterial">
             搜索
           </el-button>
@@ -65,7 +65,7 @@
           </el-button>
         </div>
         <el-table
-          :data="materials"
+          :data="temp_materials"
           element-loading-text="Loading"
           fit
           border
@@ -84,7 +84,7 @@
           <el-table-column label="材料名称" min-width="200" align="center">
             <template slot-scope="scope">
               <span v-if="scope.row.type === 'new'" >{{ scope.row.material_name }}</span>
-              <el-autocomplete
+              <!-- <el-autocomplete
                 v-else
                 v-model="scope.row.material_name"
                 value-key="material_name"
@@ -92,7 +92,24 @@
                 placeholder="请输入内容"
                 @select="handleSelectMaterial(scope.row)"
                 style="width: 200px;"
-              />
+              /> -->
+              <el-select
+                v-else
+                v-model="scope.row.material_name"
+                filterable
+                placeholder="请选择"
+                @change="handleSelectMaterial(scope.row)"
+              >
+                <el-option
+                  v-for="item in supplying_materials"
+                  :key="item.material_id"
+                  :label="item.material_name"
+                  :value="item.material_id"
+                >
+                  <span style="float: left">{{ item.material_name }}</span>
+                  <span style="float: right; color: #8492a6; font-size: 13px">{{ item.specification }}</span>
+                </el-option>
+              </el-select>
             </template>
           </el-table-column>
           <el-table-column label="单位" min-width="150" align="center">
@@ -112,7 +129,15 @@
           </el-table-column>
           <el-table-column label="操作" min-width="140" align="center">
             <template slot-scope="scope">
-              <el-button size="mini" type="danger" plain @click="delRow(scope.row)">删除</el-button>
+              <el-button
+                v-if="scope.row.can_delete===true"
+                size="mini"
+                type="danger"
+                plain
+                @click="delRow(scope.row)"
+              >
+                删除
+              </el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -131,23 +156,34 @@ import {
   createSupplier,
   updateSupplier
 } from '@/api/supplier'
+import {
+  fetchCategories,
+  fetchSupplyingMaterials,
+  fetchMaterial
+} from '@/api/material'
 
 export default {
   data() {
     return {
-      listQuery: {
-        page: 1,
-        limit: 20,
-        keyword: undefined
-      },
-
       status: undefined,
       supplier_id: undefined,
-      temp: {},
+      temp: {
+        supplier_name: undefined,
+        contact: undefined,
+        phone: undefined,
+        fax: 0,
+        telephone: undefined,
+        remark: undefined,
+        materials: [],
+        eliminate: "false",
+        msg: undefined,
+        address: undefined
+      },
+      temp_materials: [],
+
       mkey: undefined,
-      materials: [],
-      search_categories: [],
-      search_materials: [],
+      supplying_categories: [],
+      supplying_materials: [],
 
       rules: {
         supplier_name: [{ required: true, message: '请输入工程名称', trigger: 'change' }],
@@ -177,13 +213,9 @@ export default {
         // 获取订单明细
         fetchSupplierDetail({ supplier_id: this.supplier_id }).then(res => {
           this.temp = Object.assign({}, res)
-          this.materials = this.temp.materials
-        })
-        fetchSupplierMaterials({ supplier_id: this.supplier_id }).then(res => {
-          // this.materials = Object.assign({}, res)
-          this.materials = res.materials
-          this.total = res.total_num
-          this.listLoading = false
+          fetchSupplierMaterials({ supplier_id: this.supplier_id }).then(res => {
+            this.temp_materials = this.temp.materials = res.materials
+          })
         })
       }
 
@@ -192,14 +224,13 @@ export default {
       this.temp = this.$store.getters.supplierInfo
       this.temp_materials = this.temp.materials
     }
-  },
 
-  mounted() {
-    this.getAutoHeight()
-    const self = this;
-    window.onresize = function() {
-      self.getAutoHeight();
-    };
+    fetchSupplyingMaterials().then(res => {
+      this.supplying_materials = res.material_list
+    })
+    fetchCategories().then(res => {
+      this.supplying_categories = res.category_list
+    })
   },
 
   methods: {
@@ -212,12 +243,12 @@ export default {
         remark: '',
         editing: true
       }
-      this.materials.unshift(list)
+      this.temp_materials.unshift(list)
     },
     delRow(row) {
-      this.materials.forEach((v, i) => {
+      this.temp_materials.forEach((v, i) => {
         if (row.material_id === v.material_id) {
-          this.materials.splice(i, 1)
+          this.temp_materials.splice(i, 1)
         }
       })
     },
@@ -225,6 +256,7 @@ export default {
       if (typeof this.mkey === 'string' && this.mkey !== '') {
         var ret = []
         var materials = this.temp.materials
+        console.log('search', materials)
         for (var i = 0; i < materials.length; i++) {
           if (materials[i].category_name.indexOf(this.mkey) !== -1 ||
               materials[i].material_name.indexOf(this.mkey) !== -1 ||
@@ -238,14 +270,13 @@ export default {
         this.temp_materials = ret
       } else {
         this.temp_materials = this.temp.materials
+        console.log('not search', this.mkey)
       }
       return this.temp_materials
-    }
-
-
+    },
 
     querySearchMaterial(queryString, cb) {
-      var materials = this.materials;
+      var materials = this.supplying_materials;
       var results = queryString ? materials.filter(this.createMaterialFilter(queryString)) : materials;
       // 调用 callback 返回建议列表的数据
       cb(results);
@@ -256,12 +287,12 @@ export default {
       };
     },
     handleSelectMaterial(row) {
-      this.temp.contract_id = item.contract_id
-      this.temp.contract_name = item.contract_name
-      this.temp.total = 0
-      fetchContractInfo({ contract_id: item.contract_id }).then(res => {
-        Object.assign(this.temp, res)
-        this.temp_materials = this.temp.materials
+      fetchMaterial({material_id: row.material_name}).then(res => {
+        row.category_name = res.category_name
+        row.material_id = res.material_id
+        row.material_name = res.material_name
+        row.unit = row.unit
+        row.specification = res.specification
       })
     },
     
@@ -272,35 +303,20 @@ export default {
         name: 'supplier'
       })
     },
-    handleCreateSupplier() {
+    handleUpdate() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          createSupplier(this.temp).then(() => {
-            this.list.unshift(this.temp)
-            this.dialogFormVisible = false
+          var data = Object.assign({}, this.temp)
+          data.materials = data.materials.filter(m => m.material_id !== undefined)
+          var f = this.status === "create" ? createSupplier : updateSupplier
+          f(data).then(() => {
             this.$notify({
               title: 'Success',
-              message: '新建供应商成功',
+              message: '新增/修改供应商成功',
               type: 'success',
               duration: 2000
             })
-          })
-        }
-      })
-    },
-    handleUpdateSupplier() {
-      this.$refs['dataForm'].validate((valid) => {
-        if (valid) {
-          const tempData = Object.assign({ supplier_id: this.temp.id }, this.temp)
-          updateSupplier(tempData).then(() => {
-            this.dialogFormVisible = false
-            this.$notify({
-              title: 'Success',
-              message: '更新供应商信息成功',
-              type: 'success',
-              duration: 2000
-            })
-            this.getList()
+            this.cancel()
           })
         }
       })

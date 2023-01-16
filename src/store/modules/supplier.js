@@ -1,6 +1,5 @@
 const state = {
   info: {
-    id: undefined,
     supplier_name: undefined,
     contact: undefined,
     phone: undefined,
@@ -30,7 +29,6 @@ const actions = {
   },
   clearSupplierInfo({ commit }) {
     const info = {
-      id: undefined,
       supplier_name: undefined,
       contact: undefined,
       phone: undefined,

@@ -40,6 +40,14 @@ export function fetchList(query) {
   })
 }
 
+export function fetchMaterial(query) {
+  return request({
+    url: '/material/detail/',
+    method: 'get',
+    params: query
+  })
+}
+
 export function createMaterial(data) {
   return request({
     url: '/material/create/',
@@ -61,6 +69,14 @@ export function deleteMaterial(data) {
     url: '/material/delete/',
     method: 'post',
     data: data
+  })
+}
+
+export function fetchSupplyingMaterials(query) {
+  return request({
+    url: '/material/supply/',
+    method: 'get',
+    params: query
   })
 }
 

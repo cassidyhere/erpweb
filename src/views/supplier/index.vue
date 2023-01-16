@@ -22,7 +22,7 @@
       highlight-current-row
       style="width: 100%;"
       :max-height="tableHeight"
-      :default-sort="{prop: 'id', order: 'ascending'}"
+      :default-sort="{prop: 'id', order: 'descending'}"
       stripe
       :header-cell-style="{background:'#F1F3F7', color: 'black', 'font-size': '16px', padding: '4px'}"
       :cell-style="{'padding': '3px', 'font-size': '16px', 'font-weight': 600}"
@@ -221,7 +221,7 @@ export default {
         limit: 20,
         keyword: undefined,
         sort_by: null,
-        ascending: 1
+        ascending: 0
       },
       downloadLoading: false,
       loading: false,
@@ -357,7 +357,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        deleteSupplier(row).then(() => {
+        deleteSupplier({ supplier_id: row.id }).then(() => {
           this.$message.success('删除成功!') // 需要引入elemrnt
           this.getList()
         })
