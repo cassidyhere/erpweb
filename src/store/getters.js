@@ -30,6 +30,8 @@ const getters = {
   lookingSlipId: state => state.inout.lookingSlipId,
   returnInfo: state => state.inout.returnInfo,
   updatingReturnId: state => state.inout.updatingReturnId,
-  lookingReturnId: state => state.inout.lookingReturnId
+  lookingReturnId: state => state.inout.lookingReturnId,
+  supplierInfo: state => state.supplier.info,
+  updatingSupplierId: state => state.contract.updatingSupplierId
 }
 export default getters

@@ -19,8 +19,8 @@
           </el-form-item>
         </el-col>
         <el-col :span="6">
-          <el-form-item label="电话" prop="phone">
-            <el-input v-model="temp.phone" />
+          <el-form-item label="电话" prop="telephone">
+            <el-input v-model="temp.telephone" />
           </el-form-item>
         </el-col>
       </el-row>
@@ -56,8 +56,8 @@
 
       <el-form-item label="材料列表:" class="head-item" style="margin-top:30px">
         <div  class="filter-container">
-          <el-input placeholder="搜索关键字" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-          <el-button plain class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
+          <el-input placeholder="搜索关键字" style="width: 200px;" class="filter-item" @keyup.enter.native="handleSearchMaterial" />
+          <el-button plain class="filter-item" type="primary" icon="el-icon-search" @click="handleSearchMaterial">
             搜索
           </el-button>
           <el-button plain class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="addRow">
@@ -161,21 +161,36 @@ export default {
   created() {
     if (this.$route.path.endsWith('update')) {
       this.status = 'update'
-      // 先从传参找contract_id，找不到再从store找
+      // 先从传参找supplier_id，找不到再从store找
       var supplier_id = this.$route.params.supplier_id
+      if (supplier_id === parseInt(supplier_id, 10)) {
+        this.$store.dispatch('supplier/setUpdatingSupplierId', supplier_id)
+      } else {
+        supplier_id = this.$store.getters.updatingSuplierId
+      }
 
-      this.supplier_id = supplier_id
-      fetchSupplierDetail({ supplier_id: this.supplier_id }).then(res => {
-        this.temp = Object.assign({}, res)
-        this.materials = this.temp.materials
-      })
-      fetchSupplierMaterials({ supplier_id: this.supplier_id }).then(res => {
-        // this.materials = Object.assign({}, res)
-        this.materials = res.materials
-        this.total = res.total_num
-        this.listLoading = false
-      })
+      // 没有供应商则返回列表页
+      if (supplier_id === undefined) {
+        this.cancel()
+      } else {
+        this.supplier_id = supplier_id
+        // 获取订单明细
+        fetchSupplierDetail({ supplier_id: this.supplier_id }).then(res => {
+          this.temp = Object.assign({}, res)
+          this.materials = this.temp.materials
+        })
+        fetchSupplierMaterials({ supplier_id: this.supplier_id }).then(res => {
+          // this.materials = Object.assign({}, res)
+          this.materials = res.materials
+          this.total = res.total_num
+          this.listLoading = false
+        })
+      }
 
+    } else {
+      this.status = 'create'
+      this.temp = this.$store.getters.supplierInfo
+      this.temp_materials = this.temp.materials
     }
   },
 
@@ -199,7 +214,6 @@ export default {
       }
       this.materials.unshift(list)
     },
-
     delRow(row) {
       this.materials.forEach((v, i) => {
         if (row.material_id === v.material_id) {
@@ -207,6 +221,28 @@ export default {
         }
       })
     },
+    handleSearchMaterial() {
+      if (typeof this.mkey === 'string' && this.mkey !== '') {
+        var ret = []
+        var materials = this.temp.materials
+        for (var i = 0; i < materials.length; i++) {
+          if (materials[i].category_name.indexOf(this.mkey) !== -1 ||
+              materials[i].material_name.indexOf(this.mkey) !== -1 ||
+              materials[i].specification.indexOf(this.mkey) !== -1 ||
+              materials[i].unit.indexOf(this.mkey) !== -1
+          ) {
+            console.log('here', materials[i])
+            ret.push(materials[i])
+          }
+        }
+        this.temp_materials = ret
+      } else {
+        this.temp_materials = this.temp.materials
+      }
+      return this.temp_materials
+    }
+
+
 
     querySearchMaterial(queryString, cb) {
       var materials = this.materials;
@@ -229,6 +265,13 @@ export default {
       })
     },
     
+    cancel() {
+      this.$store.dispatch('tagsView/delVisitedViewByPath', '/supplier/' + this.status)
+      this.$store.dispatch('supplier/clearSupplierInfo')
+      this.$router.push({
+        name: 'supplier'
+      })
+    },
     handleCreateSupplier() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
