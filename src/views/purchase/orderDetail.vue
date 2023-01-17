@@ -133,40 +133,45 @@
           :cell-style="{'padding': '3px', 'font-size': '16px', 'font-weight': 600}"
           style="width:90%"
         >
-          <el-table-column label="材料类别" min-width="110" align="center">
+          <el-table-column label="材料类别" min-width="100" align="center">
             <template slot-scope="scope">
               <span>{{ scope.row.category_name }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="材料名称" min-width="190" align="center">
+          <el-table-column label="材料名称" min-width="160" align="center">
             <template slot-scope="scope">
               <span>{{ scope.row.material_name }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="规格" min-width="190" align="center">
+          <el-table-column label="规格" min-width="160" align="center">
             <template slot-scope="scope">
               <span>{{ scope.row.specification }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="单位" min-width="110" align="center">
+          <el-table-column label="单位" min-width="80" align="center">
             <template slot-scope="scope">
               <span>{{ scope.row.unit }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="数量" min-width="110" align="center">
+          <el-table-column label="数量" min-width="90" align="center">
             <template slot-scope="scope">
               <el-input v-model="scope.row.number" size="small" @input="handleUpdateNumber(scope.row)"></el-input>
             </template>
           </el-table-column>
-          <el-table-column label="单价(元)" min-width="110" align="center">
+          <el-table-column label="单价(元)" min-width="90" align="center">
             <template slot-scope="scope">
               <span v-if="temp.link_contract==='true'">{{ scope.row.price }}</span>
               <el-input v-else v-model="scope.row.price" size="small" @input="handleUpdatePrice(scope.row)"></el-input>
             </template>
           </el-table-column>
-          <el-table-column label="小计金额(元)" min-width="110" align="center">
+          <el-table-column label="小计金额(元)" min-width="120" align="center">
             <template slot-scope="scope">
               <span>{{ scope.row.total }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column v-if="temp.audit_status===2" label="已进仓数量" min-width="110" align="center">
+            <template slot-scope="scope">
+              <span>{{ scope.row.warehoused_number }}</span>
             </template>
           </el-table-column>
           <el-table-column label="备注" min-width="200" align="center">

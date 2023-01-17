@@ -31,7 +31,7 @@
       </el-form-item>
       <el-form-item label="工程金额(元):" prop="total">
         <span v-if="temp.audit_status===2">{{ temp.total }}</span>
-        <el-input v-else model="temp.total" @input="handleUpdateTotal(temp.total)" style="width: 150px;" />
+        <el-input v-else v-model="temp.total" @input="handleUpdateTotal(temp.total)" style="width: 150px;" />
       </el-form-item>
       <el-form-item label="签订时间:" prop="sign_time">
         <span v-if="temp.audit_status===2">{{ temp.sign_time }}</span>
