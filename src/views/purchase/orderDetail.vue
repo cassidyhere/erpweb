@@ -78,7 +78,7 @@
         </el-col>
         <el-col :span="8">
           <el-form-item v-if="temp.from_basecamp==='false'" label="工程名称:" prop="engineer_name" class="head-item">
-            <span v-if="temp.link_contract==='true' || temp.audit_status===2">{{ temp.engineer_name }}</span>
+            <span v-if="temp.link_contract==='true' || (temp.audit_status===2 && temp.engineer_name!==null)">{{ temp.engineer_name }}</span>
             <el-autocomplete
               v-else
               v-model="temp.engineer_name"
@@ -216,7 +216,7 @@ export default {
         link_contract: [{ required: true, message: '请选择是否关联采购合同', trigger: 'blur' }],
         contract_name: [{ required: true, message: '请选择采购合同名称', trigger: 'change' }],
         supplier_name: [{ required: true, message: '请选择供应商', trigger: 'change' }],
-        engineer_name: [{ required: true, message: '请选择工程', trigger: 'change' }],
+        // engineer_name: [{ required: true, message: '请选择工程', trigger: 'change' }],
         from_basecamp: [{ required: true, message: '请选择是否从总仓下单', trigger: 'blur' }],
         sign_time: [{ required: true, message: '请选择签订日期', trigger: 'blur' }],
       }
