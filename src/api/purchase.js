@@ -38,6 +38,13 @@ export function fetchContractSuppliers() {
   })
 }
 
+export function fetchPurchasedEngineers() {
+  return request({
+    url: '/purchase/engineer/',
+    method: 'get'
+  })
+}
+
 export function createContract(data) {
   return request({
     url: '/purchase/contract/create/',

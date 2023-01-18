@@ -149,7 +149,7 @@
 <script>
 import { updatePick, createPick, fetchInout } from '@/api/inout'
 import { fetchInventoryForPicked } from '@/api/inventory'
-import { fetchBuildingList } from '@/api/engineer'
+import { fetchPurchasedEngineers } from '@/api/purchase'
 import { getNowTime, isNumeric } from '@/utils/common'
 
 export default {
@@ -200,7 +200,7 @@ export default {
       }
     }
 
-    fetchBuildingList().then(res => {
+    fetchPurchasedEngineers().then(res => {
       this.engineers = res.engineers
     })
   },
