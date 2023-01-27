@@ -119,7 +119,7 @@
           </el-button>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" min-width="300" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" min-width="320" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             v-if="canEditDetail(scope.row.status)"

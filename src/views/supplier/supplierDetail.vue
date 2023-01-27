@@ -171,7 +171,7 @@ export default {
         supplier_name: undefined,
         contact: undefined,
         phone: undefined,
-        fax: 0,
+        fax: undefined,
         telephone: undefined,
         remark: undefined,
         materials: [],
@@ -199,14 +199,17 @@ export default {
       this.status = 'update'
       // 先从传参找supplier_id，找不到再从store找
       var supplier_id = this.$route.params.supplier_id
+      var from_store = false
       if (supplier_id === parseInt(supplier_id, 10)) {
         this.$store.dispatch('supplier/setUpdatingSupplierId', supplier_id)
       } else {
-        supplier_id = this.$store.getters.updatingSuplierId
+        supplier_id = this.$store.getters.updatingSupplierId
+        from_store = true
       }
 
       // 没有供应商则返回列表页
       if (supplier_id === undefined) {
+        console.log("cancel")
         this.cancel()
       } else {
         this.supplier_id = supplier_id
@@ -291,7 +294,7 @@ export default {
         row.category_name = res.category_name
         row.material_id = res.material_id
         row.material_name = res.material_name
-        row.unit = row.unit
+        row.unit = res.unit
         row.specification = res.specification
       })
     },

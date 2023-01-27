@@ -10,7 +10,7 @@
       >
         新增
       </el-button>
-      <el-button
+      <!-- <el-button
         v-waves
         :loading="downloadLoading"
         class="filter-item"
@@ -29,7 +29,7 @@
         type="file"
         accept=".xlsx, .xls"
         @change="handleClick"
-      >
+      > -->
     </div>
 
     <el-table
@@ -44,7 +44,6 @@
       :header-cell-style="{background:'#F1F3F7', color: 'black', 'font-size': '16px', padding: '4px'}"
       :cell-style="{'padding': '3px', 'font-size': '16px', 'font-weight': 600}"
       style="width: 100%;"
-      @row-click="handleUpdate"
     >
       <el-table-column label="ID" prop="id" align="center" width="65">
         <template slot-scope="scope">
@@ -58,6 +57,7 @@
       </el-table-column>
       <el-table-column label="操作" align="center" min-width="230" class-name="small-padding fixed-width">
         <template slot-scope="scope">
+          <el-button size="mini" type="info" plain @click="handleUpdate(scope.row)">编辑</el-button>
           <el-button
             v-if="scope.row.can_delete===true"
             size="mini"

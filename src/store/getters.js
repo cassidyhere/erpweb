@@ -32,6 +32,6 @@ const getters = {
   updatingReturnId: state => state.inout.updatingReturnId,
   lookingReturnId: state => state.inout.lookingReturnId,
   supplierInfo: state => state.supplier.info,
-  updatingSupplierId: state => state.contract.updatingSupplierId
+  updatingSupplierId: state => state.supplier.updatingSupplierId
 }
 export default getters
