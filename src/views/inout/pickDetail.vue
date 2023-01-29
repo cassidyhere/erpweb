@@ -80,17 +80,17 @@
               <span>{{ scope.row.contract_name }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="采购订单" max-width="200" align="center">
+          <el-table-column label="采购订单" min-width="180" align="center">
             <template slot-scope="scope">
               <span>{{ scope.row.order_name }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="材料类别" max-width="140" align="center">
+          <el-table-column label="材料类别" min-width="100" align="center">
             <template slot-scope="scope">
               <span>{{ scope.row.category_name }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="材料名称" max-width="200" align="center">
+          <el-table-column label="材料名称" min-width="100" align="center">
             <template slot-scope="scope">
               <span>{{ scope.row.material_name }}</span>
             </template>
@@ -105,21 +105,21 @@
               <span>{{ scope.row.unit }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="价格(元)" max-width="140" align="center">
+          <el-table-column label="价格(元)" min-width="100" align="center">
             <template slot-scope="scope">
               <span>{{ scope.row.price }}</span>
             </template>
           </el-table-column>
-          <el-table-column v-if="temp.audit_status!==2" label="库存数量" max-width="140" align="center">
+          <el-table-column v-if="temp.audit_status!==2" label="库存数量" min-width="100" align="center">
             <template slot-scope="scope">
               <span>{{ scope.row.inventory_quantity }}</span>
             </template>
           </el-table-column>
-          <el-table-column v-if="temp.audit_status!==2" label="可用数量" max-width="140" align="center">
+          <!-- <el-table-column v-if="temp.audit_status!==2" label="可用数量" min-width="100" align="center">
             <template slot-scope="scope">
               <span>{{ scope.row.available_quantity }}</span>
             </template>
-          </el-table-column>
+          </el-table-column> -->
           <el-table-column label="数量" max-width="140" align="center">
             <template slot-scope="scope">
               <span  v-if="status==='update' && temp.audit_status===2">{{ scope.row.inout_quantity }}</span>

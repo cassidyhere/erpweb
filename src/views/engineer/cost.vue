@@ -79,6 +79,11 @@
                 <span>{{ scope.row.quantity }}</span>
               </template>
             </el-table-column>
+            <el-table-column label="单价" width="150">
+              <template slot-scope="scope">
+                <span>{{ scope.row.price }}</span>
+              </template>
+            </el-table-column>
             <el-table-column label="总金额(元)" width="150">
               <template slot-scope="scope">
                 <span>{{ scope.row.total }}</span>
