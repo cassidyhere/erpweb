@@ -40,11 +40,11 @@
       </el-row>
       <el-row>
         <el-col :span="6">
-          <el-form-item label="下单时间" prop="order_time" class="head-item">
-            <span v-if="status==='update' && temp.audit_status===2">{{ temp.order_time }}</span>
+          <el-form-item label="退货日期" prop="inout_time" class="head-item">
+            <span v-if="status==='update' && temp.audit_status===2">{{ temp.inout_time }}</span>
             <el-date-picker
               v-else
-              v-model="temp.order_time"
+              v-model="temp.inout_time"
               type="date"
               placeholder="选择日期"
               value-format="yyyy-MM-dd"
@@ -163,7 +163,7 @@ export default {
       suppliers: [],
       rules: {
         supplier_name: [{ required: true, message: '请选择供应商', trigger: 'change' }],
-        order_time: [{ required: true, message: '请选择下单时间', trigger: 'change' }],
+        inout_time: [{ required: true, message: '请选择下单时间', trigger: 'change' }],
         order_user: [{ required: true, message: '请输入下单用户', trigger: 'change' }]
       }
     }
@@ -195,8 +195,8 @@ export default {
       // 从store找
       this.temp = this.$store.getters.returnInfo
       this.temp_materials = this.temp.materials
-      if (this.temp.order_time === undefined) {
-        this.temp.order_time = getNowTime()
+      if (this.temp.inout_time === undefined) {
+        this.temp.inout_time = getNowTime()
       }
     }
 

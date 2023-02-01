@@ -10,7 +10,7 @@ const state = {
     total: undefined,
     remark: undefined,
     order_user: undefined,
-    order_time: undefined,
+    inout_time: undefined,
     materials: []
   },
   updatingInId: undefined,
@@ -23,7 +23,7 @@ const state = {
     total: undefined,
     remark: undefined,
     order_user: undefined,
-    order_time: undefined,
+    inout_time: undefined,
     materials: []
   },
   updatingPickId: undefined,
@@ -39,7 +39,7 @@ const state = {
     total: undefined,
     remark: undefined,
     order_user: undefined,
-    order_time: undefined,
+    inout_time: undefined,
     materials: []
   },
   updatingSlipId: undefined,
@@ -51,7 +51,7 @@ const state = {
     total: undefined,
     remark: undefined,
     order_user: undefined,
-    order_time: undefined,
+    inout_time: undefined,
     materials: []
   },
   updatingReturnId: undefined,
@@ -117,7 +117,7 @@ const actions = {
       total: undefined,
       remark: undefined,
       order_user: undefined,
-      order_time: undefined,
+      inout_time: undefined,
       materials: []
     }
     commit('SET_IN_INFO', info)
@@ -140,7 +140,7 @@ const actions = {
       total: undefined,
       remark: undefined,
       order_user: undefined,
-      order_time: undefined,
+      inout_time: undefined,
       materials: []
     }
     commit('SET_PICK_INFO', info)
@@ -166,7 +166,7 @@ const actions = {
       total: undefined,
       remark: undefined,
       order_user: undefined,
-      order_time: undefined,
+      inout_time: undefined,
       materials: []
     }
     commit('SET_SLIP_INFO', info)
@@ -188,7 +188,7 @@ const actions = {
       total: undefined,
       remark: undefined,
       order_user: undefined,
-      order_time: undefined,
+      inout_time: undefined,
       materials: []
     }
     commit('SET_RETURN_INFO', info)

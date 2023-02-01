@@ -17,17 +17,17 @@
         <el-radio v-model="temp.winner" label="胜博" disabled>胜博</el-radio>
         <el-radio v-model="temp.winner" label="元天" disabled>元天</el-radio>
       </el-form-item>
-      <el-form-item v-else label="中标情况:" prop="winner">
+      <!-- <el-form-item v-else label="中标情况:" prop="winner">
         <el-radio v-model="temp.winner" label="胜博" @input="handleUpdateWinner">胜博</el-radio>
         <el-radio v-model="temp.winner" label="元天" @input="handleUpdateWinner">元天</el-radio>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="甲方:" prop="party_a">
         <span v-if="temp.audit_status===2">{{ temp.party_a }}</span>
         <el-input v-else v-model="temp.party_a" />
       </el-form-item>
       <el-form-item label="乙方:" prop="party_b">
         <span v-if="temp.audit_status===2">{{ temp.party_b }}</span>
-        <el-input v-else v-model="temp.party_b" style="width: 150px;" />
+        <el-input v-else v-model="temp.party_b" />
       </el-form-item>
       <el-form-item label="工程金额(元):" prop="total">
         <span v-if="temp.audit_status===2">{{ temp.total }}</span>
@@ -78,7 +78,7 @@ export default {
       temp: {},
       rules: {
         engineer_name: [{ required: true, message: '请输入工程名称', trigger: 'change' }],
-        winner: [{ required: true, message: '请输入中标情况', trigger: 'change' }],
+        // winner: [{ required: true, message: '请输入中标情况', trigger: 'change' }],
         total: [{ required: true, message: '请输入总金额', trigger: 'change' }],
         party_a: [{ required: true, message: '请输入甲方', trigger: 'change' }],
         party_b: [{ required: true, message: '请输入乙方', trigger: 'change' }],

@@ -47,11 +47,11 @@
           <span>{{ scope.row.engineer_type }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="中标情况" width="100" align="center">
+      <!-- <el-table-column label="中标情况" width="100" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.winner }}</span>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column label="工程金额(元)" prop="total" sortable="custom" width="150" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.total }}</span>

@@ -8,6 +8,15 @@
         class="filter-item"
         @keyup.enter.native="handleFilter"
       />
+      <el-date-picker
+        v-model="listQuery.inout_time"
+        type="daterange"
+        value-format="yyyy-MM-dd"
+        range-separator="至"
+        start-placeholder="开始日期"
+        end-placeholder="结束日期"
+        class="filter-item"
+      />
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         搜索
       </el-button>
@@ -50,16 +59,31 @@
           {{ scope.row.order_code }}
         </template>
       </el-table-column>
-      <el-table-column label="关联采购单" prop="order_name" sortable="custom" min-width="200" align="center">
+      <el-table-column label="采购单编号" prop="purchase_order_code" sortable="custom" min-width="140" align="center">
+        <template slot-scope="scope">
+          {{ scope.row.purchase_order_code }}
+        </template>
+      </el-table-column>
+      <el-table-column label="供应商" prop="supplier_name" sortable="custom" min-width="140" align="center">
+        <template slot-scope="scope">
+          {{ scope.row.supplier_name }}
+        </template>
+      </el-table-column>
+      <el-table-column label="入仓日期" sortable="custom" min-width="140" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.inout_time }}</span>
+        </template>
+      </el-table-column>
+      <!-- <el-table-column label="关联采购单" prop="order_name" sortable="custom" min-width="200" align="center">
         <template slot-scope="scope">
           {{ scope.row.order_name }}
         </template>
-      </el-table-column>
-      <el-table-column label="关联采购合同" prop="contract_name" sortable="custom" min-width="200" align="center">
+      </el-table-column> -->
+      <!-- <el-table-column label="关联采购合同" prop="contract_name" sortable="custom" min-width="200" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.contract_name }}</span>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column label="关联工程名称" prop="engineer_name" sortable="custom" min-width="200" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.engineer_name }}</span>
@@ -70,11 +94,11 @@
           <span>{{ scope.row.total }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="下单日期" min-width="140" align="center">
+      <!-- <el-table-column label="下单日期" min-width="140" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.order_time }}</span>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column label="备注" min-width="200" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.remark }}</span>
@@ -87,6 +111,16 @@
           </el-button>
           <el-button v-else size="mini" type="info" disabled>
             已审核
+          </el-button>
+        </template>
+      </el-table-column>
+      <el-table-column label="对账状态" prop="reconciled" sortable="custom" min-width="120" align="center">
+        <template slot-scope="scope" v-if="scope.row.audit_status===2">
+          <el-button v-if="scope.row.reconciled==='false'" size="mini" type="primary" @click.native.stop="handlereconciled(scope.row.id)">
+            未对账
+          </el-button>
+          <el-button v-else size="mini" type="info" disabled>
+            已对账
           </el-button>
         </template>
       </el-table-column>
@@ -130,7 +164,7 @@
 import Pagination from '@/components/Pagination'
 import waves from '@/directive/waves' // waves directive
 import fileDownload from 'js-file-download'
-import { fetchInoutList, deleteInout, auditWarehouse, downloadInExcel } from '@/api/inout'
+import { fetchInoutList, deleteInout, reconcileInout, auditWarehouse, downloadInExcel } from '@/api/inout'
 
 export default {
   components: { Pagination },
@@ -146,7 +180,8 @@ export default {
         audit_status: undefined,
         key: undefined,
         sort_by: 'id',
-        ascending: 1
+        ascending: 1,
+        inout_time: undefined
       },
       loading: false,
       list: null,
@@ -219,6 +254,20 @@ export default {
       }).then(() => {
         const data = { warehouse_order_id: warehouse_order_id }
         auditWarehouse(data).then(() => {
+          this.getList()
+        })
+      }).catch(() => {
+        this.$message.success('已取消删除')
+      })
+    },
+    handlereconciled(inout_id) {
+      this.$confirm('确认对账?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        const data = { inout_id: inout_id, order_type: 1 }
+        reconcileInout(data).then(() => {
           this.getList()
         })
       }).catch(() => {

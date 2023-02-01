@@ -16,6 +16,14 @@ export function fetchInout(query) {
   })
 }
 
+export function reconcileInout(data) {
+  return request({
+    url: '/inout/reconcile/',
+    method: 'post',
+    data: data
+  })
+}
+
 export function deleteInout(data) {
   return request({
     url: '/inout/delete/',

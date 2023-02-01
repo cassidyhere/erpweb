@@ -55,16 +55,21 @@
           <span>{{ scope.row.engineer_name }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="退库日期" sortable="custom" min-width="140" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.inout_time }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="总金额" prop="total" sortable="custom" min-width="150" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.total }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="下单日期" min-width="150" align="center">
+      <!-- <el-table-column label="下单日期" min-width="150" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.order_time }}</span>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column label="备注" min-width="300" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.remark }}</span>
@@ -77,6 +82,16 @@
           </el-button>
           <el-button v-else size="mini" type="info" disabled>
             已审核
+          </el-button>
+        </template>
+      </el-table-column>
+      <el-table-column label="对账状态" prop="reconciled" sortable="custom" min-width="120" align="center">
+        <template slot-scope="scope" v-if="scope.row.audit_status===2">
+          <el-button v-if="scope.row.reconciled==='false'" size="mini" type="primary" @click.native.stop="handlereconciled(scope.row.id)">
+            未对账
+          </el-button>
+          <el-button v-else size="mini" type="info" disabled>
+            已对账
           </el-button>
         </template>
       </el-table-column>
@@ -114,7 +129,7 @@
 import Pagination from '@/components/Pagination'
 import waves from '@/directive/waves' // waves directive
 import fileDownload from 'js-file-download'
-import { fetchInoutList, deleteInout, auditSlip, downloadSlipExcel } from '@/api/inout'
+import { fetchInoutList, deleteInout, reconcileInout, auditSlip, downloadSlipExcel } from '@/api/inout'
 
 export default {
   components: { Pagination },
@@ -208,6 +223,20 @@ export default {
       }).then(() => {
         const data = { slip_order_id: slip_order_id }
         auditSlip(data).then(() => {
+          this.getList()
+        })
+      }).catch(() => {
+        this.$message.success('已取消删除')
+      })
+    },
+    handlereconciled(inout_id) {
+      this.$confirm('确认对账?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        const data = { inout_id: inout_id, order_type: 3 }
+        reconcileInout(data).then(() => {
           this.getList()
         })
       }).catch(() => {
