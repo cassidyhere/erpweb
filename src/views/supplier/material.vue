@@ -1,13 +1,18 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input
-        v-model="listQuery.keyword"
-        placeholder="搜索关键字"
-        style="width: 200px;"
-        class="filter-item"
-        @keyup.enter.native="handleFilter"
-      />
+      <div class="filter-item away">
+        类别:
+        <el-input v-model="listQuery.category_name" placeholder="输入关键字" style="width: 150px;" @keyup.enter.native="handleFilter" />
+      </div>
+      <div class="filter-item away">
+        材料名称:
+        <el-input v-model="listQuery.material_name" placeholder="输入关键字" style="width: 150px;" @keyup.enter.native="handleFilter" />
+      </div>
+      <div class="filter-item away">
+        规格:
+        <el-input v-model="listQuery.specification" placeholder="输入关键字" style="width: 150px;" @keyup.enter.native="handleFilter" />
+      </div>
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         搜索
       </el-button>
@@ -187,8 +192,10 @@ export default {
       listQuery: {
         page: 1,
         limit: 20,
-        keyword: undefined,
-        status: null
+        status: null,
+        category_name: undefined,
+        material_name: undefined,
+        specification: undefined        
       },
 
       // table

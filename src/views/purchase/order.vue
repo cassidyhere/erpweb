@@ -1,7 +1,30 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.key" placeholder="输入关键字" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <div class="filter-item away">
+        工程:
+        <el-input v-model="listQuery.engineer" placeholder="输入关键字" style="width: 150px;" @keyup.enter.native="handleFilter" />
+      </div>
+      <div class="filter-item away">
+        供应商:
+        <el-input v-model="listQuery.supplier" placeholder="输入关键字" style="width: 150px;" @keyup.enter.native="handleFilter" />
+      </div>
+      <div class="filter-item away">
+        采购单:
+        <el-input v-model="listQuery.purchase_order" placeholder="输入关键字" style="width: 150px;" @keyup.enter.native="handleFilter" />
+      </div>
+      <div class="filter-item away">
+        日期:
+        <el-date-picker
+          v-model="listQuery.order_time"
+          type="daterange"
+          value-format="yyyy-MM-dd"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          style="width: 220px;"
+        />
+      </div>
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         搜索
       </el-button>
@@ -161,9 +184,12 @@ export default {
         limit: 20,
         status: undefined,
         audit_status: undefined,
-        key: undefined,
         sort_by: 'id',
-        ascending: 0
+        ascending: 0,
+        engineer: undefined,
+        supplier: undefined,
+        purchase_order: undefined,
+        order_time: undefined
       },
       listLoading: true,
       list: null,
