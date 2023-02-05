@@ -21,7 +21,8 @@ const state = {
     status: undefined,
     ordered_total: undefined,
     payment: undefined,
-    end_time: undefined
+    end_time: undefined,
+    arrival_time: undefined,
   },
   updatingOrderId: undefined,
   lookingOrderId: undefined
@@ -66,7 +67,8 @@ const actions = {
       status: undefined,
       ordered_total: undefined,
       payment: undefined,
-      end_time: undefined
+      end_time: undefined,
+      arrival_time: undefined,
     }
     commit('SET_ORDER_INFO', info)
   },

@@ -1,31 +1,48 @@
 <template>
   <div class="app-container">
-    <el-form
-      ref="form"
-      :model="listQuery"
-      label-width="100px"
-      style="width: 100%; min-width: 1400px;"
-    >
-      <el-row>
-        <el-col :span="3.5">
-          <el-input v-model="listQuery.key" placeholder="输入关键字" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-        </el-col>
-        <el-col :span="5">
-          <el-form-item label="审核状态:">
-            <el-radio v-model="listQuery.audit_status" label=1>未审核</el-radio>
-            <el-radio v-model="listQuery.audit_status" label=2>已审核</el-radio>
-          </el-form-item>
-        </el-col>
-        <el-col :span="6">
-          <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
-            搜索
-          </el-button>
-          <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">
-            导出excel
-          </el-button>
-        </el-col>
-      </el-row>
-    </el-form>
+    <div class="filter-container">
+      <div class="filter-item away">
+        供应商:
+        <el-input v-model="listQuery.supplier" placeholder="输入关键字" style="width: 150px;" @keyup.enter.native="handleFilter" />
+      </div>
+      <div class="filter-item away">
+        材料名称:
+        <el-input v-model="listQuery.material_name" placeholder="输入关键字" style="width: 150px;" @keyup.enter.native="handleFilter" />
+      </div>
+      <div class="filter-item away">
+        材料规格:
+        <el-input v-model="listQuery.specification" placeholder="输入关键字" style="width: 150px;" @keyup.enter.native="handleFilter" />
+      </div>
+      <div class="filter-item away">
+        下单日期:
+        <el-date-picker
+          v-model="listQuery.order_time"
+          type="daterange"
+          value-format="yyyy-MM-dd"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          style="width: 220px;"
+        />
+      </div>
+      <div class="filter-item away">
+        审核状态:
+        <el-select v-model="listQuery.audit_status" placeholder="请选择" style="width: 100px;">
+          <el-option
+            v-for="item in auditStatus"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+          </el-option>
+        </el-select>
+      </div>
+      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
+        搜索
+      </el-button>
+      <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">
+        导出excel
+      </el-button>
+    </div>
 
     <el-table
       v-loading="listLoading"
@@ -59,9 +76,9 @@
           <span>{{ scope.row.engineer_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="日期" min-width="110" align="center">
+      <el-table-column label="下单日期" min-width="110" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.insert_time }}</span>
+          <span>{{ scope.row.order_time }}</span>
         </template>
       </el-table-column>
       <el-table-column label="材料名称" min-width="200" align="center">
@@ -133,12 +150,19 @@ export default {
         page: 1,
         limit: 20,
         order_code: undefined,
-        insert_user: undefined,
         supplier: undefined,
+        material_name: undefined,
+        specification: undefined,
         audit_status: undefined,
-        engineer: undefined,
-        key: undefined,
+        engineer: undefined
       },
+      auditStatus: [{
+        value: 1,
+        label: '未审核'
+      }, {
+        value: 2,
+        label: '已审核'
+      }],
       listLoading: true,
       list: null,
       total: 0,

@@ -129,14 +129,22 @@
           <el-input v-model="temp.category_name" :disabled="true" />
         </el-form-item>
         <el-form-item v-else label="材料类别" prop="category_name">
-          <el-select v-model="temp.category_name" placeholder="请选择" @change="selectCategory">
+          <el-autocomplete
+            v-model="temp.category_name"
+            value-key="category_name"
+            :fetch-suggestions="querySearchCategory"
+            placeholder="请输入内容"
+            @select="handleSelectCategory"
+            style="width: 200px;"
+          />
+          <!-- <el-select v-model="temp.category_name" placeholder="请选择" @change="selectCategory">
             <el-option
               v-for="item in categories"
               :key="item.id"
               :label="item.category_name"
               :value="item.category_name"
             />
-          </el-select>
+          </el-select> -->
         </el-form-item>
         <el-form-item label="材料名称" prop="material_name">
           <el-input v-model="temp.material_name" />
@@ -314,6 +322,21 @@ export default {
           break
         }
       }
+    },
+
+    querySearchCategory(queryString, cb) {
+      var categories = this.categories;
+      var results = queryString ? categories.filter(this.createCategoryFilter(queryString)) : categories;
+      // 调用 callback 返回建议列表的数据
+      cb(results);
+    },
+    createCategoryFilter(queryString) {
+      return (category) => {
+        return (category.category_name.toLowerCase().indexOf(queryString.toLowerCase()) !== -1);
+      };
+    },
+    handleSelectCategory(item) {
+      this.temp.category_id = item.id
     },
     handleCreateMaterial() {
       this.$refs['dataForm'].validate((valid) => {

@@ -92,17 +92,17 @@
         </el-col>
       </el-row>
       <el-row>
-        <el-col :span="8">
+        <el-col :span="5">
           <el-form-item label="合计总金额(元):" prop="total" class="head-item">
             <span>{{ temp.total }}</span>
           </el-form-item>
         </el-col>
-        <el-col v-if="temp.link_contract==='true'" :span="8">
+        <el-col v-if="temp.link_contract==='true'" :span="5">
           <el-form-item label="合同可用金额(元):" prop="leftover_total" class="head-item">
             <span>{{ temp.leftover_total }}</span>
           </el-form-item>
         </el-col>
-        <el-col :span="8">
+        <el-col :span="7">
           <el-form-item label="下单时间:" prop="order_time" class="head-item">
             <span v-if="temp.audit_status===2">{{ temp.order_time }}</span>
             <el-date-picker
@@ -116,11 +116,45 @@
             </el-date-picker>
           </el-form-item>
         </el-col>
+        <el-col :span="7">
+          <el-form-item label="要求到货日期:" prop="arrival_time" class="head-item">
+            <span v-if="temp.audit_status===2">{{ temp.arrival_time }}</span>
+            <el-date-picker
+              v-else
+              v-model="temp.arrival_time"
+              type="date"
+              placeholder="选择日期"
+              value-format="yyyy-MM-dd"
+              style="width: 200px;"
+            >
+            </el-date-picker>
+          </el-form-item>
+        </el-col>
       </el-row>
       <el-form-item label="备注:" prop="remark" style="width: 50%;">
         <el-input v-model="temp.remark" type="textarea" maxlength="128" show-word-limit />
       </el-form-item>
       <el-form-item label="材料列表:" class="head-item" style="margin-top:30px">
+        <div  class="filter-container">
+          <div class="filter-item away">
+            类别:
+            <el-input v-model="listQuery.category_name" placeholder="输入关键字" style="width: 150px;" @keyup.enter.native="handleSearchMaterial" />
+          </div>
+          <div class="filter-item away">
+            材料名称:
+            <el-input v-model="listQuery.material_name" placeholder="输入关键字" style="width: 150px;" @keyup.enter.native="handleSearchMaterial" />
+          </div>
+          <div class="filter-item away">
+            规格:
+            <el-input v-model="listQuery.specification" placeholder="输入关键字" style="width: 150px;" @keyup.enter.native="handleSearchMaterial" />
+          </div>
+          <el-button plain class="filter-item" type="primary" icon="el-icon-search" @click="handleSearchMaterial">
+            搜索
+          </el-button>
+          <el-button v-if="temp.audit_status!==2" plain class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="addRow">
+            新增一行
+          </el-button>
+        </div>
         <el-table
           :data="temp_materials"
           element-loading-text="Loading"
@@ -174,14 +208,9 @@
               <span>{{ scope.row.warehoused_number }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="备注" min-width="200" align="center">
+          <el-table-column label="说明" min-width="200" align="center">
             <template slot-scope="scope">
               <el-input v-model="scope.row.remark" size="small"></el-input>
-            </template>
-          </el-table-column>
-          <el-table-column align="right" min-width="150">
-            <template slot="header" slot-scope="scope">
-              <el-input v-model="mkey" size="small" placeholder="输入关键字搜索" @input="handleSearchMaterial(scope.row)"></el-input>
             </template>
           </el-table-column>
         </el-table>
@@ -211,6 +240,11 @@ export default {
       contracts: [],
       engineers: [],
       suppliers: [],
+      listQuery: {
+        category_name: undefined,
+        material_name: undefined,
+        specification: undefined        
+      },
       rules: {
         order_name: [{ required: true, message: '请输入采购订单名称', trigger: 'blur' }],
         link_contract: [{ required: true, message: '请选择是否关联采购合同', trigger: 'blur' }],
@@ -264,6 +298,9 @@ export default {
       }
       if (this.temp.order_time === undefined) {
         this.temp.order_time = getNowTime()
+      }
+      if (this.temp.arrival_time === undefined) {
+        this.temp.arrival_time = getNowTime()
       }
     }
 
@@ -407,23 +444,20 @@ export default {
       console.log('this.temp.total:', this.temp.total)
     },
     handleSearchMaterial() {
-      if (typeof this.mkey === 'string' && this.mkey !== '') {
-        var ret = []
-        var materials = this.temp.materials
-        for (var i = 0; i < materials.length; i++) {
-          if (materials[i].category_name.indexOf(this.mkey) !== -1 ||
-              materials[i].material_name.indexOf(this.mkey) !== -1 ||
-              materials[i].specification.indexOf(this.mkey) !== -1 ||
-              materials[i].unit.indexOf(this.mkey) !== -1
-          ) {
-            console.log('here', materials[i])
-            ret.push(materials[i])
-          }
-        }
-        this.temp_materials = ret
-      } else {
-        this.temp_materials = this.temp.materials
+      var materials = this.temp.materials
+      var k = this.listQuery.category_name
+      if (typeof k === 'string' && k !== '') {
+        materials = materials.filter(m => m.category_name.indexOf(k) !== -1)
       }
+      k = this.listQuery.material_name
+      if (typeof k === 'string' && k !== '') {
+        materials = materials.filter(m => m.material_name.indexOf(k) !== -1)
+      }
+      k = this.listQuery.specification
+      if (typeof k === 'string' && k !== '') {
+        materials = materials.filter(m => m.specification.indexOf(k) !== -1)
+      }
+      this.temp_materials = materials
       return this.temp_materials
     }
   }

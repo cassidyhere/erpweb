@@ -25,6 +25,18 @@
           style="width: 220px;"
         />
       </div>
+      <div class="filter-item away">
+        进仓状态:
+        <el-select
+          v-model="listQuery.warehouse_status" multiple placeholder="请选择">
+          <el-option
+            v-for="item in warehouseStatus"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+          </el-option>
+        </el-select>
+      </div>
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         搜索
       </el-button>
@@ -34,7 +46,7 @@
       <!-- <el-button :loading="loading" class="filter-item" type="primary" @click="handleUpload">
         上传excel
       </el-button> -->
-      <input ref="excel-upload-input" class="excel-upload-input" type="file" accept=".xlsx, .xls" @change="handleClick">
+      <!-- <input ref="excel-upload-input" class="excel-upload-input" type="file" accept=".xlsx, .xls" @change="handleClick"> -->
     </div>
 
     <el-table
@@ -189,8 +201,19 @@ export default {
         engineer: undefined,
         supplier: undefined,
         purchase_order: undefined,
-        order_time: undefined
+        order_time: undefined,
+        warehouse_status: undefined
       },
+      warehouseStatus: [{
+        value: 1,
+        label: '未进仓'
+      }, {
+        value: 2,
+        label: '全部进仓'
+      }, {
+        value: 3,
+        label: '部分进仓'
+      }],
       listLoading: true,
       list: null,
       total: 0,

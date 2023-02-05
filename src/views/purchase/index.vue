@@ -1,7 +1,30 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.key" placeholder="输入关键字" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <div class="filter-item away">
+        工程:
+        <el-input v-model="listQuery.engineer" placeholder="输入关键字" style="width: 150px;" @keyup.enter.native="handleFilter" />
+      </div>
+      <div class="filter-item away">
+        供应商:
+        <el-input v-model="listQuery.supplier" placeholder="输入关键字" style="width: 150px;" @keyup.enter.native="handleFilter" />
+      </div>
+      <div class="filter-item away">
+        合同:
+        <el-input v-model="listQuery.contract_name" placeholder="输入关键字" style="width: 150px;" @keyup.enter.native="handleFilter" />
+      </div>
+      <div class="filter-item away">
+        签订日期:
+        <el-date-picker
+          v-model="listQuery.sign_time"
+          type="daterange"
+          value-format="yyyy-MM-dd"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          style="width: 220px;"
+        />
+      </div>
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         搜索
       </el-button>
@@ -100,7 +123,7 @@
             size="mini"
             type="info"
             plain
-            @click.native.stop="handleUpdateContract"
+            @click.native.stop="handleUpdateContract(scope.row.id)"
           >
             查看
           </el-button>
@@ -165,11 +188,14 @@ export default {
       listQuery: {
         page: 1,
         limit: 20,
-        key: undefined,
         audit_status: undefined,
         status: undefined,
         sort_by: 'id',
-        ascending: 0
+        ascending: 0,
+        engineer: undefined,
+        supplier: undefined,
+        contracrt_name: undefined,
+        sign_time: undefined,
       },
       listLoading: true,
       list: null,
@@ -256,10 +282,10 @@ export default {
         this.$message.success('已取消删除')
       })
     },
-    handleUpdateContract(row) {
+    handleUpdateContract(contract_id) {
       this.$router.push({
         name: 'updateContract',
-        params: { contract_id: row.id }
+        params: { contract_id: contract_id }
       })
     },
     handleDeleteContract(contract_id) {
