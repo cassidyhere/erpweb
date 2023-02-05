@@ -135,9 +135,26 @@
               <span>{{ scope.row.category_name }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="材料名称" min-width="200" align="center">
+          <el-table-column label="材料名称" min-width="160" align="center">
             <template slot-scope="scope">
-              <span>{{ scope.row.material_name }}</span>
+              <span v-if="temp.audit_status===2">{{ scope.row.material_name }}</span>
+              <el-select
+                v-else
+                v-model="scope.row.material_name"
+                filterable
+                placeholder="请选择"
+                @change="handleSelectMaterial(scope.row)"
+              >
+                <el-option
+                  v-for="item in supplying_materials"
+                  :key="item.material_id"
+                  :label="item.material_name"
+                  :value="item.material_id"
+                >
+                  <span style="float: left">{{ item.material_name }}</span>
+                  <span style="float: right; color: #8492a6; font-size: 13px">{{ item.specification }}</span>
+                </el-option>
+              </el-select>
             </template>
           </el-table-column>
           <el-table-column label="规格" min-width="200" align="center">
@@ -160,11 +177,18 @@
               <el-input v-model="scope.row.remark" size="small"></el-input>
             </template>
           </el-table-column>
-          <!-- <el-table-column align="right" min-width="150">
-            <template slot="header">
-              <el-input v-model="mkey" size="small" placeholder="输入关键字搜索" @input="handleSearchMaterial"></el-input>
+          <el-table-column label="操作" min-width="100" align="center">
+            <template slot-scope="scope">
+              <el-button
+                size="mini"
+                type="danger"
+                plain
+                @click="delRow(scope.row)"
+              >
+                删除
+              </el-button>
             </template>
-          </el-table-column> -->
+          </el-table-column>
         </el-table>
       </el-form-item>
     </el-form>
@@ -180,8 +204,9 @@
 <script>
 import { createContract, updateContract, fetchContract } from '@/api/purchase'
 import { fetchBuildingList } from '@/api/engineer'
-import { fetchActives, fetchSupplierMaterials } from '@/api/supplier'
+import { fetchActives } from '@/api/supplier'
 import { getNowTime, getName, isNumeric } from '@/utils/common'
+import { fetchSupplyingMaterials, fetchMaterial } from '@/api/material'
 
 export default {
   data() {
@@ -200,7 +225,7 @@ export default {
       rules: {
         contract_name: [{ required: true, message: '请输入采购合同名称', trigger: 'change' }],
         supplier_name: [{ required: true, message: '请选择供应商', trigger: 'change' }],
-        engineer_name: [{ required: true, message: '请选择工程', trigger: 'change' }],
+        // engineer_name: [{ required: true, message: '请选择工程', trigger: 'change' }],
         from_basecamp: [{ required: true, message: '', trigger: 'change' }],
         total: [
           { required: true, message: '请输入总金额', trigger: 'change' },
@@ -219,7 +244,8 @@ export default {
           }
         ],
         sign_time: [{ required: true, message: '请选择签订日期', trigger: 'blur' }],
-      }
+      },
+      supplying_materials: [],
     }
   },
 
@@ -264,10 +290,71 @@ export default {
     })
     fetchActives().then(res => {
       this.suppliers = res.suppliers
+    }),
+    fetchSupplyingMaterials().then(res => {
+      this.supplying_materials = res.material_list
     })
   },
 
   methods: {
+    handleSearchMaterial() {
+      var materials = this.temp.materials
+      var k = this.listQuery.category_name
+      if (typeof k === 'string' && k !== '') {
+        materials = materials.filter(m => m.category_name.indexOf(k) !== -1)
+      }
+      k = this.listQuery.material_name
+      if (typeof k === 'string' && k !== '') {
+        materials = materials.filter(m => m.material_name.indexOf(k) !== -1)
+      }
+      k = this.listQuery.specification
+      if (typeof k === 'string' && k !== '') {
+        materials = materials.filter(m => m.specification.indexOf(k) !== -1)
+      }
+      this.temp_materials = materials
+      return this.temp_materials
+    },
+
+    addRow() {
+      var list = {
+        category_id: null,
+        category_name: '',
+        material_id: null,
+        material_name: '',
+        remark: '',
+        editing: true
+      }
+      this.temp_materials.unshift(list)
+    },
+    delRow(row) {
+      this.temp_materials.forEach((v, i) => {
+        if (row.material_id === v.material_id) {
+          this.temp_materials.splice(i, 1)
+        }
+      })
+    },
+
+    querySearchMaterial(queryString, cb) {
+      var materials = this.supplying_materials;
+      var results = queryString ? materials.filter(this.createMaterialFilter(queryString)) : materials;
+      // 调用 callback 返回建议列表的数据
+      cb(results);
+    },
+    createMaterialFilter(queryString) {
+      return (materials) => {
+        return (materials.material_name.toLowerCase().indexOf(queryString.toLowerCase()) !== -1);
+      };
+    },
+    handleSelectMaterial(row) {
+      fetchMaterial({material_id: row.material_name}).then(res => {
+        row.category_name = res.category_name
+        row.material_id = res.material_id
+        row.material_name = res.material_name
+        row.unit = res.unit
+        row.specification = res.specification
+      })
+    },
+
     updateData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
@@ -293,6 +380,7 @@ export default {
         name: 'contract'
       })
     },
+
     querySearchSupplier(queryString, cb) {
       var suppliers = this.suppliers;
       var results = queryString ? suppliers.filter(this.createSupplierFilter(queryString)) : suppliers;
@@ -307,11 +395,8 @@ export default {
     handleSelectSupplier(item) {
       this.temp.supplier_id = item.supplier_id
       this.temp.supplier_name = item.supplier_name
-      const query = { supplier_id: item.supplier_id }
-      fetchSupplierMaterials(query).then(res => {
-        this.temp_materials = this.temp.materials = res.materials
-      })
     },
+
     querySearchEngineer(queryString, cb) {
       var engineers = this.engineers;
       var results = queryString ? engineers.filter(this.createEngineerFilter(queryString)) : engineers;
@@ -327,27 +412,11 @@ export default {
       this.temp.engineer_id = item.engineer_id
       this.temp.engineer_name = item.engineer_name
     },
+
     handleUpdatePrice(row) {
       if (!isNumeric(row.price) || Number(row.price) <= 0) {
         row.price = null
       }
-    },
-    handleSearchMaterial() {
-      var materials = this.temp.materials
-      var k = this.listQuery.category_name
-      if (typeof k === 'string' && k !== '') {
-        materials = materials.filter(m => m.category_name.indexOf(k) !== -1)
-      }
-      k = this.listQuery.material_name
-      if (typeof k === 'string' && k !== '') {
-        materials = materials.filter(m => m.material_name.indexOf(k) !== -1)
-      }
-      k = this.listQuery.specification
-      if (typeof k === 'string' && k !== '') {
-        materials = materials.filter(m => m.specification.indexOf(k) !== -1)
-      }
-      this.temp_materials = materials
-      return this.temp_materials
     }
   }
 }
