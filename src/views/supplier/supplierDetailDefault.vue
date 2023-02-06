@@ -246,7 +246,7 @@ export default {
          remark: '',
          editing: true
        }
-       this.temp_materials.unshift(list)
+       this.temp_materials.push(list)
      },
      delRow(row) {
        this.temp_materials.forEach((v, i) => {

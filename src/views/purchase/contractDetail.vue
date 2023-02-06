@@ -151,8 +151,7 @@
                   :label="item.material_name"
                   :value="item.material_id"
                 >
-                  <span style="float: left">{{ item.material_name }}</span>
-                  <span style="float: right; color: #8492a6; font-size: 13px">{{ item.specification }}</span>
+                  <span>{{ item.material_name }}</span>
                 </el-option>
               </el-select>
             </template>
@@ -324,7 +323,7 @@ export default {
         remark: '',
         editing: true
       }
-      this.temp_materials.unshift(list)
+      this.temp_materials.push(list)
     },
     delRow(row) {
       this.temp_materials.forEach((v, i) => {

@@ -420,7 +420,7 @@ export default {
         quantity: 0,
         editing: true
       }
-      this.temp.materials.unshift(list)
+      this.temp.materials.push(list)
     },
     delRow() {
       for (let i = 0; i < this.multipleSelection.length; i++) {
