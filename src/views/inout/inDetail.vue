@@ -75,7 +75,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="6">
-          <el-form-item v-if="status==='update'" class="head-item" label="下单用户:" prop="total">
+          <el-form-item v-if="status==='update'" class="head-item" label="下单用户:" prop="insert_user">
             <span>{{ temp.insert_user }}</span>
           </el-form-item>
         </el-col>
@@ -136,11 +136,6 @@
               <span>{{ scope.row.unit }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="价格(元)" max-width="140" align="center">
-            <template slot-scope="scope">
-              <span>{{ scope.row.price }}</span>
-            </template>
-          </el-table-column>
           <el-table-column v-if="temp.audit_status!==2" label="未进仓数量" max-width="140" min-width="100" align="center">
             <template slot-scope="scope">
               <span>{{ scope.row.unwarehouse_number }}</span>
@@ -150,6 +145,16 @@
             <template slot-scope="scope">
               <span v-if="status==='update' && temp.audit_status===2">{{ scope.row.inout_quantity }}</span>
               <el-input v-else v-model="scope.row.inout_quantity" size="small" @input="handleUpdateQuantity(scope.row)"></el-input>
+            </template>
+          </el-table-column>
+          <el-table-column label="单价(元)" max-width="140" align="center">
+            <template slot-scope="scope">
+              <span>{{ scope.row.price }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="小计金额(元)" min-width="120" align="center">
+            <template slot-scope="scope">
+              <span>{{ scope.row.row_total }}</span>
             </template>
           </el-table-column>
           <el-table-column label="说明" max-width="220" align="center">
@@ -175,7 +180,7 @@
 <script>
 import { updateWarehouse, createWarehouse, fetchInout } from '@/api/inout'
 import { fetchOrderElOptionGroup, fetchOrder } from '@/api/purchase'
-import { getNowTime, isNumeric } from '@/utils/common'
+import { getNowTime, isNumeric, calcTotal2, clacRowTotal } from '@/utils/common'
 
 export default {
   data() {
@@ -230,7 +235,6 @@ export default {
     } else {
       this.status = 'create'
       var order_id = this.$route.params.order_id
-      console.log('order_id:', order_id)
       if (order_id === undefined) {
         // 从store找
         this.temp = this.$store.getters.inInfo
@@ -238,14 +242,12 @@ export default {
       } else {
         this.temp.purchase_order_id = order_id
         fetchOrder({ order_id: order_id }).then(res => {
-          console.log('order:', res)
           this.temp.purchase_order_name = res.order_name
           this.temp.contract_name = res.contract_name
           this.temp.engineer_name = res.engineer_name
           this.temp.supplier_name = res.supplier_name
           this.temp_materials = this.temp.materials = res.materials
           this.temp.total = 0
-          console.log('temp:', this.temp)
         })
       }
       if (this.temp.inout_time === undefined) {
@@ -260,7 +262,6 @@ export default {
 
   methods: {
     updateData() {
-      console.log('this.temp2:', this.temp)
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           var data = Object.assign({}, this.temp)
@@ -279,13 +280,11 @@ export default {
       })
     },
     cancel() {
-      console.log('cancel')
       this.$store.dispatch('tagsView/delVisitedViewByPath', '/warehouse/in/' + this.status)
       this.$store.dispatch('inout/clearInInfo')
-      this.$router.push({
-        name: 'in'
-      })
+      this.$router.push({ name: 'in' })
     },
+
     selectPurchaseOrder(order_name) {
       for (let i = 0; i < this.purchase_orders.length; i++) {
         var options = this.purchase_orders[i].options
@@ -309,28 +308,15 @@ export default {
         }
       }
     },
+
     handleUpdateQuantity(row) {
-      console.log('row:', row)
       if (!isNumeric(row.inout_quantity) || Number(row.inout_quantity) < 0) {
         row.inout_quantity = null
       } else if (row.inout_quantity > row.unwarehouse_number) {
         row.inout_quantity = row.unwarehouse_number
       }
-      this.calcTotal()
-    },
-    calcTotal() {
-      this.temp.total = undefined
-      var total = 0.0
-      var materials = this.temp.materials
-      for (let i = 0; i < materials.length; i++) {
-        if (isNaN(materials[i].inout_quantity) || isNaN(materials[i].price)) {
-          continue
-        } else {
-          total = total + materials[i].inout_quantity * materials[i].price
-        }
-      }
-      this.temp.total = total.toFixed(2)
-      console.log('this.temp.total:', this.temp.total)
+      row.row_total = clacRowTotal(row.inout_quantity, row.price)
+      this.temp.total = calcTotal2(this.temp.materials)
     },
     handleSearchMaterial() {
       var materials = this.temp.materials

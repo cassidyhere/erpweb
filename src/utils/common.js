@@ -45,3 +45,49 @@ export function isNumeric(str) {
   return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
          !isNaN(parseFloat(str)) // ...and ensure strings of whitespace fail
 }
+
+export function round3(row, column) {
+  let v = row[column['property']]
+  if (typeof v === "number") return v.toFixed(3)
+  return v
+}
+
+export function clacRowTotal(number, price) {
+  if (isNumeric(number) && isNumeric(price)) {
+    return (Number(number) * Number(price)).toFixed(3)
+  }
+}
+
+export function calcTotal(materials) {
+  var total = 0.0
+  for (let i = 0; i < materials.length; i++) {
+    if (isNumeric(materials[i].number) && isNumeric(materials[i].price)) {
+      total = total + Number(materials[i].number) * Number(materials[i].price)
+      continue
+    }
+  }
+  return total.toFixed(3)
+}
+
+export function calcTotal2(materials) {
+  var total = 0.0
+  for (let i = 0; i < materials.length; i++) {
+    if (isNumeric(materials[i].inout_quantity) && isNumeric(materials[i].price)) {
+      total = total + Number(materials[i].inout_quantity) * Number(materials[i].price)
+      continue
+    }
+  }
+  return total.toFixed(3)
+}
+
+export function querySearch(list, key, queryString, cb) {
+  var results = queryString ? list.filter(createStringFilter(key, queryString)) : list;
+  // 调用 callback 返回建议列表的数据
+  cb(results);
+}
+
+export function createStringFilter(key, queryString) {
+  return (list) => {
+    return (list[key].toLowerCase().indexOf(queryString.toLowerCase()) !== -1);
+  };
+}

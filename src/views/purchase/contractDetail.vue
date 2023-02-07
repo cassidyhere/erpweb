@@ -130,7 +130,7 @@
           :cell-style="{'padding': '3px', 'font-size': '16px', 'font-weight': 600}"
           style="width:90%"
         >
-          <el-table-column label="材料类别" min-width="120" align="center">
+          <el-table-column label="材料类别" min-width="100" align="center">
             <template slot-scope="scope">
               <span>{{ scope.row.category_name }}</span>
             </template>
@@ -156,17 +156,17 @@
               </el-select>
             </template>
           </el-table-column>
-          <el-table-column label="规格" min-width="200" align="center">
+          <el-table-column label="规格" min-width="160" align="center">
             <template slot-scope="scope">
               <span>{{ scope.row.specification }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="单位" min-width="120" align="center">
+          <el-table-column label="单位" min-width="70" align="center">
             <template slot-scope="scope">
               <span>{{ scope.row.unit }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="价格(元)" min-width="140" align="center">
+          <el-table-column label="单价(元)" min-width="100" align="center">
             <template slot-scope="scope">
               <el-input v-model="scope.row.price" size="small" @change="handleUpdatePrice(scope.row)"></el-input>
             </template>
@@ -176,7 +176,7 @@
               <el-input v-model="scope.row.remark" size="small"></el-input>
             </template>
           </el-table-column>
-          <el-table-column label="操作" min-width="100" align="center">
+          <el-table-column label="操作" min-width="90" align="center">
             <template slot-scope="scope">
               <el-button
                 size="mini"
@@ -204,7 +204,7 @@
 import { createContract, updateContract, fetchContract } from '@/api/purchase'
 import { fetchBuildingList } from '@/api/engineer'
 import { fetchActives } from '@/api/supplier'
-import { getNowTime, getName, isNumeric } from '@/utils/common'
+import { getNowTime, getName, isNumeric, querySearch } from '@/utils/common'
 import { fetchSupplyingMaterials, fetchMaterial } from '@/api/material'
 
 export default {
@@ -296,6 +296,25 @@ export default {
   },
 
   methods: {
+    // supplier
+    querySearchSupplier(queryString, cb) {
+      querySearch(this.suppliers, 'supplier_name', queryString, cb)
+    },
+    handleSelectSupplier(item) {
+      this.temp.supplier_id = item.supplier_id
+      this.temp.supplier_name = item.supplier_name
+    },
+
+    // engineer
+    querySearchEngineer(queryString, cb) {
+      querySearch(this.engineers, 'engineer_name', queryString, cb)
+    },
+    handleSelectEngineer(item) {
+      this.temp.engineer_id = item.engineer_id
+      this.temp.engineer_name = item.engineer_name
+    },
+
+    // material filter
     handleSearchMaterial() {
       var materials = this.temp.materials
       var k = this.listQuery.category_name
@@ -313,7 +332,6 @@ export default {
       this.temp_materials = materials
       return this.temp_materials
     },
-
     addRow() {
       var list = {
         category_id: null,
@@ -333,16 +351,9 @@ export default {
       })
     },
 
+    // material item
     querySearchMaterial(queryString, cb) {
-      var materials = this.supplying_materials;
-      var results = queryString ? materials.filter(this.createMaterialFilter(queryString)) : materials;
-      // 调用 callback 返回建议列表的数据
-      cb(results);
-    },
-    createMaterialFilter(queryString) {
-      return (materials) => {
-        return (materials.material_name.toLowerCase().indexOf(queryString.toLowerCase()) !== -1);
-      };
+      querySearch(this.supplying_materials, 'material_name', queryString, cb)
     },
     handleSelectMaterial(row) {
       fetchMaterial({material_id: row.material_name}).then(res => {
@@ -353,7 +364,13 @@ export default {
         row.specification = res.specification
       })
     },
+    handleUpdatePrice(row) {
+      if (!isNumeric(row.price) || Number(row.price) <= 0) {
+        row.price = null
+      }
+    },
 
+    // update & cancel
     updateData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
@@ -378,44 +395,6 @@ export default {
       this.$router.push({
         name: 'contract'
       })
-    },
-
-    querySearchSupplier(queryString, cb) {
-      var suppliers = this.suppliers;
-      var results = queryString ? suppliers.filter(this.createSupplierFilter(queryString)) : suppliers;
-      // 调用 callback 返回建议列表的数据
-      cb(results);
-    },
-    createSupplierFilter(queryString) {
-      return (suppliers) => {
-        return (suppliers.supplier_name.toLowerCase().indexOf(queryString.toLowerCase()) !== -1);
-      };
-    },
-    handleSelectSupplier(item) {
-      this.temp.supplier_id = item.supplier_id
-      this.temp.supplier_name = item.supplier_name
-    },
-
-    querySearchEngineer(queryString, cb) {
-      var engineers = this.engineers;
-      var results = queryString ? engineers.filter(this.createEngineerFilter(queryString)) : engineers;
-      // 调用 callback 返回建议列表的数据
-      cb(results);
-    },
-    createEngineerFilter(queryString) {
-      return (engineers) => {
-        return (engineers.engineer_name.toLowerCase().indexOf(queryString.toLowerCase()) !== -1);
-      };
-    },
-    handleSelectEngineer(item) {
-      this.temp.engineer_id = item.engineer_id
-      this.temp.engineer_name = item.engineer_name
-    },
-
-    handleUpdatePrice(row) {
-      if (!isNumeric(row.price) || Number(row.price) <= 0) {
-        row.price = null
-      }
     }
   }
 }

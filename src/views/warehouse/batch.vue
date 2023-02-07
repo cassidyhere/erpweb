@@ -63,7 +63,7 @@
           <span>{{ scope.row.specification }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="平均单价(元)" prop="price" sortable="custom" min-width="140" align="center">
+      <el-table-column label="平均单价(元)" prop="price" sortable="custom" min-width="150" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.price }}</span>
         </template>

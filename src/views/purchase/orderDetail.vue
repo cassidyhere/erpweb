@@ -13,7 +13,7 @@
       <el-row>
         <el-col :span="10">
           <el-form-item class="head-item" label="订单名称:" prop="order_name">
-            <el-input v-model="temp.order_name" style="width: 300px;" />
+            <el-input v-model="temp.order_name" maxlength="40" show-word-limit style="width: 300px;" />
           </el-form-item>
         </el-col>
         <el-col :span="6">
@@ -132,7 +132,7 @@
         </el-col>
       </el-row>
       <el-form-item label="备注:" prop="remark" style="width: 50%;">
-        <el-input v-model="temp.remark" type="textarea" maxlength="128" show-word-limit />
+        <el-input v-model="temp.remark" type="textarea" maxlength="80" show-word-limit />
       </el-form-item>
       <el-form-item label="材料列表:" class="head-item" style="margin-top:30px">
         <div  class="filter-container">
@@ -198,19 +198,21 @@
               <span>{{ scope.row.specification }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="单位" min-width="80" align="center">
+          <el-table-column label="单位" min-width="70" align="center">
             <template slot-scope="scope">
               <span>{{ scope.row.unit }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="数量" min-width="90" align="center">
+          <el-table-column label="数量" min-width="100" align="center">
             <template slot-scope="scope">
               <el-input v-model="scope.row.number" size="small" @input="handleUpdateNumber(scope.row)"></el-input>
             </template>
           </el-table-column>
-          <el-table-column label="单价(元)" min-width="90" align="center">
+          <el-table-column label="单价(元)" min-width="100" align="center">
             <template slot-scope="scope">
-              <span v-if="temp.link_contract==='true'">{{ scope.row.price }}</span>
+              <span v-if="temp.link_contract==='true'">
+                {{ scope.row.price }}
+              </span>
               <el-input v-else v-model="scope.row.price" size="small" @input="handleUpdatePrice(scope.row)"></el-input>
             </template>
           </el-table-column>
@@ -226,10 +228,10 @@
           </el-table-column>
           <el-table-column label="说明" min-width="200" align="center">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.remark" size="small"></el-input>
+              <el-input v-model="scope.row.remark" size="small" maxlength="80" show-word-limit></el-input>
             </template>
           </el-table-column>
-          <el-table-column label="操作" min-width="100" align="center">
+          <el-table-column label="操作" min-width="90" align="center">
             <template slot-scope="scope">
               <el-button
                 size="mini"
@@ -255,7 +257,7 @@
 import { createOrder, updateOrder, fetchOrder, fetchContractExecuting, fetchContractInfo } from '@/api/purchase'
 import { fetchBuildingList } from '@/api/engineer'
 import { fetchActives } from '@/api/supplier'
-import { getNowTime, getName, isNumeric } from '@/utils/common'
+import { getNowTime, getName, isNumeric, calcTotal, clacRowTotal, querySearch } from '@/utils/common'
 import { fetchSupplyingMaterials, fetchMaterial } from '@/api/material'
 
 export default {
@@ -349,6 +351,50 @@ export default {
   },
 
   methods: {
+    // contract
+    handleLinkContract() {
+      this.temp.contract_id = undefined
+      this.temp.contract_name = undefined
+      this.temp.supplier_id = undefined
+      this.temp.supplier_name = undefined
+      this.temp.engineer_id = undefined
+      this.temp.engineer_name = undefined
+      this.temp.leftover_total = undefined
+      this.temp.materials = this.temp_materials = []
+      this.temp.total = 0
+    },
+    querySearchContract(queryString, cb) {
+      querySearch(this.contracts, 'contract_name', queryString, cb)
+    },
+    handleSelectContract(item) {
+      this.temp.contract_id = item.contract_id
+      this.temp.contract_name = item.contract_name
+      this.temp.total = "0.000"
+      fetchContractInfo({ contract_id: item.contract_id }).then(res => {
+        Object.assign(this.temp, res)
+        this.temp_materials = this.temp.materials
+      })
+    },
+
+    // supplier
+    querySearchSupplier(queryString, cb) {
+      querySearch(this.suppliers, 'supplier_name', queryString, cb)
+    },
+    handleSelectSupplier(item) {
+      this.temp.supplier_id = item.supplier_id
+      this.temp.supplier_name = item.supplier_name
+    },
+
+    // engineer
+    querySearchEngineer(queryString, cb) {
+      querySearch(this.engineers, 'engineer_name', queryString, cb)
+    },
+    handleSelectEngineer(item) {
+      this.temp.engineer_id = item.engineer_id
+      this.temp.engineer_name = item.engineer_name
+    },
+
+    // material filter
     handleSearchMaterial() {
       var materials = this.temp.materials
       var k = this.listQuery.category_name
@@ -366,7 +412,6 @@ export default {
       this.temp_materials = materials
       return this.temp_materials
     },
-
     addRow() {
       var list = {
         category_id: null,
@@ -374,6 +419,8 @@ export default {
         material_id: null,
         material_name: '',
         remark: '',
+        price: null,
+        total: 0,
         editing: true
       }
       this.temp_materials.push(list)
@@ -384,18 +431,12 @@ export default {
           this.temp_materials.splice(i, 1)
         }
       })
+      this.temp.total = calcTotal(this.temp.materials)
     },
 
+    // material item
     querySearchMaterial(queryString, cb) {
-      var materials = this.supplying_materials;
-      var results = queryString ? materials.filter(this.createMaterialFilter(queryString)) : materials;
-      // 调用 callback 返回建议列表的数据
-      cb(results);
-    },
-    createMaterialFilter(queryString) {
-      return (materials) => {
-        return (materials.material_name.toLowerCase().indexOf(queryString.toLowerCase()) !== -1);
-      };
+      querySearch(this.supplying_materials, 'material_name', queryString, cb)
     },
     handleSelectMaterial(row) {
       fetchMaterial({material_id: row.material_name}).then(res => {
@@ -406,12 +447,28 @@ export default {
         row.specification = res.specification
       })
     },
+    handleUpdatePrice(row) {
+      if (!isNumeric(row.price) || Number(row.price) < 0) {
+        row.price = null
+      }
+      console.log("row:", row)
+      row.total = clacRowTotal(row.number, row.price)
+      this.temp.total = calcTotal(this.temp.materials)
+    },
+    handleUpdateNumber(row) {
+      if (!isNumeric(row.number) || Number(row.number) < 0) {
+        row.number = null
+      }
+      row.total = clacRowTotal(row.number, row.price)
+      this.temp.total = calcTotal(this.temp.materials)
+    },
 
+    // update & cancel
     updateData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           var data = Object.assign({}, this.temp)
-          data.materials = data.materials.filter(m => m.number !== undefined)
+          data.materials = data.materials.filter(m => (m.number !== undefined) && (m.price !== undefined))
           var f = this.status === "create" ? createOrder : updateOrder
           f(data).then(() => {
             this.$notify({
@@ -431,104 +488,6 @@ export default {
       this.$router.push({
         name: 'order'
       })
-    },
-
-    handleLinkContract() {
-      this.temp.contract_id = undefined
-      this.temp.contract_name = undefined
-      this.temp.supplier_id = undefined
-      this.temp.supplier_name = undefined
-      this.temp.engineer_id = undefined
-      this.temp.engineer_name = undefined
-      this.temp.leftover_total = undefined
-      this.temp.materials = this.temp_materials = []
-      this.temp.total = 0
-    },
-    querySearchContract(queryString, cb) {
-      var contracts = this.contracts;
-      var results = queryString ? contracts.filter(this.createContractFilter(queryString)) : contracts;
-      // 调用 callback 返回建议列表的数据
-      cb(results);
-    },
-    createContractFilter(queryString) {
-      return (contracts) => {
-        return (contracts.contract_name.toLowerCase().indexOf(queryString.toLowerCase()) !== -1);
-      };
-    },
-    handleSelectContract(item) {
-      this.temp.contract_id = item.contract_id
-      this.temp.contract_name = item.contract_name
-      this.temp.total = 0
-      fetchContractInfo({ contract_id: item.contract_id }).then(res => {
-        Object.assign(this.temp, res)
-        this.temp_materials = this.temp.materials
-      })
-    },
-
-    querySearchSupplier(queryString, cb) {
-      var suppliers = this.suppliers;
-      var results = queryString ? suppliers.filter(this.createSupplierFilter(queryString)) : suppliers;
-      // 调用 callback 返回建议列表的数据
-      cb(results);
-    },
-    createSupplierFilter(queryString) {
-      return (suppliers) => {
-        return (suppliers.supplier_name.toLowerCase().indexOf(queryString.toLowerCase()) !== -1);
-      };
-    },
-    handleSelectSupplier(item) {
-      this.temp.supplier_id = item.supplier_id
-      this.temp.supplier_name = item.supplier_name
-    },
-
-    querySearchEngineer(queryString, cb) {
-      var engineers = this.engineers;
-      var results = queryString ? engineers.filter(this.createEngineerFilter(queryString)) : engineers;
-      // 调用 callback 返回建议列表的数据
-      cb(results);
-    },
-    createEngineerFilter(queryString) {
-      return (engineers) => {
-        return (engineers.engineer_name.toLowerCase().indexOf(queryString.toLowerCase()) !== -1);
-      };
-    },
-    handleSelectEngineer(item) {
-      this.temp.engineer_id = item.engineer_id
-      this.temp.engineer_name = item.engineer_name
-    },
-    handleUpdatePrice(row) {
-      if (!isNumeric(row.price) || Number(row.price) < 0) {
-        row.price = null
-      }
-      this.clacRowTotal(row)
-      this.calcTotal()
-    },
-    handleUpdateNumber(row) {
-      if (!isNumeric(row.number) || Number(row.number) < 0) {
-        row.number = null
-      }
-      this.clacRowTotal(row)
-      this.calcTotal()
-    },
-    clacRowTotal(row) {
-      if (isNaN(row.number) || isNaN(row.price)) {
-        row.total = null
-      } else {
-        row.total = (row.number * row.price).toFixed(2)
-      }
-    },
-    calcTotal() {
-      this.temp.total = undefined
-      var total = 0.0
-      var materials = this.temp.materials
-      for (let i = 0; i < materials.length; i++) {
-        if (isNaN(materials[i].number) || isNaN(materials[i].price)) {
-          continue
-        } else {
-          total = total + materials[i].number * materials[i].price
-        }
-      }
-      this.temp.total = total.toFixed(2)
     }
   }
 }

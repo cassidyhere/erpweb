@@ -101,12 +101,12 @@
           <span>{{ scope.row.number }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="单价(元)" min-width="90" align="center">
+      <el-table-column label="单价(元)" min-width="100" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.price }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="金额(元)" min-width="100" align="center">
+      <el-table-column label="金额(元)" min-width="120" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.total }}</span>
         </template>

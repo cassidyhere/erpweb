@@ -60,7 +60,7 @@
           <span>{{ scope.row.inout_time }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="总金额" prop="total" sortable="custom" min-width="150" align="center">
+      <el-table-column label="总金额(元)" prop="total" sortable="custom" min-width="150" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.total }}</span>
         </template>

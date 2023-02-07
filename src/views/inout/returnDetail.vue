@@ -125,11 +125,6 @@
               <span>{{ scope.row.unit }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="价格(元)" max-width="140" align="center">
-            <template slot-scope="scope">
-              <span>{{ scope.row.price }}</span>
-            </template>
-          </el-table-column>
           <el-table-column v-if="temp.audit_status!==2" label="库存数量" max-width="140" align="center">
             <template slot-scope="scope">
               <span>{{ scope.row.inventory_quantity }}</span>
@@ -144,6 +139,16 @@
             <template slot-scope="scope">
               <span v-if="status==='update' && temp.audit_status===2">{{ scope.row.inout_quantity }}</span>
               <el-input v-else v-model="scope.row.inout_quantity" size="small" @input="handleUpdateQuantity(scope.row)"></el-input>
+            </template>
+          </el-table-column>
+          <el-table-column label="单价(元)" max-width="140" align="center">
+            <template slot-scope="scope">
+              <span>{{ scope.row.price }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="小计金额(元)" min-width="120" align="center">
+            <template slot-scope="scope">
+              <span>{{ scope.row.row_total }}</span>
             </template>
           </el-table-column>
           <el-table-column label="说明" max-width="220" align="center">
@@ -170,7 +175,7 @@
 import { updateReturn, createReturn, fetchInout } from '@/api/inout'
 import { fetchInventorySuppliers } from '@/api/inventory'
 import { fetchSupplierInventories } from '@/api/supplier'
-import { getNowTime, isNumeric } from '@/utils/common'
+import { getNowTime, isNumeric, calcTotal2, clacRowTotal } from '@/utils/common'
 
 export default {
   data() {
@@ -239,10 +244,9 @@ export default {
     cancel() {
       this.$store.dispatch('tagsView/delVisitedViewByPath', '/warehouse/return/' + this.status)
       this.$store.dispatch('inout/clearReturnInfo')
-      this.$router.push({
-        name: 'return'
-      })
+      this.$router.push({ name: 'return' })
     },
+
     updateData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
@@ -269,24 +273,8 @@ export default {
       } else if (row.inout_quantity > row.available_quantity) {
         row.inout_quantity = row.available_quantity
       }
-      this.calcTotal()
-    },
-    calcTotal() {
-      this.temp.total = undefined
-      var total = 0.0
-      var materials = this.temp.materials
-      for (let i = 0; i < materials.length; i++) {
-        if (isNaN(materials[i].inout_quantity) || isNaN(materials[i].price)) {
-          console.log('continue', materials[i].inout_quantity, materials[i].price)
-          continue
-        } else {
-          console.log('cala', materials[i].inout_quantity, materials[i].price)
-          
-          total = total + materials[i].inout_quantity * materials[i].price
-        }
-      }
-      this.temp.total = total.toFixed(2)
-      console.log('this.temp.total:', this.temp.total)
+      row.row_total = clacRowTotal(row.inout_quantity, row.price)
+      this.temp.total = calcTotal2(this.temp.materials)
     },
     handleSearchMaterial() {
       var materials = this.temp.materials

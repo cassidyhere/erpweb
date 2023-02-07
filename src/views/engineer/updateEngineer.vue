@@ -30,7 +30,7 @@
         <el-input v-else v-model="temp.party_b" />
       </el-form-item>
       <el-form-item label="工程金额(元):" prop="total">
-        <span v-if="temp.audit_status===2">{{ temp.total }}</span>
+        <span v-if="temp.audit_status===2">{{ strTotal }}</span>
         <el-input v-else v-model="temp.total" @input="handleUpdateTotal(temp.total)" style="width: 150px;" />
       </el-form-item>
       <el-form-item label="签订时间:" prop="sign_time">
@@ -70,7 +70,7 @@
 
 <script>
 import { fetchEngineer, updateEngineer, createEngineer } from '@/api/engineer'
-import { getNowTime, isNumeric } from '@/utils/common'
+import { getNowTime, isNumeric, round3 } from '@/utils/common'
 
 export default {
   data() {
@@ -91,6 +91,14 @@ export default {
         { id: 3, name: '表前' },
         { id: 4, name: '表后' }
       ]
+    }
+  },
+
+  computed: {
+    strTotal() {
+      let v = this.temp.total
+      if (typeof v === "number") return v.toFixed(3)
+      return v
     }
   },
 

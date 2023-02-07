@@ -52,30 +52,18 @@
           <span>{{ scope.row.winner }}</span>
         </template>
       </el-table-column> -->
-      <el-table-column label="工程金额(元)" prop="total" sortable="custom" width="150" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.total }}</span>
-        </template>
+      <el-table-column label="工程金额(元)" prop="total" sortable="custom" width="150" align="center" :formatter="formatter">
       </el-table-column>
       <el-table-column label="签订增项" min-width="200" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.extension }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="结算价(元)" width="140" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.settlement }}</span>
-        </template>
+      <el-table-column label="结算价(元)" prop="settlement" width="140" align="center" :formatter="formatter">
       </el-table-column>
-      <el-table-column label="内部暂定成本(元)" width="160" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.tentative_cost }}</span>
-        </template>
+      <el-table-column label="内部暂定成本(元)" prop="tentative_cost" width="160" align="center" :formatter="formatter">
       </el-table-column>
-      <el-table-column label="已收款(已实收)" width="150" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.collection }}</span>
-        </template>
+      <el-table-column label="已收款(已实收)" prop="collection" width="150" align="center" :formatter="formatter">
       </el-table-column>
       <el-table-column label="签订日期" prop="sign_time" sortable="custom" width="120" align="center">
         <template slot-scope="scope">
@@ -214,6 +202,7 @@ import {
   downloadEngineerExcel,
   deleteEngineer
 } from '@/api/engineer'
+import { round3 } from '@/utils/common'
 
 export default {
   components: { Pagination },
@@ -417,6 +406,9 @@ export default {
         name: 'collection',
         params: { engineer_id: engineer_id, can_edit: can_edit }
       })
+    },
+    formatter(row, column) {
+      return round3(row, column)
     },
     getAutoHeight() {
       // 窗口高度减去表格外元素的高度

@@ -28,7 +28,7 @@
           <span>{{ scope.row.category_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="总金额" width="200" align="center">
+      <el-table-column label="总金额(元)" width="200" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.total }}</span>
         </template>
