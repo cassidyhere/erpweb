@@ -111,11 +111,11 @@
           <span v-else>部分进仓</span>
         </template>
       </el-table-column>
-      <el-table-column label="备注" min-width="200" align="center">
+      <!-- <el-table-column label="备注" min-width="200" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.remark }}</span>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column label="审核状态" width="100" align="center">
         <template slot-scope="scope">
           <el-button v-if="scope.row.audit_status===1" size="mini" type="primary" @click.native.stop="handleAuditOrder(scope.row.id)">
