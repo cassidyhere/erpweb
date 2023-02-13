@@ -63,17 +63,17 @@
           <span>{{ scope.row.specification }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="平均单价(元)" prop="price" sortable="custom" min-width="150" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.price }}</span>
-        </template>
-      </el-table-column>
       <el-table-column label="库存" prop="inventory_quantity" sortable="custom" min-width="100" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.inventory_quantity }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="预用库存" min-width="100" align="center">
+      <el-table-column label="平均单价(元)" prop="price" sortable="custom" min-width="150" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.price }}</span>
+        </template>
+      </el-table-column>
+      <!-- <el-table-column label="预用库存" min-width="100" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.lock_quantity }}</span>
         </template>
@@ -82,7 +82,7 @@
         <template slot-scope="scope">
           <span>{{ scope.row.available_quantity }}</span>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column label="总价(元)" prop="total" sortable="custom" min-width="140" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.total }}</span>
