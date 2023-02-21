@@ -66,19 +66,48 @@
         <div  class="filter-container">
           <div class="filter-item away">
             类别:
-            <el-input v-model="listQuery.category_name" placeholder="输入关键字" style="width: 150px;" @keyup.enter.native="handleSearchMaterial" />
+            <el-select
+              v-model="listQuery.category_name"
+              filterable
+              placeholder="请选择"
+              @change="handleSelectCategory"
+              style="width: 130px;"
+            >
+              <el-option
+                v-for="item in categories"
+                :key="item.category_id"
+                :label="item.category_name"
+                :value="item.category_id">
+              </el-option>
+            </el-select>
           </div>
           <div class="filter-item away">
-            材料名称:
-            <el-input v-model="listQuery.material_name" placeholder="输入关键字" style="width: 150px;" @keyup.enter.native="handleSearchMaterial" />
+            采购订单:
+            <el-select
+              v-model="listQuery.purchase_order_name"
+              filterable
+              placeholder="请选择"
+              @change="handleSelectOrder"
+              style="width: 150px;"
+            >
+              <el-option
+                v-for="item in purchase_orders"
+                :key="item.order_id"
+                :label="item.order_name"
+                :value="item.order_id">
+              </el-option>
+            </el-select>
           </div>
-          <div class="filter-item away">
-            规格:
-            <el-input v-model="listQuery.specification" placeholder="输入关键字" style="width: 150px;" @keyup.enter.native="handleSearchMaterial" />
-          </div>
-          <el-button plain class="filter-item" type="primary" icon="el-icon-search" @click="handleSearchMaterial">
-            搜索
-          </el-button>
+          <!-- <div class="filter-item away">
+            <el-switch
+              v-model="hidden"
+              inactive-text="显示订单全部未出仓材料"
+              active-color="#13ce66"
+              inactive-color="#ff4949"
+              change="handleHidden"
+            >
+            </el-switch>
+          </div> -->
           <el-button v-if="temp.audit_status===1" plain class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="addRow">
             新增一行
           </el-button>
@@ -95,7 +124,7 @@
       :cell-style="{'padding': '3px', 'font-size': '16px', 'font-weight': 600}"
           style="width:90%"
         >
-          <el-table-column label="采购合同" max-width="200" align="center">
+          <el-table-column label="采购合同" min-width="180" align="center">
             <template slot-scope="scope">
               <span>{{ scope.row.contract_name }}</span>
             </template>
@@ -107,7 +136,7 @@
           </el-table-column>
           <el-table-column label="材料类别" min-width="100" align="center">
             <template slot-scope="scope">
-              <span>{{ scope.row.category_name }}</span>
+              <span>{{ scope.row.category_name }}</span> 
             </template>
           </el-table-column>
           <el-table-column label="材料名称" min-width="100" align="center">
@@ -115,12 +144,12 @@
               <span>{{ scope.row.material_name }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="规格" max-width="200" align="center">
+          <el-table-column label="规格" min-width="90" max-width="200" align="center">
             <template slot-scope="scope">
               <span>{{ scope.row.specification }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="单位" max-width="140" align="center">
+          <el-table-column label="单位" max-width="130" align="center">
             <template slot-scope="scope">
               <span>{{ scope.row.unit }}</span>
             </template>
