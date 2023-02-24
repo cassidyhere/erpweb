@@ -14,47 +14,42 @@
           </el-form-item>
         </el-col>
         <el-col :span="6">
-          <el-form-item class="head-item" label="关联采购单:" prop="purchase_order_name">
-            <span v-if="status==='update' && temp.audit_status===2">{{ temp.purchase_order_name }}</span>
-            <el-select
-              v-else 
-              v-model="temp.purchase_order_name"
+          <el-form-item v-if="temp.audit_status!==2" lass="head-item" label="关联采购单:" prop="option" >
+            <el-cascader
+              v-model="temp.option"
+              placeholder="请选择或搜索"
+              :options="options"
               filterable
-              placeholder="请选择"
-              @change="selectPurchaseOrder"
+              @change="selectOption"
+              style="width: 450px;"
             >
-              <el-option-group
-                v-for="group in purchase_orders"
-                :key="group.label"
-                :label="group.label"
-              >
-                <el-option
-                  v-for="item in group.options"
-                  :key="item.id"
-                  :label="item.order_name"
-                  :value="item.order_name"
-                />
-              </el-option-group>
-            </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col :span="6">
-          <el-form-item class="head-item" label="关联采购合同:" prop="contract_name">
-            <span>{{ temp.contract_name }}</span>
-          </el-form-item>
-        </el-col>
-        <el-col :span="6">
-          <el-form-item class="head-item" label="关联供应商:" prop="supplier_name">
-            <span>{{ temp.supplier_name }}</span>
+            </el-cascader>
           </el-form-item>
         </el-col>
       </el-row>
       <el-row>
         <el-col :span="6">
-          <el-form-item class="head-item" label="关联工程:" prop="engineer_name">
+          <el-form-item class="head-item" label="工程:" prop="engieneer_name">
             <span>{{ temp.engineer_name }}</span>
           </el-form-item>
         </el-col>
+        <el-col :span="6">
+          <el-form-item class="head-item" label="采购合同:" prop="contract_name">
+            <span>{{ temp.contract_name }}</span>
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
+          <el-form-item class="head-item" label="采购单:" prop="purchase_order_name">
+            <span>{{ temp.purchase_order_name }}</span>
+          </el-form-item>
+        </el-col>
+        <el-col :span="6">
+          <el-form-item class="head-item" label="供应商:" prop="supplier_name">
+            <span>{{ temp.supplier_name }}</span>
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row>
         <el-col :span="6">
           <el-form-item class="head-item" label="总金额(元):" prop="total">
             <span>{{ temp.total }}</span>
@@ -179,7 +174,7 @@
 
 <script>
 import { updateWarehouse, createWarehouse, fetchInout } from '@/api/inout'
-import { fetchOrderElOptionGroup, fetchOrder } from '@/api/purchase'
+import { fetchWarehousingOrderList, fetchOrder } from '@/api/purchase'
 import { getNowTime, isNumeric, calcTotal2, clacRowTotal } from '@/utils/common'
 
 export default {
@@ -202,9 +197,9 @@ export default {
       inout_id: undefined,
       temp: {},
       temp_materials: [],
-      purchase_orders: [],
+      options: [],
       rules: {
-        purchase_order_name: [{ required: true, validator: validatePass, trigger: 'blur' }],
+        option: [{ required: true, validator: validatePass, trigger: 'blur' }],
         inout_time: [{ required: true, message: '请选择下单时间', trigger: 'blur' }],
         order_user: [{ required: true, message: '请输入下单用户', trigger: 'blur' }]
       }
@@ -229,7 +224,9 @@ export default {
         // 获取订单明细
         fetchInout({ inout_id: inout_id, order_type: 1 }).then(res => {
           this.temp = Object.assign({}, res)
+          console.log("res", res)
           this.temp_materials = this.temp.materials
+          this.temp.option = [this.temp.purchase_order_id]
         })
       }
     } else {
@@ -248,6 +245,7 @@ export default {
           this.temp.supplier_name = res.supplier_name
           this.temp_materials = this.temp.materials = res.materials
           this.temp.total = 0
+          this.temp.option = [order_id]
         })
       }
       if (this.temp.inout_time === undefined) {
@@ -255,8 +253,9 @@ export default {
       }
     }
 
-    fetchOrderElOptionGroup().then(res => {
-      this.purchase_orders = res.el_option_group
+    fetchWarehousingOrderList().then(res => {
+      this.options = res.purchase_orders
+      console.log("res.options", res.purchase_orders)
     })
   },
 
@@ -285,28 +284,16 @@ export default {
       this.$router.push({ name: 'in' })
     },
 
-    selectPurchaseOrder(order_name) {
-      for (let i = 0; i < this.purchase_orders.length; i++) {
-        var options = this.purchase_orders[i].options
-        var right = false
-        for (let j = 0; j < options.length; j++) {
-          if (options[j].order_name === order_name) {
-            this.temp.purchase_order_id = options[j].id
-            fetchOrder({ order_id: this.temp.purchase_order_id }).then(res => {
-              this.temp.contract_name = res.contract_name
-              this.temp.engineer_name = res.engineer_name
-              this.temp.supplier_name = res.supplier_name
-              this.temp_materials = this.temp.materials = res.materials
-              this.temp.total = 0
-            })
-            right = true
-            break
-          }
-        }
-        if (right === true) {
-          break
-        }
-      }
+    selectOption(option) {
+      this.temp.purchase_order_id = option[1]
+      fetchOrder({ order_id: this.temp.purchase_order_id }).then(res => {
+        this.temp.purchase_order_name = res.order_name
+        this.temp.contract_name = res.contract_name
+        this.temp.engineer_name = res.engineer_name
+        this.temp.supplier_name = res.supplier_name
+        this.temp_materials = this.temp.materials = res.materials
+        this.temp.total = 0
+      })
     },
 
     handleUpdateQuantity(row) {

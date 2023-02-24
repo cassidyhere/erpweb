@@ -105,9 +105,9 @@ export function fetchOrderList(query) {
   })
 }
 
-export function fetchOrderElOptionGroup(query) {
+export function fetchWarehousingOrderList(query) {
   return request({
-    url: '/purchase/order/el-option-group/',
+    url: '/purchase/order/warehousing/',
     method: 'get',
     params: query
   })
