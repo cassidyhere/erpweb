@@ -69,12 +69,12 @@
           <span>{{ scope.row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="采购订单" min-width="160" align="center">
+      <el-table-column label="采购订单" width="220" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.order_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="采购合同" min-width="160" align="center">
+      <el-table-column label="采购合同" width="220" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.contract_name }}</span>
         </template>
@@ -84,7 +84,7 @@
           <span>{{ scope.row.supplier_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="工程" min-width="160" align="center">
+      <el-table-column label="工程" min-width="200" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.engineer_name }}</span>
         </template>

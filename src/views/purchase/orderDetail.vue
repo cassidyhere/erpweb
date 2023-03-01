@@ -11,12 +11,12 @@
         <span>{{ temp.order_code }}</span>
       </el-form-item>
       <el-row>
-        <el-col :span="10">
+        <el-col :span="6">
           <el-form-item class="head-item" label="订单名称:" prop="order_name">
             <el-input v-model="temp.order_name" maxlength="40" show-word-limit style="width: 300px;" />
           </el-form-item>
         </el-col>
-        <el-col :span="6">
+        <el-col :span="4">
           <el-form-item label="是否关联采购合同:" prop="link_contract" class="head-item">
             <el-radio-group v-if="temp.audit_status===2" v-model="temp.link_contract" disabled>
               <el-radio label=true>是</el-radio>
@@ -28,7 +28,7 @@
             </el-radio-group>
           </el-form-item>
         </el-col>
-        <el-col v-if="temp.link_contract==='true'" :span="8">
+        <el-col v-if="temp.link_contract==='true'" :span="6">
           <el-form-item label="合同名称:" prop="contract_name" class="head-item">
             <span v-if="temp.audit_status===2">{{ temp.contract_name }}</span>
             <el-autocomplete
@@ -38,13 +38,13 @@
               :fetch-suggestions="querySearchContract"
               placeholder="请输入内容"
               @select="handleSelectContract"
-              style="width: 200px;"
+              style="width: 300px;"
             />
           </el-form-item>
         </el-col>
       </el-row>
       <el-row>
-        <el-col :span="10">
+        <el-col :span="6">
           <el-form-item label="供应商名称:" prop="supplier_name" class="head-item">
             <span v-if="temp.link_contract==='true' || temp.audit_status===2">
               {{ temp.supplier_name }}
@@ -56,11 +56,11 @@
               :fetch-suggestions="querySearchSupplier"
               placeholder="请输入内容"
               @select="handleSelectSupplier"
-              style="width: 200px;"
+              style="width: 400px;"
             />
           </el-form-item>
         </el-col>
-        <el-col :span="6">
+        <el-col :span="3">
           <el-form-item label="总仓:" prop="from_basecamp" class="head-item">
             <el-radio-group 
               v-if="temp.link_contract==='true' || temp.audit_status===2" 
@@ -86,7 +86,7 @@
               :fetch-suggestions="querySearchEngineer"
               placeholder="请输入内容"
               @select="handleSelectEngineer"
-              style="width: 200px;"
+              style="width: 450px;"
             />
           </el-form-item>
         </el-col>
