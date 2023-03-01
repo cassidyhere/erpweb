@@ -180,7 +180,7 @@ export default {
         audit_status: undefined,
         key: undefined,
         sort_by: 'id',
-        ascending: 1,
+        ascending: 0,
         inout_time: undefined
       },
       loading: false,
