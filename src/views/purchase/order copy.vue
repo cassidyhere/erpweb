@@ -59,52 +59,52 @@
       style="width: 100%;"
       :max-height="tableHeight"
       stripe
-      :header-cell-style="{background:'#F1F3F7', color: 'black', 'font-size': '16px', padding: '3px'}"
-      :cell-style="{'padding': '0.5px', 'color': 'black', 'font-size': '16px', 'font-weight': 600}"
+      :header-cell-style="{background:'#F1F3F7', color: 'black', 'font-size': '16px', padding: '4px'}"
+      :cell-style="{'padding': '3px', 'font-size': '16px', 'font-weight': 600}"
       :default-sort="{prop: 'id', order: 'descending'}"
       @sort-change="sortChange"
     >
-      <el-table-column label="ID" prop="id" sortable="custom" align="left" width="70">
+      <el-table-column label="ID" prop="id" sortable="custom" align="center" width="70">
         <template slot-scope="scope">
           <span>{{ scope.row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="采购订单" width="200" align="left">
+      <el-table-column label="采购订单" width="200" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.order_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="采购合同" width="200" align="left">
+      <el-table-column label="采购合同" width="200" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.contract_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="供应商" min-width="400" align="left">
+      <el-table-column label="供应商" min-width="400" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.supplier_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="工程" min-width="400" align="left">
+      <el-table-column label="工程" min-width="400" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.engineer_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="订单金额(元)" width="120" align="right">
+      <el-table-column label="订单金额(元)" width="120" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.total }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="已支付金额(元)" width="140" align="right">
+      <el-table-column label="已支付金额(元)" width="140" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.payment }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="下单日期" width="110" align="left">
+      <el-table-column label="下单日期" width="110" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.order_time }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="进仓状态" width="100" align="left">
+      <el-table-column label="进仓状态" width="100" align="center">
         <template slot-scope="scope">
           <span v-if="scope.row.warehouse_status===1">未进仓</span>
           <span v-else-if="scope.row.warehouse_status===2">全部进仓</span>
@@ -116,7 +116,7 @@
           <span>{{ scope.row.remark }}</span>
         </template>
       </el-table-column> -->
-      <el-table-column label="审核状态" width="100" align="left">
+      <el-table-column label="审核状态" width="100" align="center">
         <template slot-scope="scope">
           <el-button v-if="scope.row.audit_status===1" size="mini" type="primary" @click.native.stop="handleAuditOrder(scope.row.id)">
             审核
@@ -126,7 +126,7 @@
           </el-button>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="left" width="220" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" width="220" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             size="mini"

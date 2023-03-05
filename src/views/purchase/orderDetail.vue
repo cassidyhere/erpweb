@@ -86,7 +86,7 @@
               :fetch-suggestions="querySearchEngineer"
               placeholder="请输入内容"
               @select="handleSelectEngineer"
-              style="width: 450px;"
+              style="width: 550px;"
             />
           </el-form-item>
         </el-col>
@@ -151,9 +151,11 @@
           <el-button plain class="filter-item" type="primary" icon="el-icon-search" @click="handleSearchMaterial">
             搜索
           </el-button>
-          <el-button v-if="temp.link_contract==='false' && temp.audit_status!==2" plain class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="addRow">
+          <!-- <el-button v-if="temp.link_contract==='false' && temp.audit_status!==2" plain class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="addRow">
             新增一行
-          </el-button>
+          </el-button> -->
+          <el-button type="primary" @click="updateData" class="filter-item" style="margin-left: 10px;">确定</el-button>
+          <el-button class="filter-item" @click="cancel">取消</el-button>
         </div>
         <el-table
           :data="temp_materials"
@@ -247,9 +249,18 @@
       </el-form-item>
     </el-form>
 
-    <el-button type="primary" @click="updateData" style="margin-left: 140px;">确定</el-button>
-    <el-button @click="cancel">取消</el-button>
-
+    <!-- <el-button type="primary" @click="updateData" style="margin-left: 140px;">确定</el-button>
+    <el-button @click="cancel">取消</el-button> -->
+    <el-button
+      v-if="temp.link_contract==='false' && temp.audit_status!==2"
+      plain
+      style="margin-left: 140px;"
+      type="primary"
+      icon="el-icon-edit"
+      @click="addRow"
+    >
+      新增一行
+    </el-button>
   </div>
 </template>
 
