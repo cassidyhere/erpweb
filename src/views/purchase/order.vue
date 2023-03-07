@@ -59,8 +59,8 @@
       style="width: 100%;"
       :max-height="tableHeight"
       stripe
-      :header-cell-style="{background:'#F1F3F7', color: 'black', 'font-size': '16px', padding: '3px'}"
-      :cell-style="{'padding': '0.5px', 'color': 'black', 'font-size': '16px', 'font-weight': 600}"
+      :header-cell-style="{'text-align':'center', background:'#F1F3F7', color: 'black', 'font-size': '14px', 'padding': '0px'}"
+      :cell-style="{'padding': '0.5px', 'color': 'black', 'font-size': '14px', 'font-weight': 600}"
       :default-sort="{prop: 'id', order: 'descending'}"
       @sort-change="sortChange"
     >
@@ -116,7 +116,7 @@
           <span>{{ scope.row.remark }}</span>
         </template>
       </el-table-column> -->
-      <el-table-column label="审核状态" width="100" align="left">
+      <el-table-column label="审核状态" width="100" align="center">
         <template slot-scope="scope">
           <el-button v-if="scope.row.audit_status===1" size="mini" type="primary" @click.native.stop="handleAuditOrder(scope.row.id)">
             审核
@@ -126,7 +126,7 @@
           </el-button>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="left" width="220" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" width="220" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -358,4 +358,8 @@ export default {
   display: none;
   z-index: -9999;
 }
+/* /deep/.el-table td, .el-table th {
+  padding-left: 1px;
+  padding-right: 1px;
+} */
 </style>
