@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <div class="filter-container">
+    <div class="filter-container" style="width: 1000px">
       <div class="filter-item away">
         工程:
         <el-input v-model="listQuery.engineer" placeholder="输入关键字" style="width: 150px;" @keyup.enter.native="handleFilter" />

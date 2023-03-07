@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <div class="filter-container">
+    <div class="filter-container" style="min-width: 1000px">
       <div class="filter-item away">
         工程:
         <el-input v-model="listQuery.engineer" placeholder="输入关键字" style="width: 150px;" @keyup.enter.native="handleFilter" />
@@ -27,8 +27,7 @@
       </div>
       <div class="filter-item away">
         进仓状态:
-        <el-select
-          v-model="listQuery.warehouse_status" multiple placeholder="请选择">
+        <el-select v-model="listQuery.warehouse_status" multiple placeholder="请选择" style="width: 150px">
           <el-option
             v-for="item in warehouseStatus"
             :key="item.value"
@@ -64,47 +63,47 @@
       :default-sort="{prop: 'id', order: 'descending'}"
       @sort-change="sortChange"
     >
-      <el-table-column label="ID" prop="id" sortable="custom" align="left" width="70">
+      <el-table-column label="ID" prop="id" sortable="custom" align="left" width="50">
         <template slot-scope="scope">
           <span>{{ scope.row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="采购订单" width="200" align="left">
+      <el-table-column label="采购订单" width="155" align="left">
         <template slot-scope="scope">
           <span>{{ scope.row.order_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="采购合同" width="200" align="left">
+      <el-table-column label="采购合同" width="155" align="left">
         <template slot-scope="scope">
           <span>{{ scope.row.contract_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="供应商" min-width="400" align="left">
+      <el-table-column label="供应商" min-width="320" align="left">
         <template slot-scope="scope">
           <span>{{ scope.row.supplier_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="工程" min-width="400" align="left">
+      <el-table-column label="工程" min-width="480" align="left">
         <template slot-scope="scope">
           <span>{{ scope.row.engineer_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="订单金额(元)" width="120" align="right">
+      <el-table-column label="订单金额(元)" width="100" align="right">
         <template slot-scope="scope">
           <span>{{ scope.row.total }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="已支付金额(元)" width="140" align="right">
+      <el-table-column label="已付金额(元)" width="100" align="right">
         <template slot-scope="scope">
           <span>{{ scope.row.payment }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="下单日期" width="110" align="left">
+      <el-table-column label="下单日期" width="90" align="left">
         <template slot-scope="scope">
           <span>{{ scope.row.order_time }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="进仓状态" width="100" align="left">
+      <el-table-column label="进仓状态" width="70" align="left">
         <template slot-scope="scope">
           <span v-if="scope.row.warehouse_status===1">未进仓</span>
           <span v-else-if="scope.row.warehouse_status===2">全部进仓</span>
@@ -116,7 +115,7 @@
           <span>{{ scope.row.remark }}</span>
         </template>
       </el-table-column> -->
-      <el-table-column label="审核状态" width="100" align="center">
+      <el-table-column label="审核状态" width="80" align="center">
         <template slot-scope="scope">
           <el-button v-if="scope.row.audit_status===1" size="mini" type="primary" @click.native.stop="handleAuditOrder(scope.row.id)">
             审核
@@ -358,8 +357,10 @@ export default {
   display: none;
   z-index: -9999;
 }
-/* /deep/.el-table td, .el-table th {
-  padding-left: 1px;
-  padding-right: 1px;
-} */
+/deep/.el-table .cell, 
+/deep/.el-table__cell:first-child .cell,
+/deep/.el-table th.el-table__cell>.cell {
+  padding-left: 5px;
+  padding-right: 5px;
+}
 </style>
