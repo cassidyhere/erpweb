@@ -47,57 +47,57 @@
       style="width: 100%;"
       :max-height="tableHeight"
       stripe
-      :header-cell-style="{background:'#F1F3F7', color: 'black', 'font-size': '16px', padding: '4px'}"
-      :cell-style="{'padding': '3px', 'font-size': '16px', 'font-weight': 600}"
+      :header-cell-style="{'text-align':'center', background:'#F1F3F7', color: 'black', 'font-size': '14px', 'padding': '0px'}"
+      :cell-style="{'padding': '0.5px', 'color': 'black', 'font-size': '14px', 'font-weight': 400}"
       :default-sort="{prop: 'id', order: 'descending'}"
       @sort-change="sortChange"
     >
-      <el-table-column label="ID" prop="id" sortable="custom" align="center" width="70">
+      <!-- <el-table-column label="ID" prop="id" sortable="custom" align="center" width="70">
         <template slot-scope="scope">
           <span>{{ scope.row.id }}</span>
         </template>
-      </el-table-column>
-      <el-table-column label="合同名称" prop="contract_name" sortable="custom" min-width="180" align="center">
+      </el-table-column> -->
+      <el-table-column label="合同编号" prop="contract_code" sortable="custom" min-width="100" align="left">
         <template slot-scope="scope">
-          <span>{{ scope.row.contract_name }}</span>
+          <span>{{ scope.row.contract_code }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="工程名称" prop="engineer_name" sortable="custom" min-width="180" align="center">
+      <el-table-column label="工程名称" prop="engineer_name" sortable="custom" min-width="480" align="left">
         <template slot-scope="scope">
           <span>{{ scope.row.engineer_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="供应商名称" prop="supplier_name" sortable="custom" min-width="180" align="center">
+      <el-table-column label="供应商名称" prop="supplier_name" sortable="custom" min-width="320" align="left">
         <template slot-scope="scope">
           <span>{{ scope.row.supplier_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="合同金额(元)" prop="total" sortable="custom" width="145" align="center">
+      <el-table-column label="合同金额(元)" prop="total" sortable="custom" width="120" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.total }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="已使用金额(元)" width="140" align="center">
+      <el-table-column label="已使用金额(元)" width="110" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.ordered_total }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="可用金额(元)" width="130" align="center">
+      <el-table-column label="可用金额(元)" width="100" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.leftover_total }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="已支付金额(元)" width="140" align="center">
+      <el-table-column label="已支付金额(元)" width="110" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.payment }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="签订日期" prop="sign_time" sortable="custom" width="120" align="center">
+      <el-table-column label="签订日期" prop="sign_time" sortable="custom" width="90" align="left">
         <template slot-scope="scope">
           <span>{{ scope.row.sign_time }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="完结日期" prop="end_time" sortable="custom" width="120" align="center">
+      <el-table-column label="完结日期" prop="end_time" sortable="custom" width="90" align="left">
         <template slot-scope="scope">
           <span>{{ scope.row.end_time }}</span>
         </template>
@@ -107,7 +107,7 @@
           <span>{{ scope.row.remark }}</span>
         </template>
       </el-table-column> -->
-      <el-table-column label="审核状态" width="120" align="center">
+      <el-table-column label="审核状态" width="80" align="center">
         <template slot-scope="scope">
           <el-button v-if="scope.row.audit_status===1" size="mini" type="primary" @click.native.stop="handleAuditContract(scope.row.id)">
             审核
@@ -335,5 +335,14 @@ export default {
 .excel-upload-input{
   display: none;
   z-index: -9999;
+}
+/deep/.el-table .cell, 
+/deep/.el-table__cell:first-child .cell {
+  padding-left: 5px;
+  padding-right: 5px;
+}
+/deep/.el-table th.el-table__cell>.cell {
+  padding-left: 3px;
+  padding-right: 0px;
 }
 </style>

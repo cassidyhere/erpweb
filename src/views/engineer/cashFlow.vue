@@ -20,124 +20,124 @@
       style="width: 100%;"
       :max-height="tableHeight"
       stripe
-      :header-cell-style="{background:'#F1F3F7', color: 'black', 'font-size': '16px', padding: '4px'}"
-      :cell-style="{'padding': '3px', 'font-size': '16px', 'font-weight': 600}"
+      :header-cell-style="{'text-align':'center', background:'#F1F3F7', color: 'black', 'font-size': '14px', 'padding': '0px'}"
+      :cell-style="{'padding': '0.5px', 'color': 'black', 'font-size': '14px', 'font-weight': 400}"
       :default-sort="{prop: 'id', order: 'descending'}"
       @sort-change="sortChange"
     >
-      <el-table-column fixed label="ID" prop="id" sortable="custom" align="center" width="70">
+      <!-- <el-table-column fixed label="ID" prop="id" sortable="custom" align="center" width="70">
         <template slot-scope="scope">
           <span>{{ scope.row.id }}</span>
         </template>
-      </el-table-column>
-      <el-table-column fixed label="项目名称" prop="engineer_name" sortable="custom" width="240" align="center">
+      </el-table-column> -->
+      <el-table-column fixed label="项目名称" prop="engineer_name" sortable="custom" width="480" align="left">
         <template slot-scope="scope">
           <span>{{ scope.row.engineer_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="工程性质" width="140" align="center">
+      <el-table-column label="工程性质" width="120" align="left">
         <template slot-scope="scope">
           <span>{{ scope.row.engineer_type }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="中标情况" width="100" align="center">
+      <el-table-column label="中标情况" width="70" align="left">
         <template slot-scope="scope">
           <span>{{ scope.row.winner }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="工程金额(元)" prop="total" sortable="custom" width="150" align="center">
+      <el-table-column label="工程金额(元)" prop="total" sortable="custom" width="120" align="right">
         <template slot-scope="scope">
           <span>{{ scope.row.total }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="签订增项" width="200" align="center">
+      <el-table-column label="签订增项" width="140" align="left">
         <template slot-scope="scope">
           <span>{{ scope.row.extension }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="结算价(元)" width="120" align="center">
+      <el-table-column label="结算价(元)" width="80" align="right">
         <template slot-scope="scope">
           <span>{{ scope.row.settlement }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="内部暂定成本(元)" width="160" align="center">
+      <el-table-column label="内部暂定成本(元)" width="120" align="right">
         <template slot-scope="scope">
           <span>{{ scope.row.tentative_cost }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="预计利润(%)" width="120" align="center">
+      <el-table-column label="预计利润(%)" width="90" align="right">
         <template slot-scope="scope">
           <span>{{ scope.row.expected_profit }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="收款(%)" width="100" align="center">
+      <el-table-column label="收款(%)" width="80" align="right">
         <template slot-scope="scope">
           <span>{{ scope.row.collection_percent }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="已收款(已实收)" width="140" align="center">
+      <el-table-column label="已收款(已实收)" width="110" align="right">
         <template slot-scope="scope">
           <span>{{ scope.row.collection }}</span>
         </template>
       </el-table-column>
       <el-table-column label="已付款" align="center">
-        <el-table-column label="变压器" width="100" align="center">
+        <el-table-column label="变压器" width="80" align="right">
           <template slot-scope="scope">
             <span>{{ scope.row.payment }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="母线槽" width="100" align="center">
+        <el-table-column label="母线槽" width="80" align="right">
           <template slot-scope="scope">
             <span>{{ scope.row.payment }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="箱柜" width="100" align="center">
+        <el-table-column label="箱柜" width="80" align="right">
           <template slot-scope="scope">
             <span>{{ scope.row.payment }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="电缆" width="100" align="center">
+        <el-table-column label="电缆" width="80" align="right">
           <template slot-scope="scope">
             <span>{{ scope.row.payment }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="桥架" width="100" align="center">
+        <el-table-column label="桥架" width="80" align="right">
           <template slot-scope="scope">
             <span>{{ scope.row.payment }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="业务费" width="100" align="center">
+        <el-table-column label="业务费" width="80" align="right">
           <template slot-scope="scope">
             <span>{{ scope.row.payment }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="设计费" width="100" align="center">
+        <el-table-column label="设计费" width="80" align="right">
           <template slot-scope="scope">
             <span>{{ scope.row.payment }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="企业应交税金" width="100" align="center">
+        <el-table-column label="企业应交税金" width="90" align="right">
           <template slot-scope="scope">
             <span>{{ scope.row.payment }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="分包及人工" width="100" align="center">
+        <el-table-column label="分包及人工" width="80" align="right">
           <template slot-scope="scope">
             <span>{{ scope.row.payment }}</span>
           </template>
         </el-table-column>
       </el-table-column>
-      <el-table-column label="已付款合计" width="140" align="center">
+      <el-table-column label="已付款合计" width="90" align="right">
         <template slot-scope="scope">
           <span>{{ scope.row.payment }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="应付未付款" width="140" align="center">
+      <el-table-column label="应付未付款" width="90" align="right">
         <template slot-scope="scope">
           <span>{{ scope.row.rest }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="备注" width="200" align="center">
+      <el-table-column label="备注" width="140" align="left">
         <template slot-scope="scope">
           <span>{{ scope.row.remark }}</span>
         </template>
@@ -241,5 +241,14 @@ export default {
 .excel-upload-input{
   display: none;
   z-index: -9999;
+}
+/deep/.el-table .cell, 
+/deep/.el-table__cell:first-child .cell {
+  padding-left: 5px;
+  padding-right: 5px;
+}
+/deep/.el-table th.el-table__cell>.cell {
+  padding-left: 3px;
+  padding-right: 0px;
 }
 </style>

@@ -59,21 +59,21 @@
       :max-height="tableHeight"
       stripe
       :header-cell-style="{'text-align':'center', background:'#F1F3F7', color: 'black', 'font-size': '14px', 'padding': '0px'}"
-      :cell-style="{'padding': '0.5px', 'color': 'black', 'font-size': '14px', 'font-weight': 600}"
+      :cell-style="{'padding': '0.5px', 'color': 'black', 'font-size': '14px', 'font-weight': 400}"
       :default-sort="{prop: 'id', order: 'descending'}"
       @sort-change="sortChange"
     >
-      <el-table-column label="ID" prop="id" sortable="custom" align="left" width="50">
+      <!-- <el-table-column label="ID" prop="id" sortable="custom" align="left" width="50">
         <template slot-scope="scope">
           <span>{{ scope.row.id }}</span>
         </template>
-      </el-table-column>
-      <el-table-column label="采购订单" width="155" align="left">
+      </el-table-column> -->
+      <el-table-column label="采购单编号" width="100" align="left">
         <template slot-scope="scope">
-          <span>{{ scope.row.order_name }}</span>
+          <span>{{ scope.row.order_code }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="采购合同" width="155" align="left">
+      <el-table-column label="合同编号" width="100" align="left">
         <template slot-scope="scope">
           <span>{{ scope.row.contract_name }}</span>
         </template>
@@ -88,17 +88,17 @@
           <span>{{ scope.row.engineer_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="订单金额(元)" width="100" align="right">
+      <el-table-column label="订单金额(元)" width="90" align="right">
         <template slot-scope="scope">
           <span>{{ scope.row.total }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="已付金额(元)" width="100" align="right">
+      <el-table-column label="已付金额(元)" width="90" align="right">
         <template slot-scope="scope">
           <span>{{ scope.row.payment }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="下单日期" width="90" align="left">
+      <el-table-column label="下单日期" width="85" align="left">
         <template slot-scope="scope">
           <span>{{ scope.row.order_time }}</span>
         </template>
@@ -358,9 +358,12 @@ export default {
   z-index: -9999;
 }
 /deep/.el-table .cell, 
-/deep/.el-table__cell:first-child .cell,
-/deep/.el-table th.el-table__cell>.cell {
+/deep/.el-table__cell:first-child .cell {
   padding-left: 5px;
   padding-right: 5px;
+}
+/deep/.el-table th.el-table__cell>.cell {
+  padding-left: 3px;
+  padding-right: 0px;
 }
 </style>

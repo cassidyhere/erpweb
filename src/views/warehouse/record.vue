@@ -23,61 +23,61 @@
       :max-height="tableHeight"
       :default-sort="{prop: 'id', order: 'descending'}"
       stripe
-      :header-cell-style="{background:'#F1F3F7', color: 'black', 'font-size': '16px', padding: '4px'}"
-      :cell-style="{'padding': '3px', 'font-size': '16px', 'font-weight': 600}"
+      :header-cell-style="{'text-align':'center', background:'#F1F3F7', color: 'black', 'font-size': '14px', 'padding': '0px'}"
+      :cell-style="{'padding': '0.5px', 'color': 'black', 'font-size': '14px', 'font-weight': 400}"
       @sort-change="sortChange"
     >
-      <el-table-column label="ID" sortable="custom" prop="id" align="center" width="70">
+      <!-- <el-table-column label="ID" sortable="custom" prop="id" align="center" width="70">
         <template slot-scope="scope">
           <span>{{ scope.row.id }}</span>
         </template>
-      </el-table-column>
-      <el-table-column label="单据编号" prop="order_code" min-width="140" align="center">
+      </el-table-column> -->
+      <el-table-column label="单据编号" prop="order_code" min-width="100" align="left">
         <template slot-scope="scope">
           {{ scope.row.order_code }}
         </template>
       </el-table-column>
-      <el-table-column label="单据类型" prop="flag" min-width="100" align="center">
+      <el-table-column label="单据类型" prop="flag" min-width="80" align="left">
         <template slot-scope="scope">
           {{ scope.row.flag }}
         </template>
       </el-table-column>
-      <el-table-column label="材料名称" prop="material_name" min-width="200" align="center">
+      <el-table-column label="材料名称" prop="material_name" min-width="260" align="left">
         <template slot-scope="scope">
           <span>{{ scope.row.material_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="材料类别" prop="category_name" min-width="120" align="center">
+      <el-table-column label="材料类别" prop="category_name" min-width="100" align="left">
         <template slot-scope="scope">
           <span>{{ scope.row.category_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="规格" prop="specification" min-width="200" align="center">
+      <el-table-column label="规格" prop="specification" min-width="150" align="left">
         <template slot-scope="scope">
           <span>{{ scope.row.specification }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="单位" min-width="100" align="center">
+      <el-table-column label="单位" min-width="40" align="left">
         <template slot-scope="scope">
           <span>{{ scope.row.unit }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="出入库数量" min-width="110" align="center">
+      <el-table-column label="出入库数量" min-width="90" align="right">
         <template slot-scope="scope">
           <span>{{ scope.row.inout_quantity }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="起始数量" min-width="100" align="center">
+      <el-table-column label="起始数量" min-width="80" align="right">
         <template slot-scope="scope">
           <span>{{ scope.row.start_quantity }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="结存数量" min-width="100" align="center">
+      <el-table-column label="结存数量" min-width="80" align="right">
         <template slot-scope="scope">
           <span>{{ scope.row.end_quantity }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="出入库时间" min-width="110" align="center">
+      <el-table-column label="出入库时间" min-width="90" align="left">
         <template slot-scope="scope">
           <span>{{ scope.row.inout_time }}</span>
         </template>
@@ -169,3 +169,15 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+/deep/.el-table .cell, 
+/deep/.el-table__cell:first-child .cell {
+  padding-left: 5px;
+  padding-right: 5px;
+}
+/deep/.el-table th.el-table__cell>.cell {
+  padding-left: 3px;
+  padding-right: 0px;
+}
+</style>

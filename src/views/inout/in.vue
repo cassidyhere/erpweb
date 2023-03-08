@@ -44,32 +44,32 @@
       style="width: 100%;"
       :max-height="tableHeight"
       stripe
-      :header-cell-style="{background:'#F1F3F7', color: 'black', 'font-size': '16px', padding: '4px'}"
-      :cell-style="{'padding': '3px', 'font-size': '16px', 'font-weight': 600}"
+      :header-cell-style="{'text-align':'center', background:'#F1F3F7', color: 'black', 'font-size': '14px', 'padding': '0px'}"
+      :cell-style="{'padding': '0.5px', 'color': 'black', 'font-size': '14px', 'font-weight': 400}"
       :default-sort="{prop: 'id', order: 'descending'}"
       @sort-change="sortChange"
     >
-      <el-table-column label="ID" sortable="custom" prop="id" align="center" width="70">
+      <!-- <el-table-column label="ID" sortable="custom" prop="id" align="center" width="70">
         <template slot-scope="scope">
           <span>{{ scope.row.id }}</span>
         </template>
-      </el-table-column>
-      <el-table-column label="入仓单编号" prop="order_code" sortable="custom" min-width="140" align="center">
+      </el-table-column> -->
+      <el-table-column label="入仓单编号" prop="order_code" min-width="100" align="left">
         <template slot-scope="scope">
           {{ scope.row.order_code }}
         </template>
       </el-table-column>
-      <el-table-column label="采购单编号" prop="purchase_order_code" sortable="custom" min-width="140" align="center">
+      <el-table-column label="采购单编号" prop="purchase_order_code" min-width="100" align="left">
         <template slot-scope="scope">
           {{ scope.row.purchase_order_code }}
         </template>
       </el-table-column>
-      <el-table-column label="供应商" prop="supplier_name" sortable="custom" min-width="140" align="center">
+      <el-table-column label="供应商" prop="supplier_name" sortable="custom" min-width="300" align="left">
         <template slot-scope="scope">
           {{ scope.row.supplier_name }}
         </template>
       </el-table-column>
-      <el-table-column label="入仓日期" sortable="custom" min-width="140" align="center">
+      <el-table-column label="入仓日期" sortable="custom" min-width="100" align="left">
         <template slot-scope="scope">
           <span>{{ scope.row.inout_time }}</span>
         </template>
@@ -84,12 +84,12 @@
           <span>{{ scope.row.contract_name }}</span>
         </template>
       </el-table-column> -->
-      <el-table-column label="关联工程名称" prop="engineer_name" sortable="custom" min-width="200" align="center">
+      <el-table-column label="关联工程名称" prop="engineer_name" sortable="custom" min-width="460" align="left">
         <template slot-scope="scope">
           <span>{{ scope.row.engineer_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="总金额(元)" prop="total" sortable="custom" min-width="140" align="center">
+      <el-table-column label="总金额(元)" prop="total" min-width="90" align="right">
         <template slot-scope="scope">
           <span>{{ scope.row.total }}</span>
         </template>
@@ -99,12 +99,12 @@
           <span>{{ scope.row.order_time }}</span>
         </template>
       </el-table-column> -->
-      <el-table-column label="备注" min-width="200" align="center">
+      <el-table-column label="备注" min-width="120" align="left">
         <template slot-scope="scope">
           <span>{{ scope.row.remark }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="审核状态" prop="audit_status" sortable="custom" min-width="120" align="center">
+      <el-table-column label="审核状态" prop="audit_status" min-width="80" align="center">
         <template slot-scope="scope">
           <el-button v-if="scope.row.audit_status===1" size="mini" type="primary" @click.native.stop="handleAuditWarehouse(scope.row.id)">
             审核
@@ -114,7 +114,7 @@
           </el-button>
         </template>
       </el-table-column>
-      <el-table-column label="对账状态" prop="reconciled" sortable="custom" min-width="120" align="center">
+      <el-table-column label="对账状态" prop="reconciled" min-width="80" align="center">
         <template slot-scope="scope" v-if="scope.row.audit_status===2">
           <el-button v-if="scope.row.reconciled==='false'" size="mini" type="primary" @click.native.stop="handlereconciled(scope.row.id)">
             未对账
@@ -124,7 +124,7 @@
           </el-button>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="230" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" width="220" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             size="mini"
@@ -308,3 +308,15 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+/deep/.el-table .cell, 
+/deep/.el-table__cell:first-child .cell {
+  padding-left: 5px;
+  padding-right: 5px;
+}
+/deep/.el-table th.el-table__cell>.cell {
+  padding-left: 3px;
+  padding-right: 0px;
+}
+</style>

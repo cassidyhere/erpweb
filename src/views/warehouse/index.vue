@@ -24,46 +24,46 @@
       :max-height="tableHeight"
       :default-sort="{prop: 'id', order: 'ascending'}"
       stripe
-      :header-cell-style="{background:'#F1F3F7', color: 'black', 'font-size': '16px', padding: '4px'}"
-      :cell-style="{'padding': '3px', 'font-size': '16px', 'font-weight': 600}"
+      :header-cell-style="{'text-align':'center', background:'#F1F3F7', color: 'black', 'font-size': '14px', 'padding': '0px'}"
+      :cell-style="{'padding': '0.5px', 'color': 'black', 'font-size': '14px', 'font-weight': 400}"
       @sort-change="sortChange"
     >
-      <el-table-column label="ID" prop="id" sortable="custom" align="center" width="70">
+      <!-- <el-table-column label="ID" prop="id" sortable="custom" align="center" width="70">
         <template slot-scope="scope">
           <span>{{ scope.row.id }}</span>
         </template>
-      </el-table-column>
-      <el-table-column label="材料类别" prop="category_name" sortable="custom" min-width="120" align="center">
+      </el-table-column> -->
+      <el-table-column label="材料类别" prop="category_name" sortable="custom" min-width="100" align="left">
         <template slot-scope="scope">
           <span>{{ scope.row.category_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="材料名称" prop="material_name" sortable="custom" min-width="200" align="center">
+      <el-table-column label="材料名称" prop="material_name" sortable="custom" min-width="300" align="left">
         <template slot-scope="scope">
           <span>{{ scope.row.material_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="单位" min-width="120" align="center">
+      <el-table-column label="单位" min-width="60" align="left">
         <template slot-scope="scope">
           <span>{{ scope.row.unit }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="规格" min-width="200" align="center">
+      <el-table-column label="规格" min-width="200" align="left">
         <template slot-scope="scope">
           <span>{{ scope.row.specification }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="库存" prop="inventory_quantity" sortable="custom" min-width="160" align="center">
+      <el-table-column label="库存" prop="inventory_quantity" sortable="custom" min-width="100" align="right">
         <template slot-scope="scope">
           <span>{{ scope.row.inventory_quantity }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="平均单价(元)" prop="price" sortable="custom" min-width="160" align="center">
+      <el-table-column label="平均单价(元)" prop="price" sortable="custom" min-width="110" align="right">
         <template slot-scope="scope">
           <span>{{ scope.row.price }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="总价" prop="total" sortable="custom" min-width="160" align="center">
+      <el-table-column label="总价" prop="total" sortable="custom" min-width="100" align="right">
         <template slot-scope="scope">
           <span>{{ scope.row.total }}</span>
         </template>
@@ -171,5 +171,14 @@ export default {
 .excel-upload-input{
   display: none;
   z-index: -9999;
+}
+/deep/.el-table .cell, 
+/deep/.el-table__cell:first-child .cell {
+  padding-left: 5px;
+  padding-right: 5px;
+}
+/deep/.el-table th.el-table__cell>.cell {
+  padding-left: 3px;
+  padding-right: 0px;
 }
 </style>

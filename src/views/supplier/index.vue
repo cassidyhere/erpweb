@@ -24,41 +24,41 @@
       :max-height="tableHeight"
       :default-sort="{prop: 'id', order: 'descending'}"
       stripe
-      :header-cell-style="{background:'#F1F3F7', color: 'black', 'font-size': '16px', padding: '4px'}"
-      :cell-style="{'padding': '3px', 'font-size': '16px', 'font-weight': 600}"
+      :header-cell-style="{'text-align':'center', background:'#F1F3F7', color: 'black', 'font-size': '14px', 'padding': '0px'}"
+      :cell-style="{'padding': '0.5px', 'color': 'black', 'font-size': '14px', 'font-weight': 400}"
       @sort-change="sortChange"
     >
-      <el-table-column label="ID" prop="id" sortable="custom" align="center" width="70">
+      <!-- <el-table-column label="ID" prop="id" sortable="custom" align="center" width="70">
         <template slot-scope="scope">
           <span>{{ scope.row.id }}</span>
         </template>
-      </el-table-column>
-      <el-table-column label="供应商名称" prop="supplier_name" sortable="custom" min-width="200" align="center">
+      </el-table-column> -->
+      <el-table-column label="供应商名称" prop="supplier_name" sortable="custom" min-width="320" align="left">
         <template slot-scope="scope">
           <span>{{ scope.row.supplier_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="供应信息" min-width="200" align="center">
+      <el-table-column label="供应信息" min-width="340" align="left">
         <template slot-scope="scope">
           <span>{{ scope.row.msg }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="联系人" min-width="130" align="center">
+      <el-table-column label="联系人" min-width="60" align="left">
         <template slot-scope="scope">
           <span>{{ scope.row.contact }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="电话" min-width="130" align="center">
+      <el-table-column label="电话" min-width="100" align="left">
         <template slot-scope="scope">
           <span>{{ scope.row.phone }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="传真" min-width="130" align="center">
+      <el-table-column label="传真" min-width="110" align="left">
         <template slot-scope="scope">
           <span>{{ scope.row.fax }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="地址" min-width="300" align="center">
+      <el-table-column label="地址" min-width="300" align="left">
         <template slot-scope="scope">
           <span>{{ scope.row.address }}</span>
         </template>
@@ -519,5 +519,11 @@ export default {
 .excel-upload-input{
   display: none;
   z-index: -9999;
+}
+/deep/.el-table .cell, 
+/deep/.el-table__cell:first-child .cell,
+/deep/.el-table th.el-table__cell>.cell {
+  padding-left: 5px;
+  padding-right: 5px;
 }
 </style>

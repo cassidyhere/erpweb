@@ -53,75 +53,75 @@
       highlight-current-row
       :max-height="tableHeight"
       stripe
-      :header-cell-style="{background:'#F1F3F7', color: 'black', 'font-size': '16px', padding: '4px'}"
-      :cell-style="{'padding': '3px', 'font-size': '16px', 'font-weight': 600}"
+      :header-cell-style="{'text-align':'center', background:'#F1F3F7', color: 'black', 'font-size': '14px', 'padding': '0px'}"
+      :cell-style="{'padding': '0.5px', 'color': 'black', 'font-size': '14px', 'font-weight': 400}"
     >
-      <el-table-column label="ID" prop="id" align="center" width="65">
+      <!-- <el-table-column label="ID" prop="id" align="center" width="65">
         <template slot-scope="scope">
           <span>{{ scope.row.id }}</span>
         </template>
-      </el-table-column>
-      <el-table-column label="采购单编号" min-width="150" align="center">
+      </el-table-column> -->
+      <el-table-column label="采购单编号" width="100" align="left">
         <template slot-scope="scope">
           <span>{{ scope.row.order_code }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="供应商" min-width="200" align="center">
+      <el-table-column label="供应商" min-width="320" align="left">
         <template slot-scope="scope">
           <span>{{ scope.row.supplier_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="经手人" min-width="100" align="center">
+      <el-table-column label="经手人" min-width="70" align="left">
         <template slot-scope="scope">
           <span>{{ scope.row.engineer_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="下单日期" min-width="110" align="center">
+      <el-table-column label="下单日期" min-width="90" align="left">
         <template slot-scope="scope">
           <span>{{ scope.row.order_time }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="材料名称" min-width="200" align="center">
+      <el-table-column label="材料名称" min-width="160" align="left">
         <template slot-scope="scope">
           <span>{{ scope.row.material_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="材料规格" min-width="200" align="center">
+      <el-table-column label="材料规格" min-width="140" align="left">
         <template slot-scope="scope">
           <span>{{ scope.row.specification }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="单位" min-width="80" align="center">
+      <el-table-column label="单位" min-width="50" align="left">
         <template slot-scope="scope">
           <span>{{ scope.row.unit }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="采购数量" min-width="100" align="center">
+      <el-table-column label="采购数量" min-width="75" align="right">
         <template slot-scope="scope">
           <span>{{ scope.row.number }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="单价(元)" min-width="100" align="center">
+      <el-table-column label="单价(元)" min-width="90" align="right">
         <template slot-scope="scope">
           <span>{{ scope.row.price }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="金额(元)" min-width="120" align="center">
+      <el-table-column label="金额(元)" min-width="90" align="right">
         <template slot-scope="scope">
           <span>{{ scope.row.total }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="已到货数量" min-width="110" align="center">
+      <el-table-column label="已到货数量" min-width="75" align="right">
         <template slot-scope="scope">
           <span>{{ scope.row.warehoused_number }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="采购单审核状态" min-width="150" align="center">
+      <el-table-column label="采购单审核状态" min-width="75" align="left">
         <template slot-scope="scope">
           <span>{{ scope.row.audit_status }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="备注" min-width="200" align="center">
+      <el-table-column label="备注" min-width="200" align="left">
         <template slot-scope="scope">
           <span>{{ scope.row.remark }}</span>
         </template>
@@ -222,5 +222,11 @@ export default {
 .excel-upload-input{
   display: none;
   z-index: -9999;
+}
+/deep/.el-table .cell, 
+/deep/.el-table__cell:first-child .cell,
+/deep/.el-table th.el-table__cell>.cell {
+  padding-left: 5px;
+  padding-right: 5px;
 }
 </style>

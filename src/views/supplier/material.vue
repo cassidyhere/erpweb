@@ -45,46 +45,46 @@
       highlight-current-row
       :max-height="tableHeight"
       stripe
-      :header-cell-style="{background:'#F1F3F7', color: 'black', 'font-size': '16px', padding: '4px'}"
-      :cell-style="{'padding': '3px', 'font-size': '16px', 'font-weight': 600}"
+      :header-cell-style="{'text-align':'center', background:'#F1F3F7', color: 'black', 'font-size': '14px', 'padding': '0px'}"
+      :cell-style="{'padding': '0.5px', 'color': 'black', 'font-size': '14px', 'font-weight': 400}"
       style="width: 100%;"
     >
-      <el-table-column label="ID" prop="id" align="center" width="65">
+      <!-- <el-table-column label="ID" prop="id" align="center" width="65">
         <template slot-scope="scope">
           <span>{{ scope.row.id }}</span>
         </template>
-      </el-table-column>
-      <el-table-column label="材料类别名称" min-width="120" align="center">
+      </el-table-column> -->
+      <el-table-column label="材料类别名称" min-width="120" align="left">
         <template slot-scope="scope">
           {{ scope.row.category_name }}
         </template>
       </el-table-column>
-      <el-table-column label="材料名称" min-width="200" align="center">
+      <el-table-column label="材料名称" min-width="180" align="left">
         <template slot-scope="scope">
           <span>{{ scope.row.material_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="单位" min-width="120" align="center">
+      <el-table-column label="单位" min-width="60" align="left">
         <template slot-scope="scope">
           <span>{{ scope.row.unit }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="规格" min-width="200" align="center">
+      <el-table-column label="规格" min-width="140" align="left">
         <template slot-scope="scope">
           <span>{{ scope.row.specification }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="备注" min-width="300" align="center">
+      <el-table-column label="备注" min-width="200" align="left">
         <template slot-scope="scope">
           <span>{{ scope.row.remark }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="是否淘汰" min-width="80" align="center">
+      <el-table-column label="是否淘汰" min-width="60" align="left">
         <template slot-scope="scope">
           <span>{{ disabled_status[scope.row.status] }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" min-width="140" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" min-width="150" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button size="mini" type="info" plain @click="handleUpdate(scope.row)">查看</el-button>
           <el-button
@@ -383,3 +383,12 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+/deep/.el-table .cell, 
+/deep/.el-table__cell:first-child .cell,
+/deep/.el-table th.el-table__cell>.cell {
+  padding-left: 5px;
+  padding-right: 5px;
+}
+</style>
