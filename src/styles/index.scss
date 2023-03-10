@@ -121,7 +121,7 @@ aside {
 
 //main-container全局样式
 .app-container {
-  padding: 20px;
+  padding: 10px;
 }
 
 .components-container {
@@ -130,7 +130,7 @@ aside {
 }
 
 .pagination-container {
-  margin-top: 20px;
+  margin-top: 10px;
 }
 
 .text-center {
@@ -172,12 +172,13 @@ aside {
 }
 
 .filter-container {
-  padding-bottom: 10px;
+  padding-bottom: 0px;
 
   .filter-item {
     display: inline-block;
     vertical-align: middle;
     margin-bottom: 10px;
+    font-size: 14px;
   }
 
   .away{
@@ -192,4 +193,15 @@ aside {
 
 .multiselect--active {
   z-index: 1000 !important;
+}
+
+.el-input--medium .el-input__inner,
+.el-range-editor--medium.el-input__inner {
+  height: 30px;
+  line-height: 30px;
+  font-size: 14px;
+}
+
+.el-button--medium {
+  padding: 7px 10px;
 }
