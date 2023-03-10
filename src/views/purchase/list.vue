@@ -3,15 +3,15 @@
     <div class="filter-container">
       <div class="filter-item away">
         供应商:
-        <el-input v-model="listQuery.supplier" placeholder="输入关键字" style="width: 150px;" @keyup.enter.native="handleFilter" />
+        <el-input v-model="listQuery.supplier" placeholder="输入关键字" style="width: 140px;" @keyup.enter.native="handleFilter" />
       </div>
       <div class="filter-item away">
         材料名称:
-        <el-input v-model="listQuery.material_name" placeholder="输入关键字" style="width: 150px;" @keyup.enter.native="handleFilter" />
+        <el-input v-model="listQuery.material_name" placeholder="输入关键字" style="width: 120px;" @keyup.enter.native="handleFilter" />
       </div>
       <div class="filter-item away">
         材料规格:
-        <el-input v-model="listQuery.specification" placeholder="输入关键字" style="width: 150px;" @keyup.enter.native="handleFilter" />
+        <el-input v-model="listQuery.specification" placeholder="输入关键字" style="width: 120px;" @keyup.enter.native="handleFilter" />
       </div>
       <div class="filter-item away">
         下单日期:
@@ -35,6 +35,10 @@
             :value="item.value">
           </el-option>
         </el-select>
+      </div>
+      <div class="filter-item away">
+        工程:
+        <el-input v-model="listQuery.engineer" placeholder="输入关键字" style="width: 155px;" @keyup.enter.native="handleFilter" />
       </div>
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         搜索
@@ -71,11 +75,6 @@
           <span>{{ scope.row.supplier_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="经手人" min-width="70" align="left">
-        <template slot-scope="scope">
-          <span>{{ scope.row.engineer_name }}</span>
-        </template>
-      </el-table-column>
       <el-table-column label="下单日期" min-width="90" align="left">
         <template slot-scope="scope">
           <span>{{ scope.row.order_time }}</span>
@@ -91,29 +90,39 @@
           <span>{{ scope.row.specification }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="单位" min-width="50" align="left">
+      <el-table-column label="单位" min-width="40" align="left">
         <template slot-scope="scope">
           <span>{{ scope.row.unit }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="采购数量" min-width="75" align="right">
+      <el-table-column label="采购数量" min-width="65" align="right">
         <template slot-scope="scope">
           <span>{{ scope.row.number }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="单价(元)" min-width="90" align="right">
+      <el-table-column label="单价(元)" min-width="80" align="right">
         <template slot-scope="scope">
           <span>{{ scope.row.price }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="金额(元)" min-width="90" align="right">
+      <el-table-column label="金额(元)" min-width="80" align="right">
         <template slot-scope="scope">
           <span>{{ scope.row.total }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="已到货数量" min-width="75" align="right">
+      <el-table-column label="已到货数量" min-width="65" align="right">
         <template slot-scope="scope">
           <span>{{ scope.row.warehoused_number }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="工程" min-width="480" align="left">
+        <template slot-scope="scope">
+          <span>{{ scope.row.engineer_name }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="经手人" min-width="60" align="left">
+        <template slot-scope="scope">
+          <span>{{ scope.row.order_user }}</span>
         </template>
       </el-table-column>
       <el-table-column label="采购单审核状态" min-width="75" align="left">
