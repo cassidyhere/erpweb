@@ -29,7 +29,7 @@
         <span v-if="temp.audit_status===2">{{ temp.party_b }}</span>
         <el-input v-else v-model="temp.party_b" />
       </el-form-item>
-      <el-form-item label="工程金额(元):" prop="total">
+      <el-form-item label="工程金额(元):" prop="total" label-width="120px">
         <span v-if="temp.audit_status===2">{{ strTotal }}</span>
         <el-input v-else v-model="temp.total" @input="handleUpdateTotal(temp.total)" style="width: 150px;" />
       </el-form-item>

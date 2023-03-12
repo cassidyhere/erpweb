@@ -9,7 +9,7 @@
     >
       <el-row>
         <el-col :span="6">
-          <el-form-item v-if="status==='update'" class="head-item" label="入仓单编号:" prop="order_code">
+          <el-form-item v-if="status==='update'" label="入仓单编号:" prop="order_code">
             <span>{{ temp.order_code }}</span>
           </el-form-item>
         </el-col>
@@ -29,29 +29,29 @@
       </el-row>
       <el-row>
         <el-col :span="6">
-          <el-form-item class="head-item" label="工程:" prop="engieneer_name">
+          <el-form-item label="工程:" prop="engieneer_name">
             <span>{{ temp.engineer_name }}</span>
           </el-form-item>
         </el-col>
         <el-col :span="6">
-          <el-form-item class="head-item" label="采购合同:" prop="contract_name">
+          <el-form-item label="采购合同:" prop="contract_name">
             <span>{{ temp.contract_name }}</span>
           </el-form-item>
         </el-col>
         <el-col :span="6">
-          <el-form-item class="head-item" label="采购单:" prop="purchase_order_name">
+          <el-form-item label="采购单:" prop="purchase_order_name">
             <span>{{ temp.purchase_order_name }}</span>
           </el-form-item>
         </el-col>
         <el-col :span="6">
-          <el-form-item class="head-item" label="供应商:" prop="supplier_name">
+          <el-form-item label="供应商:" prop="supplier_name">
             <span>{{ temp.supplier_name }}</span>
           </el-form-item>
         </el-col>
       </el-row>
       <el-row>
         <el-col :span="6">
-          <el-form-item class="head-item" label="总金额(元):" prop="total">
+          <el-form-item label="总金额(元):" prop="total">
             <span>{{ temp.total }}</span>
           </el-form-item>
         </el-col>
@@ -70,7 +70,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="6">
-          <el-form-item v-if="status==='update'" class="head-item" label="下单用户:" prop="insert_user">
+          <el-form-item v-if="status==='update'" label="下单用户:" prop="insert_user">
             <span>{{ temp.insert_user }}</span>
           </el-form-item>
         </el-col>
@@ -78,7 +78,7 @@
       <el-form-item label="备注:" prop="remark" style="width: 50%;">
         <el-input v-model="temp.remark" type="textarea" maxlength="128" show-word-limit />
       </el-form-item>
-      <el-form-item label="材料列表:" class="head-item" style="margin-top:30px">
+      <el-form-item label="材料列表:" style="margin-top:30px">
         <div  class="filter-container">
           <div class="filter-item away">
             类别:

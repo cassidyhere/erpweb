@@ -9,12 +9,12 @@
     >
       <el-row>
         <el-col :span="6">
-          <el-form-item v-if="status==='update'" class="head-item" label="入仓单编号:" prop="contract_name">
+          <el-form-item v-if="status==='update'" label="入仓单编号:" prop="contract_name">
             <span>{{ temp.order_code }}</span>
           </el-form-item>
         </el-col>
         <el-col :span="6">
-          <el-form-item class="head-item" label="关联工程:" prop="engineer_name">
+          <el-form-item label="关联工程:" prop="engineer_name">
             <span v-if="status==='update' && temp.audit_status===2">{{ temp.engineer_name }}</span>
             <el-select
               v-else
@@ -33,7 +33,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="6">
-          <el-form-item class="head-item" label="总金额(元):" prop="total">
+          <el-form-item label="总金额(元):" prop="total">
             <span>{{ temp.total }}</span>
           </el-form-item>
         </el-col>
@@ -54,7 +54,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="6">
-          <el-form-item v-if="status==='update'" class="head-item" label="下单用户:" prop="total">
+          <el-form-item v-if="status==='update'" label="下单用户:" prop="total">
             <span>{{ temp.insert_user }}</span>
           </el-form-item>
         </el-col>
@@ -62,7 +62,7 @@
       <el-form-item label="备注" prop="remark" style="width: 50%;">
         <el-input v-model="temp.remark" type="textarea" maxlength="128" show-word-limit />
       </el-form-item>
-      <el-form-item label="材料列表" class="head-item" style="margin-top:30px">
+      <el-form-item label="材料列表" style="margin-top:30px">
         <div  class="filter-container">
           <div class="filter-item away">
             类别:
@@ -110,9 +110,25 @@
               <span>{{ scope.row.category_name }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="材料名称" min-width="100" align="center">
+          <el-table-column label="材料名称" min-width="160" align="center">
             <template slot-scope="scope">
-              <span>{{ scope.row.material_name }}</span>
+              <span v-if="status !== 'update'">{{ scope.row.material_name }}</span>
+              <el-select
+                v-else
+                v-model="scope.row.material_name"
+                filterable
+                placeholder="请选择"
+                @change="handleSelectMaterial(scope.row)"
+              >
+                <el-option
+                  v-for="item in supplying_materials"
+                  :key="item.material_id"
+                  :label="item.material_name"
+                  :value="item.material_id"
+                >
+                  <span>{{ item.material_name }}</span>
+                </el-option>
+              </el-select>
             </template>
           </el-table-column>
           <el-table-column label="规格" max-width="200" align="center">
@@ -154,6 +170,18 @@
           <el-table-column label="说明" max-width="220" align="center">
             <template slot-scope="scope">
               <el-input v-model="scope.row.remark" size="small"></el-input>
+            </template>
+          </el-table-column>
+          <el-table-column v-if="status !== 'update'" label="操作" min-width="90" align="center">
+            <template slot-scope="scope">
+              <el-button
+                size="mini"
+                type="danger"
+                plain
+                @click="delRow(scope.row)"
+              >
+                删除
+              </el-button>
             </template>
           </el-table-column>
           <!-- <el-table-column align="right" min-width="150">
@@ -292,7 +320,40 @@ export default {
       }
       this.temp_materials = materials
       return this.temp_materials
-    }
+    },
+    addRow() {
+      var list = {
+        category_id: null,
+        category_name: '',
+        order_id: '',
+        order_name: '',
+        material_id: null,
+        material_name: '',
+        inventory_quantity: 0,
+        inout_quantity: 0,
+        price: 0,
+        row_total: 0,
+        remark: ''
+      }
+      this.temp_materials.push(list)
+    },
+    delRow(row) {
+      this.temp_materials.forEach((v, i) => {
+        if (row.material_id === v.material_id) {
+          this.temp_materials.splice(i, 1)
+        }
+      })
+      this.temp.total = calcTotal(this.temp.materials)
+    },
+    handleSelectMaterial(row) {
+      fetchMaterial({material_id: row.material_name}).then(res => {
+        row.category_name = res.category_name
+        row.material_id = res.material_id
+        row.material_name = res.material_name
+        row.unit = res.unit
+        row.specification = res.specification
+      })
+    },
   }
 }
 </script>

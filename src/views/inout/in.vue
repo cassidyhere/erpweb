@@ -104,16 +104,7 @@
           <span>{{ scope.row.remark }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="审核状态" prop="audit_status" min-width="80" align="center">
-        <template slot-scope="scope">
-          <el-button v-if="scope.row.audit_status===1" size="mini" type="primary" @click.native.stop="handleAuditWarehouse(scope.row.id)">
-            审核
-          </el-button>
-          <el-button v-else size="mini" type="info" disabled>
-            已审核
-          </el-button>
-        </template>
-      </el-table-column>
+      
       <el-table-column label="对账状态" prop="reconciled" min-width="80" align="center">
         <template slot-scope="scope" v-if="scope.row.audit_status===2">
           <el-button v-if="scope.row.reconciled==='false'" size="mini" type="primary" @click.native.stop="handlereconciled(scope.row.id)">
@@ -150,6 +141,16 @@
             @click.native.stop="handleDownloadIn(scope.row.id, scope.row.order_code)"
           >
             导出
+          </el-button>
+        </template>
+      </el-table-column>
+      <el-table-column label="审核状态" prop="audit_status" min-width="80" align="center">
+        <template slot-scope="scope">
+          <el-button v-if="scope.row.audit_status===1" size="mini" type="primary" @click.native.stop="handleAuditWarehouse(scope.row.id)">
+            审核
+          </el-button>
+          <el-button v-else size="mini" type="info" disabled>
+            已审核
           </el-button>
         </template>
       </el-table-column>

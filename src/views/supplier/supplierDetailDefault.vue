@@ -54,7 +54,7 @@
         <el-input v-model="temp.remark" type="textarea" maxlength="128" show-word-limit />
       </el-form-item>
 
-      <el-form-item label="材料列表:" class="head-item" style="margin-top:30px">
+      <el-form-item label="材料列表:" style="margin-top:30px">
         <div  class="filter-container">
           <el-input v-model="mkey" placeholder="搜索关键字" style="width: 200px;" class="filter-item" @keyup.enter.native="handleSearchMaterial" />
           <el-button plain class="filter-item" type="primary" icon="el-icon-search" @click="handleSearchMaterial">

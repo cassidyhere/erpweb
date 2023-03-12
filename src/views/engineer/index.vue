@@ -75,16 +75,6 @@
           <span>{{ scope.row.remark }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="审核状态" prop="audit_status" width="80" align="center">
-        <template slot-scope="scope">
-          <el-button v-if="scope.row.audit_status===1" size="mini" type="primary" @click="handleAuditEngineer(scope.row.id)">
-            审核
-          </el-button>
-          <el-button v-else size="mini" type="info" disabled>
-            已审核
-          </el-button>
-        </template>
-      </el-table-column>
       <el-table-column label="状态" prop="status" width="75" align="center">
         <template slot-scope="scope">
           <el-button v-if="scope.row.audit_status===1" size="mini" type="success" disabled>
@@ -180,6 +170,16 @@
             @click="handleCollect(scope.row.id, false)"
           >
             收款记录
+          </el-button>
+        </template>
+      </el-table-column>
+      <el-table-column label="审核状态" prop="audit_status" width="80" align="center">
+        <template slot-scope="scope">
+          <el-button v-if="scope.row.audit_status===1" size="mini" type="primary" @click="handleAuditEngineer(scope.row.id)">
+            审核
+          </el-button>
+          <el-button v-else size="mini" type="info" disabled>
+            已审核
           </el-button>
         </template>
       </el-table-column>

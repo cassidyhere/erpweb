@@ -115,16 +115,6 @@
           <span>{{ scope.row.remark }}</span>
         </template>
       </el-table-column> -->
-      <el-table-column label="审核状态" width="80" align="center">
-        <template slot-scope="scope">
-          <el-button v-if="scope.row.audit_status===1" size="mini" type="primary" @click.native.stop="handleAuditOrder(scope.row.id)">
-            审核
-          </el-button>
-          <el-button v-else size="mini" type="info" disabled>
-            已审核
-          </el-button>
-        </template>
-      </el-table-column>
       <el-table-column label="操作" align="center" width="220" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -161,6 +151,16 @@
             @click.native.stop="handleDownloadOrder(scope.row.id, scope.row.order_name)"
           >
             导出
+          </el-button>
+        </template>
+      </el-table-column>
+      <el-table-column label="审核状态" width="80" align="center">
+        <template slot-scope="scope">
+          <el-button v-if="scope.row.audit_status===1" size="mini" type="primary" @click.native.stop="handleAuditOrder(scope.row.id)">
+            审核
+          </el-button>
+          <el-button v-else size="mini" type="info" disabled>
+            已审核
           </el-button>
         </template>
       </el-table-column>

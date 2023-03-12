@@ -4,7 +4,7 @@
       ref="dataForm"
       :model="temp"
       :rules="rules"
-      label-width="140px"
+      label-width="120px"
       style="min-width: 1200px; max-width: 2000px"
     >
       <el-form-item v-if="status!=='create'" class="head-item" label="订单编号:" prop="order_code">
