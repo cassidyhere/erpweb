@@ -426,10 +426,12 @@ export default {
     addRow() {
       var list = {
         category_id: null,
-        category_name: '',
+        category_name: null,
         material_id: null,
-        material_name: '',
-        remark: '',
+        material_name: null,
+        specification: null,
+        unit: null,
+        remark: null,
         price: null,
         total: 0,
         editing: true
@@ -451,6 +453,26 @@ export default {
     },
     handleSelectMaterial(row) {
       fetchMaterial({material_id: row.material_name}).then(res => {
+        for (var i = 0; i < this.temp_materials.length; i++) {
+          let m = this.temp_materials[i]
+          if (
+            m.category_name === res.category_name 
+            && m.material_name === res.material_name 
+            && m.specification === res.specification
+          ) {
+            row.category_id = null
+            row.category_name = null
+            row.material_id = null
+            row.material_name = null
+            row.specification = null
+            row.unit = null
+            row.remark = null
+            row.price = null
+            row.total = 0
+            this.$message.error('不能重复添加材料！')
+            return
+          }
+        }
         row.category_name = res.category_name
         row.material_id = res.material_id
         row.material_name = res.material_name
