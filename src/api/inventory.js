@@ -61,3 +61,10 @@ export function fetchInventoryForPicked(query) {
   })
 }
 
+export function fetchInventoryForOptions(query) {
+  return request({
+    url: '/inventory/batch/for-options/',
+    method: 'get',
+    params: query
+  })
+}

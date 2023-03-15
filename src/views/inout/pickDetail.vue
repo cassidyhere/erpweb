@@ -112,7 +112,7 @@
           </el-table-column>
           <el-table-column label="材料名称" min-width="160" align="center">
             <template slot-scope="scope">
-              <span v-if="status !== 'update'">{{ scope.row.material_name }}</span>
+              <span v-if="status !== 'update' && temp.audit_status !== 2">{{ scope.row.material_name }}</span>
               <el-select
                 v-else
                 v-model="scope.row.material_name"
@@ -121,10 +121,10 @@
                 @change="handleSelectMaterial(scope.row)"
               >
                 <el-option
-                  v-for="item in supplying_materials"
-                  :key="item.material_id"
+                  v-for="item in options"
+                  :key="item.inv_id"
                   :label="item.material_name"
-                  :value="item.material_id"
+                  :value="item.inv_id"
                 >
                   <span>{{ item.material_name }}</span>
                 </el-option>
@@ -172,7 +172,7 @@
               <el-input v-model="scope.row.remark" size="small"></el-input>
             </template>
           </el-table-column>
-          <el-table-column v-if="status !== 'update'" label="操作" min-width="90" align="center">
+          <el-table-column v-if="temp.audit_status !== 2" label="操作" min-width="90" align="center">
             <template slot-scope="scope">
               <el-button
                 size="mini"
@@ -201,7 +201,7 @@
 
 <script>
 import { updatePick, createPick, fetchInout } from '@/api/inout'
-import { fetchInventoryForPicked } from '@/api/inventory'
+import { fetchInventoryForPicked, fetchInventoryForOptions } from '@/api/inventory'
 import { fetchPurchasedEngineers } from '@/api/purchase'
 import { getNowTime, isNumeric, calcTotal2, clacRowTotal } from '@/utils/common'
 
@@ -218,6 +218,7 @@ export default {
       temp: {},
       temp_materials: [],
       engineers: [],
+      options: [],
       rules: {
         engineer_name: [{ required: true, message: '请选择关联工程', trigger: 'change' }],
         inout_time: [{ required: true, message: '请选择下单时间', trigger: 'change' }],
@@ -260,6 +261,12 @@ export default {
     fetchPurchasedEngineers().then(res => {
       this.engineers = res.engineers
     })
+
+    if (typeof this.temp.engineer_id === 'number') {
+      fetchInventoryForOptions({engineer_id: this.temp.engineer_id}).then(res => {
+        this.options = res.materials
+      })
+    }
   },
 
   methods: {
@@ -291,6 +298,9 @@ export default {
       this.temp.engineer_id = engineer_id
       fetchInventoryForPicked({ engineer_id: engineer_id }).then(res => {
         this.temp_materials = this.temp.materials = res.materials
+      })
+      fetchInventoryForOptions({engineer_id: engineer_id}).then(res => {
+        this.options = res.materials
       })
     },
 
