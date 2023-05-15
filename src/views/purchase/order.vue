@@ -225,7 +225,8 @@ export default {
       total: 0,
       downloadLoading: false,
       loading: false,
-      tableHeight: "100px"
+      tableHeight: "100px",
+      total_amount: 0
     }
   },
 

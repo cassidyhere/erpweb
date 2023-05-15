@@ -167,7 +167,14 @@
       </el-table-column>
     </el-table>
 
-    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
+    <div class="filter-container">
+      <div class="filter-item away">
+        <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
+      </div>
+      <div class="filter-item away" style="margin-top: 15px; margin-left: 20px">
+        <span>金额合计：{{ total_amount }}</span>
+      </div>
+    </div>
 
   </div>
 </template>
@@ -202,7 +209,8 @@ export default {
       total: 0,
       downloadLoading: false,
       loading: false,
-      tableHeight: "100px"
+      tableHeight: "100px",
+      total_amount: 0
     }
   },
 
@@ -229,6 +237,7 @@ export default {
       fetchContractList(this.listQuery).then(res => {
         this.list = res.purchase_contract_list
         this.total = res.total_num
+        this.total_amount = res.total_amount
         this.listLoading = false
       })
     },
