@@ -115,7 +115,7 @@
           <span>{{ scope.row.warehoused_number }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="工程" min-width="480" align="left">
+      <!-- <el-table-column label="工程" min-width="480" align="left">
         <template slot-scope="scope">
           <span>{{ scope.row.engineer_name }}</span>
         </template>
@@ -129,7 +129,7 @@
         <template slot-scope="scope">
           <span>{{ scope.row.audit_status }}</span>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column label="备注" min-width="200" align="left">
         <template slot-scope="scope">
           <span>{{ scope.row.remark }}</span>

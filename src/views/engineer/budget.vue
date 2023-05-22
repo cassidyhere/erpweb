@@ -1,6 +1,9 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
+      <div class="filter-item away">
+        <span>{{ engineer_name }}</span>
+      </div>
       <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">
         导出excel
       </el-button>
@@ -18,27 +21,27 @@
       :header-cell-style="{'text-align':'center', background:'#F1F3F7', color: 'black', 'font-size': '14px', 'padding': '0px'}"
       :cell-style="{'padding': '0.5px', 'color': 'black', 'font-size': '14px', 'font-weight': 400}"
     >
-      <el-table-column label="ID" prop="id" align="center" width="80">
+      <el-table-column label="ID" prop="id" align="center" width="60">
         <template slot-scope="scope">
           <span>{{ scope.row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="材料类别" width="300" align="center">
+      <el-table-column label="材料类别" width="140" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.category_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="总金额(元)" width="200" align="center">
+      <el-table-column label="总金额(元)" width="100" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.total }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="备注" width="400" align="center">
+      <el-table-column label="备注" width="300" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.remark }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="审核状态" width="200" align="center">
+      <el-table-column label="审核状态" width="140" align="center">
         <template slot-scope="scope">
           <el-button v-if="scope.row.audit_status===1" size="mini" type="primary" @click="handleAuditBudget(scope.row.id)">
             审核
@@ -48,7 +51,7 @@
           </el-button>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="300" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" width="200" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
             v-if="scope.row.audit_status===1"
@@ -80,6 +83,12 @@
         </template>
       </el-table-column>
     </el-table>
+
+    <div class="filter-container">
+      <div class="filter-item away" style="margin-top: 15px">
+        <span>金额合计：{{ total_amount }}</span>
+      </div>
+    </div>
 
     <el-dialog
       :title="textMap[dialogStatus]"
@@ -191,11 +200,13 @@ export default {
       // filter
       downloadLoading: false,
       loading: false,
+      engineer_name: null,
 
       // table
       listLoading: true,
       list: null,
       total: 0,
+      total_amount: 0,
 
       // dialog
       temp: {
@@ -243,6 +254,8 @@ export default {
       fetchBudgetList(data).then(res => {
         this.list = res.budget_list
         this.total = res.total_num
+        this.total_amount = res.total_amount
+        this.engineer_name = res.engineer_name
         this.listLoading = false
       })
     },
