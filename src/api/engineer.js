@@ -198,6 +198,17 @@ export function fetchBudgetDetail(query) {
   })
 }
 
+export function downloadBudgetExcel(query) {
+  return request({
+    url: '/engineer/budget/export/',
+    method: 'get',
+    params: query,
+    headers: { 'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' },
+    responseType: 'blob'
+  })
+}
+
+
 export function fetchCostList(query) {
   return request({
     url: '/engineer/cost/list/',

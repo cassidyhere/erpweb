@@ -4,7 +4,7 @@
       <div class="filter-item away">
         <span>{{ engineer_name }}</span>
       </div>
-      <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">
+      <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click.native.stop="handleDownload">
         导出excel
       </el-button>
     </div>
@@ -185,8 +185,10 @@ import {
   updateEngineerBudget,
   deleteEngineerBudget,
   fetchBudgetList,
-  fetchBudgetDetail
+  fetchBudgetDetail,
+  downloadBudgetExcel
 } from '@/api/engineer'
+import fileDownload from 'js-file-download'
 import { fetchCategoryList, fetchMaterialList } from '@/api/supplier'
 
 export default {
@@ -245,6 +247,10 @@ export default {
     // filter
     handleDownload() {
       this.downloadLoading = true
+      downloadBudgetExcel({ engineer_id: this.engineer_id }).then(res => {
+        fileDownload(res.data, '预算分析表.xlsx')
+        this.downloadLoading = false
+      })
     },
 
     // table
