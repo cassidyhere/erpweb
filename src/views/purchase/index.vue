@@ -31,9 +31,9 @@
       <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
         新增
       </el-button>
-      <!-- <el-button :loading="loading" class="filter-item" type="primary" @click="handleUpload">
+      <el-button :loading="loading" class="filter-item" type="primary" @click="handleUpload">
         上传excel
-      </el-button> -->
+      </el-button>
       <input ref="excel-upload-input" class="excel-upload-input" type="file" accept=".xlsx, .xls" @change="handleClick">
     </div>
 
@@ -183,7 +183,7 @@
 import Pagination from '@/components/Pagination'
 import waves from '@/directive/waves' // waves directive
 import fileDownload from 'js-file-download'
-import { fetchContractList, auditContract, deleteContract, downloadContractExcel } from '@/api/purchase'
+import { fetchContractList, auditContract, deleteContract, downloadContractExcel, importContractExcel } from '@/api/purchase'
 
 export default {
   components: { Pagination },
@@ -258,8 +258,9 @@ export default {
     },
     upload(rawFile) {
       this.$refs['excel-upload-input'].value = null // fix can't select the same excel
-      importEngineerExcel(rawFile).then(() => {
+      importContractExcel(rawFile).then(() => {
         this.$message.success('添加成功') // 需要引入elemrnt
+        this.getList()
       })
     },
 

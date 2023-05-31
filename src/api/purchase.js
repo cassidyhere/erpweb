@@ -90,12 +90,13 @@ export function importContractExcel(file) {
   formData.append('file', file)
 
   return request({
-    url: 'purchase/contract/import-file/',
+    url: 'purchase/contract/upload/',
     method: 'post',
     data: formData,
     headers: { 'Content-Type': 'multipart/form-data' }
   })
 }
+
 
 export function fetchOrderList(query) {
   return request({
